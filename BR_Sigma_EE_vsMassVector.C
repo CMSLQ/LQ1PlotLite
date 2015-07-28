@@ -18,9 +18,9 @@ void BR_Sigma_EE_vsMassVector()
 {
 
  // filename for the final plot (NB: changing the name extension changes the file format)
- string fileName2 = "BR_Sigma_EEVector.pdf";
- string fileName3 = "BR_Sigma_EEVector.png";
- string fileName1 = "BR_Sigma_EEVector.eps";
+ string fileNamePdf = "BR_Sigma_EEVector.pdf";
+ string fileNamePng = "BR_Sigma_EEVector.png";
+ string fileNameEps = "BR_Sigma_EEVector.eps";
 
  // axes labels for the final plot
  string title = ";M_{LQ} [GeV];#sigma#times#beta^{2} [pb]";
@@ -288,14 +288,20 @@ legend->AddEntry(AMxsTh_vs_m,"AM, #sigma_{theory}#times#beta^{2}, (#beta=1)","lf
  legend->AddEntry(MCxsData_vs_m_observed, "Obs. 95% CL upper limit","lp");
  legend->Draw();
 
+
  TLatex l1;
  l1.SetTextAlign(12);
  l1.SetTextFont(42);
  l1.SetNDC();
- l1.SetTextSize(0.04);
+ l1.SetTextSize(0.046);
+ TLatex l2;
+ l2.SetTextAlign(12);
+ l2.SetTextFont(62);
+ l2.SetNDC();
+ l2.SetTextSize(0.065);
+ l1.DrawLatex(0.651,0.93,"19.7 fb^{-1} (8 TeV)");
+ l2.DrawLatex(0.2,0.85,"CMS");
 
- //l1.DrawLatex(0.14,0.93,"CMS #it{Preliminary}          #sqrt{s} = 8 TeV         19.7 fb^{-1}");
- l1.DrawLatex(0.14,0.93,"CMS                   #sqrt{s} = 8 TeV                  19.7 fb^{-1}");
 
 if (NoteStyle)
 {
@@ -316,9 +322,9 @@ if (NoteStyle)
  legend->Draw();
 
  c->SetLogy();
- c->SaveAs((fileName1).c_str());
- c->SaveAs((fileName2).c_str());
- c->SaveAs((fileName3).c_str());
+ c->SaveAs((fileNamePdf).c_str());
+ //c->SaveAs((fileNameEps).c_str());
+ //c->SaveAs((fileNamePng).c_str());
 
 
 }
