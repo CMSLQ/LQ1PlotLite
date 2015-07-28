@@ -22,9 +22,9 @@ Double_t y_pdf[202] = {10.006483831,7.732000484,6.06581922,4.781628951,3.8039318
 
 
  // filename for the final plot (NB: changing the name extension changes the file format)
- string fileName2 = "BR_Sigma_ENu.pdf";
- string fileName3 = "BR_Sigma_ENu.png";
- string fileName1 = "BR_Sigma_ENu.eps";
+ string fileNamePdf = "BR_Sigma_ENu.pdf";
+ string fileNamePng = "BR_Sigma_ENu.png";
+ string fileNameEps = "BR_Sigma_ENu.eps";
   
  // axes labels for the final plot
  string title = ";M_{LQ} [GeV];#sigma#times2#beta(1-#beta) [pb]";
@@ -247,9 +247,9 @@ Double_t y_2sigma[38]={0.0724815 , 0.0242935 , 0.0112347 , 0.0054605 , 0.0028249
 
 
  c->SetLogy();
- c->SaveAs((fileName1).c_str());
- c->SaveAs((fileName2).c_str());
- c->SaveAs((fileName3).c_str());
+ c->SaveAs((fileNamePdf).c_str());
+ //c->SaveAs((fileNameEps).c_str());
+ //c->SaveAs((fileNamePng).c_str());
 
  delete pl;
  delete xsTh_vs_m;
