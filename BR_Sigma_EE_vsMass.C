@@ -248,28 +248,20 @@ Double_t y_2sigma[38]={0.074466 , 0.0255255 , 0.0126711 , 0.00623475 , 0.0038704
  l1.SetTextFont(42);
  l1.SetNDC();
  l1.SetTextSize(0.04);
-// double stamp_x = 0.76;
-//  double stamp_y = 0.58;
 
- // l1.DrawLatex(stamp_x,stamp_y - 0.00,"CMS 2012");	   
- // l1.DrawLatex(stamp_x,stamp_y - 0.05,"#sqrt{s} = 8 TeV");
-  //l1.DrawLatex(0.70,0.53,"CMS 2011");
- //l1.DrawLatex(0.70,0.48,"#sqrt{s} = 7 TeV");
+ TLatex l1;
+ l1.SetTextAlign(12);
+ l1.SetTextFont(42);
+ l1.SetNDC();
+ l1.SetTextSize(0.046);//was .04
+ TLatex l2;
+ l2.SetTextAlign(12);
+ l2.SetTextFont(62);
+ l2.SetNDC();
+ l2.SetTextSize(0.065);
+ l1.DrawLatex(0.651,0.93,"19.7 fb^{-1} (8 TeV)");
+ l2.DrawLatex(0.165,0.85,"CMS");
 
- //l1.DrawLatex(0.14,0.93,"CMS #it{Preliminary}          #sqrt{s} = 8 TeV         19.7 fb^{-1}");
- //l1.DrawLatex(0.14,0.93,  "  CMS                        #sqrt{s} = 8 TeV         19.7 fb^{-1}");
- l1.DrawLatex(0.14,0.93,"CMS                   #sqrt{s} = 8 TeV                  19.7 fb^{-1}");
- // l1.DrawLatex(0.14,0.93,"CMS Work In Progres       #sqrt{s} = 8 TeV         19.6 fb^{-1}");
- // l1.DrawLatex(0.76,0.53,"Preliminary");
- // l1.DrawLatex(0.76,0.48,"#sqrt{s} = 8 TeV");
- // l1.DrawLatex(0.76,0.43,"19.6 fb^{-1}");
-
-//  TLatex l2;
-//  l2.SetTextAlign(12);
-//  l2.SetTextSize(0.037);
-//  l2.SetTextFont(42);
-//  l2.SetNDC();
-//  l2.DrawLatex(0.4,0.485,"EXO-10-005 scaled to #sqrt{s} = 7 TeV");
 
  c->SetGridx();
  c->SetGridy();
