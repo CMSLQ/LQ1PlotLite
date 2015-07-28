@@ -58,8 +58,8 @@ r.gStyle.SetPadRightMargin(0.1);
 mass1 = 450
 mass2 = 650
 
-bkgd_file = r.TFile(os.environ["LQDATA"] + "/enujj_analysis/enujj/scaled_output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_plots.root" )
-qcd_file  = r.TFile(os.environ["LQDATA"] + "/enujj_analysis/enujj_qcd/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_QCD_plots.root")
+bkgd_file = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_enujj_MT_plots.root" )
+qcd_file  = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_enujj_MT_QCD_plots.root")
 
 for i_var, var in enumerate(vars):
 
@@ -139,25 +139,18 @@ for i_var, var in enumerate(vars):
     leg.SetFillColor(0);
     leg.SetBorderSize(0);
     leg.SetTextSize(.05)
-    leg.AddEntry(data_hist ,"Data");
+    leg.AddEntry(data_hist ,"Data","lpe");
     leg.AddEntry(wjets_hist,"W + jets");
     leg.AddEntry(ttbar_hist,"t#bar{t} + jets");
     leg.AddEntry(other_hist,"Other background");
     leg.AddEntry(qcd_hist  ,"QCD");
-    leg.AddEntry(sig1_hist  ,"LQ, M = "+str(mass1)+" GeV, #beta = 0.5");
-    leg.AddEntry(sig2_hist  ,"LQ, M = "+str(mass2)+" GeV, #beta = 0.5");
-    
-    sqrts = "#sqrt{s} = 8 TeV";
-    l1 = r.TLatex()
-    l1.SetTextAlign(12)
-    l1.SetTextFont(42)
-    l1.SetNDC()
-    l1.SetTextSize(0.06)
+    leg.AddEntry(sig1_hist  ,"LQ, M = "+str(mass1)+" GeV, #beta = 0.5","l");
+    leg.AddEntry(sig2_hist  ,"LQ, M = "+str(mass2)+" GeV, #beta = 0.5","l");
     
     canv_name = var + "_canv"
     pad_name  = var + "_pad"
     save_name = var + "_enujj.pdf"
-    save_name = save_name.replace("PAS","preselection")
+    #save_name = save_name.replace("PAS","preselection")
 
     canvas = r.TCanvas(canv_name,canv_name,800,550)
     canvas.cd()
@@ -169,8 +162,20 @@ for i_var, var in enumerate(vars):
     sig2_hist.Draw("HIST SAME");
     data_hist.Draw("SAME");
     leg.Draw()
-    # l1.DrawLatex(0.18,0.94,"CMS #it{Preliminary}      "+sqrts+", 19.7 fb^{  -1}")
-    l1.DrawLatex(0.12,0.94,"CMS                  "+sqrts+"                19.7 fb^{-1}")
+
+    l1 = r.TLatex()
+    l1.SetTextAlign(12)
+    l1.SetTextFont(42)
+    l1.SetNDC()
+    l1.SetTextSize(0.06)
+    l2 = r.TLatex()
+    l2.SetTextAlign(12)
+    l2.SetTextFont(62)
+    l2.SetNDC()
+    l2.SetTextSize(0.08)
+    l1.DrawLatex(0.64,0.94,"19.7 fb^{-1} (8 TeV)")
+    l2.DrawLatex(0.15,0.84,"CMS")
+
     
     canvas.SaveAs(save_name)
 
