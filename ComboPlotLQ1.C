@@ -72,9 +72,9 @@ for (unsigned int ii = 0; ii < numbetas; ++ii){
 }
 
  // filename for the final plot (NB: changing the name extension changes the file format)
- string fileName0 = "LQ1Combination.eps";
- string fileName1 = "LQ1Combination.pdf";
- string fileName2 = "LQ1Combination.png";
+ string fileNameEps = "LQ1Combination.eps";
+ string fileNamePdf = "LQ1Combination.pdf";
+ string fileNamePng = "LQ1Combination.png";
 
 
  // axes labels for the final plot
@@ -298,17 +298,14 @@ Double_t beta_CMS[116]={0.0333,0.0337,0.0345,0.0350,0.0357,0.0376,0.0411,0.0445,
  l1.SetTextAlign(12);
  l1.SetTextFont(42);
  l1.SetNDC();
- l1.SetTextSize(0.04);
- 
- // l1.DrawLatex(0.7,0.41,"CMS 2012");
- // l1.DrawLatex(0.7,0.36,sqrts.c_str());
-
- // l1.DrawLatex(0.7,0.47,"CMS Preliminary");
- // l1.DrawLatex(0.7,0.41,"Preliminary");
- // l1.DrawLatex(0.7,0.36,sqrts.c_str());
- // l1.DrawLatex(0.14,0.93,"CMS Work In Progress       #sqrt{s} = 8 TeV         19.7 fb^{-1}");
- //l1.DrawLatex(0.14,0.93,"CMS #it{Preliminary}          #sqrt{s} = 8 TeV         19.7 fb^{-1}");
- l1.DrawLatex(0.14,0.93,"CMS                   #sqrt{s} = 8 TeV                  19.7 fb^{-1}");
+ l1.SetTextSize(0.046);
+ TLatex l2;
+ l2.SetTextAlign(12);
+ l2.SetTextFont(62);
+ l2.SetNDC();
+ l2.SetTextSize(0.065);
+ l1.DrawLatex(0.651,0.93,"19.7 fb^{-1} (8 TeV)");
+ l2.DrawLatex(0.8,0.85,"CMS");
 
 
  TLatex l2;
@@ -329,9 +326,9 @@ Double_t beta_CMS[116]={0.0333,0.0337,0.0345,0.0350,0.0357,0.0376,0.0411,0.0445,
  // c->SetGridx();
  // c->SetGridy();
  c->SetLogy(0);
- c->SaveAs(fileName0.c_str());
- c->SaveAs(fileName1.c_str());
- c->SaveAs(fileName2.c_str());
+ c->SaveAs(fileNamePdf.c_str());
+ //c->SaveAs(fileNameEps.c_str());
+ //c->SaveAs(fileNamePng.c_str());
 
 
  delete legend;
