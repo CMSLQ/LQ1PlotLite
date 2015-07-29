@@ -123,7 +123,7 @@ for i_mass, mass in enumerate(masses) :
     leg.AddEntry(ttbar_hist,"t#bar{t} + jets");
     leg.AddEntry(other_hist,"Other background");
     leg.AddEntry(qcd_hist  ,"QCD");
-    leg.AddEntry(stack_hist,"Unc. (stat. + syst.)");
+    leg.AddEntry(stack_hist,"Unc. (stat + syst)");
     leg.AddEntry(sig_hist  ,"LQ, M = "+str(mass)+" GeV, #beta = 1.0","l");
 
     canv_name = var + "_LQ" + str(mass) + "_canv"
