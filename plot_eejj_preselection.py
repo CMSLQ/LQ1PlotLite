@@ -1,29 +1,6 @@
-import os , math, copy
-import ROOT as r
-from numpy import array
+#!/usr/bin/env python
 
-def setStyle ( plot, color, style, width ) :
-    plot.SetLineColor( color ) 
-    plot.SetFillColor( color ) 
-    plot.SetFillStyle( style ) 
-    plot.SetLineWidth( width )
-    return
-
-def rebin ( plot, bins ) :
-    n_bins    = len ( bins ) - 1
-    bin_array = array ( bins, dtype=float ) 
-    new_name  = plot.GetName() + "_rebin"
-    new_plot  = plot.Rebin ( n_bins, new_name, bin_array ) 
-    return new_plot
-
-def makeSafe ( plot ) :
-    n_bins = plot.GetNbinsX()
-    for i in range ( 1, n_bins + 1 ):
-        old_content = plot.GetBinContent(i)
-        if old_content > 0. and old_content < 0.0001:
-            plot.SetBinContent(i, 0. )
-            plot.SetBinError  (i, 0. )
-    
+from plot_common import *
 
 mass1 = 450
 mass2 = 650
@@ -92,18 +69,18 @@ for i_var, var in enumerate(vars):
     data_hist.SetMarkerSize (0.7)
     
     stack = r.THStack ("stack", "stack")
-    stack.Add ( qcd_hist   );
-    stack.Add ( other_hist );
-    stack.Add ( ttbar_hist );
-    stack.Add ( zjets_hist );
-    stack.Draw();
-    stack.SetMaximum(200000);
-    stack.SetMinimum(0.1);
+    stack.Add ( qcd_hist   )
+    stack.Add ( other_hist )
+    stack.Add ( ttbar_hist )
+    stack.Add ( zjets_hist )
+    stack.Draw()
+    stack.SetMaximum(200000)
+    stack.SetMinimum(0.1)
 
     
 
     stack.GetXaxis().SetTitle( x_labels [i_var] )
-    stack.GetYaxis().SetTitle( "Events/GeV" )
+    stack.GetYaxis().SetTitle( "Events / bin" )
     stack.GetXaxis().CenterTitle()
     stack.GetYaxis().CenterTitle()
 
@@ -125,18 +102,18 @@ for i_var, var in enumerate(vars):
     stack.GetYaxis().CenterTitle(1)
     
     
-    leg = r.TLegend(0.43,0.52,0.89,0.88,"","brNDC");
-    leg.SetTextFont(42);
-    leg.SetFillColor(0);
-    leg.SetBorderSize(0);
+    leg = r.TLegend(0.43,0.52,0.89,0.88,"","brNDC")
+    leg.SetTextFont(42)
+    leg.SetFillColor(0)
+    leg.SetBorderSize(0)
     leg.SetTextSize(.05)
-    leg.AddEntry(data_hist ,"Data","lpe");
-    leg.AddEntry(zjets_hist,"Z/#gamma^{*} + jets");
-    leg.AddEntry(ttbar_hist,"t#bar{t} + jets");
-    leg.AddEntry(other_hist,"Other background");
-    leg.AddEntry(qcd_hist  ,"QCD");
-    leg.AddEntry(sig1_hist  ,"LQ, M = "+str(mass1)+" GeV, #beta = 1.0","l");
-    leg.AddEntry(sig2_hist  ,"LQ, M = "+str(mass2)+" GeV, #beta = 1.0","l");
+    leg.AddEntry(data_hist ,"Data","lpe")
+    leg.AddEntry(zjets_hist,"Z/#gamma^{*} + jets")
+    leg.AddEntry(ttbar_hist,"t#bar{t} + jets")
+    leg.AddEntry(other_hist,"Other background")
+    leg.AddEntry(qcd_hist  ,"QCD")
+    leg.AddEntry(sig1_hist  ,"LQ, M = "+str(mass1)+" GeV, #beta = 1.0","l")
+    leg.AddEntry(sig2_hist  ,"LQ, M = "+str(mass2)+" GeV, #beta = 1.0","l")
     
     canv_name = var + "_canv"
     pad_name  = var + "_pad"
@@ -149,10 +126,13 @@ for i_var, var in enumerate(vars):
     pad1   = r.TPad( pad_name, pad_name , 0.0, 0.0, 1.0, 1.0 )
     canvas.SetLogy()
 
-    stack.Draw("HIST");
-    sig1_hist.Draw("HIST SAME");
-    sig2_hist.Draw("HIST SAME");
-    data_hist.Draw("SAME");
+    stack.Draw("HIST")
+    sig1_hist.Draw("HIST SAME")
+    sig2_hist.Draw("HIST SAME")
+    # convert to Poisson error bars
+    g = poissonErrGraph(data_hist)
+    g.Draw("ZPSAME")
+
     leg.Draw()
     
     # CMS/lumi/energy

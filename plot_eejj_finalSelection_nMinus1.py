@@ -1,29 +1,7 @@
-import os , math, copy
-import ROOT as r
-from numpy import array
+#!/usr/bin/env python
 
-def setStyle ( plot, color, style, width ) :
-    plot.SetLineColor( color ) 
-    plot.SetFillColor( color ) 
-    plot.SetFillStyle( style ) 
-    plot.SetLineWidth( width )
-    return
+from plot_common import *
 
-def rebin ( plot, bins ) :
-    n_bins    = len ( bins ) - 1
-    bin_array = array ( bins, dtype=float ) 
-    new_name  = plot.GetName() + "_rebin"
-    new_plot  = plot.Rebin ( n_bins, new_name, bin_array ) 
-    return new_plot
-
-def makeSafe ( plot ) :
-    n_bins = plot.GetNbinsX()
-    for i in range ( 1, n_bins + 1 ):
-        old_content = plot.GetBinContent(i)
-        if old_content > 0. and old_content < 0.0001:
-            plot.SetBinContent(i, 0. )
-            plot.SetBinError  (i, 0. )
-    
 
 masses = [ 650 ]
 mass_colors = [ 38 ]
@@ -122,7 +100,7 @@ for i_mass, mass in enumerate(masses) :
         stack_hist.SetBinError(bin, tot_err)
             
     stack.GetXaxis().SetTitle( x_labels [i_var] )
-    stack.GetYaxis().SetTitle( "Events/GeV" )
+    stack.GetYaxis().SetTitle( "Events / bin" )
     stack.GetXaxis().CenterTitle()
     stack.GetYaxis().CenterTitle()
 
@@ -170,7 +148,9 @@ for i_mass, mass in enumerate(masses) :
 
     stack.Draw("HIST");
     sig_hist.Draw("HIST SAME");
-    data_hist.Draw("SAME");
+    # convert to Poisson error bars
+    g = poissonErrGraph(data_hist)
+    g.Draw("ZPSAME")
     stack_hist.Draw("E2 SAME");
     leg.Draw()
 
