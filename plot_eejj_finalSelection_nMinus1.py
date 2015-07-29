@@ -146,12 +146,13 @@ for i_mass, mass in enumerate(masses) :
     canvas.cd()
     pad1   = r.TPad( pad_name, pad_name , 0.0, 0.0, 1.0, 1.0 )
 
-    stack.Draw("HIST");
-    sig_hist.Draw("HIST SAME");
+    stack.Draw("HIST")
+    sig_hist.Draw("HIST SAME")
+    stack_hist.Draw("E2 SAME");
+    data_hist.Draw("P SAME")
     # convert to Poisson error bars
     g = poissonErrGraph(data_hist)
-    g.Draw("ZPSAME")
-    stack_hist.Draw("E2 SAME");
+    g.Draw("same z")
     leg.Draw()
 
     # CMS/lumi/energy

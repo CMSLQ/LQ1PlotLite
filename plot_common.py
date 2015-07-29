@@ -10,16 +10,25 @@ def poissonErrGraph(hist):
     g.SetMarkerSize(0.7)
     g.SetMarkerStyle(20)
     seenNonzeroPoint = False
-    for i in range(0, g.GetN()):
+    i=0
+    while i < g.GetN():
       N = g.GetY()[i]
+      #print 'consider point N=',N
+      #for n in range(0,g.GetN()):
+      #  print g.GetY()[n],
+      #print
       if N > 0:
         seenNonzeroPoint = True
       if not seenNonzeroPoint:
+        #print 'removePoint(',i,') / ',g.GetN()
+        g.RemovePoint(i)
+        i=0
         continue
       L = 0 if N==0 else (r.Math.gamma_quantile(alpha/2,N,1.))
       U = r.Math.gamma_quantile_c(alpha/2,N+1,1)
       g.SetPointEYlow(i, N-L)
       g.SetPointEYhigh(i, U-N)
+      i+=1
     return g
 
 def setStyle ( plot, color, style, width ) :

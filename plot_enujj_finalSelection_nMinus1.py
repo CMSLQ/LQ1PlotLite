@@ -77,11 +77,11 @@ for i_mass, mass in enumerate(masses) :
     data_hist.SetMarkerSize (0.7)
   
     stack = r.THStack ("stack", "stack")
-    stack.Add ( qcd_hist   );
-    stack.Add ( other_hist );
-    stack.Add ( ttbar_hist );
-    stack.Add ( wjets_hist );
-    stack.Draw();
+    stack.Add ( qcd_hist   )
+    stack.Add ( other_hist )
+    stack.Add ( ttbar_hist )
+    stack.Add ( wjets_hist )
+    stack.Draw()
         
     stack.SetMaximum(200000);
     stack.SetMinimum(0.1);
@@ -151,12 +151,13 @@ for i_mass, mass in enumerate(masses) :
     canvas.cd()
     pad1   = r.TPad( pad_name, pad_name , 0.0, 0.0, 1.0, 1.0 )
 
-    stack.Draw("HIST");
-    sig_hist.Draw("HIST SAME");
+    stack.Draw("HIST")
+    sig_hist.Draw("HIST SAME")
+    stack_hist.Draw("E2 SAME")
+    data_hist.Draw("P SAME")
     # convert to Poisson error bars
     g = poissonErrGraph(data_hist)
-    g.Draw("ZPSAME")
-    stack_hist.Draw("E2 SAME");
+    g.Draw("same z")
     leg.Draw()
         
     # CMS/lumi/energy
