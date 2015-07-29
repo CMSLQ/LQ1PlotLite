@@ -56,8 +56,8 @@ beta = 0.075
 lq_scale = 2. * ( 2. * beta * ( 1. - beta ) )
 
 
-bkgd_file = r.TFile(os.environ["LQDATA"] + "/enujj_analysis/enujj/scaled_output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_plots.root" )
-qcd_file  = r.TFile(os.environ["LQDATA"] + "/enujj_analysis/enujj_qcd/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_QCD_plots.root")
+bkgd_file = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_enujj_MT_plots.root" )
+qcd_file  = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_enujj_MT_QCD_plots.root")
 
 for i_mass, mass in enumerate(masses) :
     for i_var, var in enumerate(vars):
