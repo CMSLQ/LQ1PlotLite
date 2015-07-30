@@ -78,7 +78,7 @@ for i_var, var in enumerate(vars):
     stack.SetMinimum(0.1);
 
     stack.GetXaxis().SetTitle( x_labels [i_var] )
-    stack.GetYaxis().SetTitle( "Events/GeV" )
+    stack.GetYaxis().SetTitle( "Events / bin" )
     stack.GetXaxis().CenterTitle()
     stack.GetYaxis().CenterTitle()
 
