@@ -111,7 +111,7 @@ for i_var, var in enumerate(vars):
     leg.AddEntry(zjets_hist,"Z/#gamma^{*} + jets")
     leg.AddEntry(ttbar_hist,"t#bar{t} + jets")
     leg.AddEntry(other_hist,"Other background")
-    leg.AddEntry(qcd_hist  ,"QCD")
+    leg.AddEntry(qcd_hist  ,"Multijet")
     leg.AddEntry(sig1_hist  ,"LQ, M = "+str(mass1)+" GeV, #beta = 1.0","l")
     leg.AddEntry(sig2_hist  ,"LQ, M = "+str(mass2)+" GeV, #beta = 1.0","l")
     
