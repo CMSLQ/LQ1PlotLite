@@ -251,8 +251,8 @@ Double_t y_2sigma[38]={0.050342016375 , 0.019232736215 , 0.011166857289 , 0.0058
 
  c->RedrawAxis();
  legend->Draw();
- c->SetGridx();
- c->SetGridy();
+ //c->SetGridx();
+ //c->SetGridy();
 
 
  c->SetLogy();
