@@ -122,7 +122,9 @@ for i_mass, mass in enumerate(masses) :
     stack.GetYaxis().CenterTitle(1)
     
   
-    leg = r.TLegend(0.4,0.52,0.86,0.88,"","brNDC");
+    #leg = r.TLegend(0.426,0.584,0.789,0.894,"","brNDC")
+    # for LQ signal scaled x10 legend
+    leg = r.TLegend(0.361,0.580,0.724,0.894,"","brNDC")
     leg.SetTextFont(42);
     leg.SetFillColor(0);
     leg.SetBorderSize(0);
@@ -133,7 +135,9 @@ for i_mass, mass in enumerate(masses) :
     leg.AddEntry(other_hist,"Other background");
     leg.AddEntry(qcd_hist  ,"QCD");
     leg.AddEntry(stack_hist,"Unc. (stat + syst)");
-    leg.AddEntry(sig_hist  ,"LQ, M = "+str(mass)+" GeV, #beta = 0.075","l");
+    #leg.AddEntry(sig_hist  ,"LQ, M = "+str(mass)+" GeV, #beta = 0.075","l");
+    # for LQ signal scaled x10 legend
+    leg.AddEntry(sig_hist  ,"LQ, M = "+str(mass)+" GeV, #beta = 0.075, x10","l");
   
   
     canv_name = var + str(mass) + "_canv"
@@ -147,13 +151,20 @@ for i_mass, mass in enumerate(masses) :
     pad1   = r.TPad( pad_name, pad_name , 0.0, 0.0, 1.0, 1.0 )
 
     stack.Draw("HIST")
+    # for LQ signal scaled x10
+    sig_hist.Scale(10)
+    #
     sig_hist.Draw("HIST SAME")
     stack_hist.Draw("E2 SAME");
-    data_hist.Draw("P SAME")
+    data_hist.Draw("HIST P SAME")
     # convert to Poisson error bars
     g = poissonErrGraph(data_hist)
+    setStyle (g , 1 ,    0, 1) 
     g.Draw("same z")
+    sig_hist.Draw("HIST SAME")
     leg.Draw()
+    canvas.RedrawAxis()
+    canvas.RedrawAxis('G')
 
     # CMS/lumi/energy
     l1 = r.TLatex()
@@ -182,4 +193,12 @@ for i_mass, mass in enumerate(masses) :
     line.Draw("SAME")
 
     canvas.SaveAs(save_name)
+
+    ### wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
+    #if __name__ == '__main__':
+    #   rep = ''
+    #   while not rep in [ 'q', 'Q' ]:
+    #      rep = raw_input( 'enter "q" to quit: ' )
+    #      if 1 < len(rep):
+    #         rep = rep[0]
 
