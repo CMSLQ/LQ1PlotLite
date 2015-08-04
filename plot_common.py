@@ -41,7 +41,7 @@ def getLastPopulatedBin(histList,threshold=1e-2):
   for bin in reversed(range ( 1, n_bins)):
     for hist in histList:
       if hist.GetBinContent(bin) > threshold:
-        print 'found bincontent of:',hist.GetBinContent(bin),'in bin',bin,'with center',hist.GetBinCenter(bin),'in hist:',hist.GetName()
+        #print 'found bincontent of:',hist.GetBinContent(bin),'in bin',bin,'with center',hist.GetBinCenter(bin),'in hist:',hist.GetName()
         return bin
     
 
