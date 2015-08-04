@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 from plot_common import *
+import tdrstyle
+
+# set batch
+r.gROOT.SetBatch()
 
 
 masses = [ 450, 650 ]
@@ -30,10 +34,15 @@ r.gStyle.SetLabelFont ( 42, "XYZ" );
 r.gStyle.SetOptTitle(0);
 r.gStyle.SetOptStat(0);
 
+#set the tdr style
+tdrstyle.setTDRStyle()
+
 r.gStyle.SetPadTopMargin(0.1);
 r.gStyle.SetPadBottomMargin(0.16);
 r.gStyle.SetPadLeftMargin(0.12);
 r.gStyle.SetPadRightMargin(0.1);
+r.gStyle.SetPadTickX(0)
+r.gStyle.SetPadTickY(0)
 
 
 bkgd_file = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_enujj_MT_plots.root" )
@@ -60,13 +69,13 @@ for i_mass, mass in enumerate(masses):
     stack_hist.Add ( other_hist ) 
     stack_hist.Add ( qcd_hist ) 
     
-    setStyle (wjets_hist, 6 , 3007, 2)
-    setStyle (ttbar_hist, 4 , 3005, 2)
-    setStyle (other_hist, 3 , 3006, 2)
-    setStyle (qcd_hist  , 7 , 3004, 2)
+    setStyle (wjets_hist, 6 , 3007, 1)
+    setStyle (ttbar_hist, 4 , 3005, 1)
+    setStyle (other_hist, 3 , 3006, 1)
+    setStyle (qcd_hist  , 7 , 3004, 1)
     setStyle (sig_hist  , mass_colors[i_mass],    0, 3)
     setStyle (data_hist , 1 ,    0, 1)
-    setStyle (stack_hist, 1, 3002, 1 )
+    setStyle (stack_hist, 14, 3002, 1 )
   
     data_hist.SetMarkerStyle(20)
     data_hist.SetMarkerSize (0.7)
@@ -122,14 +131,14 @@ for i_mass, mass in enumerate(masses):
     stack.GetXaxis().CenterTitle(1)
     stack.GetYaxis().CenterTitle(1)
     
-    leg = r.TLegend(0.43,0.52,0.89,0.88,"","brNDC");
+    leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC");
     leg.SetTextFont(42);
     leg.SetFillColor(0);
     leg.SetBorderSize(0);
     leg.SetTextSize(.05)
     leg.AddEntry(data_hist ,"Data","lpe");
     leg.AddEntry(wjets_hist,"W + jets");
-    leg.AddEntry(ttbar_hist,"t#bar{t} + jets");
+    leg.AddEntry(ttbar_hist,"t#bar{t}");
     leg.AddEntry(other_hist,"Other background");
     leg.AddEntry(qcd_hist  ,"Multijet");
     leg.AddEntry(stack_hist,"Unc. (stat + syst)");
@@ -147,11 +156,20 @@ for i_mass, mass in enumerate(masses):
 
     stack.Draw("HIST");
     sig_hist.Draw("HIST SAME");
+    stack_hist.Draw("E2 SAME");
     # convert to Poisson error bars
     g = poissonErrGraph(data_hist)
     g.Draw("ZPSAME")
-    stack_hist.Draw("E2 SAME");
     leg.Draw()
+    canvas.RedrawAxis('G')
+    canvas.RedrawAxis()
+    # redraw frame
+    r.gPad.Update()
+    line = r.TLine(r.gPad.GetUxmin(),r.gPad.GetUymin(),r.gPad.GetUxmax(),r.gPad.GetUymin())
+    line.Draw()
+    line = r.TLine(r.gPad.GetUxmax(),r.gPad.GetUymin(),r.gPad.GetUxmax(),r.gPad.GetUymax())
+    line.Draw()
+    r.gPad.Update()
   
     # CMS/lumi/energy
     l1 = r.TLatex()

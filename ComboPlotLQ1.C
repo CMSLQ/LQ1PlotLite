@@ -311,7 +311,7 @@ Double_t beta_CMS[116]={0.0333,0.0337,0.0345,0.0350,0.0357,0.0376,0.0411,0.0445,
  l2.SetTextAlign(12);
  l2.SetTextFont(42);
  l2.SetNDC();
- l2.SetTextSize(0.04);
+ l2.SetTextSize(0.06);
  l2.SetTextColor(kBlue);
  l2.SetTextAngle(30);
  l2.DrawLatex(0.24,0.35,"eejj");
@@ -320,7 +320,7 @@ Double_t beta_CMS[116]={0.0333,0.0337,0.0345,0.0350,0.0357,0.0376,0.0411,0.0445,
  l2.DrawLatex(0.25,0.84,"e#nujj");
  l2.SetTextColor(kBlack);
  l2.SetTextAngle(79);
- l2.DrawLatex(0.65,0.50,"eejj + e#nujj");
+ l2.DrawLatex(0.655,0.50,"eejj + e#nujj");
 
  // c->SetGridx();
  // c->SetGridy();
@@ -330,15 +330,15 @@ Double_t beta_CMS[116]={0.0333,0.0337,0.0345,0.0350,0.0357,0.0376,0.0411,0.0445,
  //c->SaveAs(fileNamePng.c_str());
 
 
- delete legend;
- delete beta_vs_m_lljj_observed;
- delete beta_vs_m_lvjj_observed;
- delete beta_vs_m_comb_observed;
- delete gr_excl_D0;
- delete gr_excl_ATLAS;
- delete gr_excl_D0_new;
- delete bg;
- delete c;
+ //delete legend;
+ //delete beta_vs_m_lljj_observed;
+ //delete beta_vs_m_lvjj_observed;
+ //delete beta_vs_m_comb_observed;
+ //delete gr_excl_D0;
+ //delete gr_excl_ATLAS;
+ //delete gr_excl_D0_new;
+ //delete bg;
+ //delete c;
 }
 
 

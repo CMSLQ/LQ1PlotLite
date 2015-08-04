@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 from plot_common import *
+import tdrstyle
+
+# set batch
+r.gROOT.SetBatch()
 
 
 masses = [ 650 ]
@@ -28,6 +32,9 @@ r.gStyle.SetTitleFont ( 42, "XYZ" );
 r.gStyle.SetLabelFont ( 42, "XYZ" );
 r.gStyle.SetOptTitle(0);
 r.gStyle.SetOptStat(0);
+
+#set the tdr style
+tdrstyle.setTDRStyle()
 
 r.gStyle.SetPadTopMargin(0.1);
 r.gStyle.SetPadBottomMargin(0.16);
@@ -65,16 +72,16 @@ for i_mass, mass in enumerate(masses) :
     stack_hist.Add ( other_hist ) 
     stack_hist.Add ( qcd_hist ) 
         
-    setStyle (wjets_hist, 6 , 3007, 2)
-    setStyle (ttbar_hist, 4 , 3005, 2)
-    setStyle (other_hist, 3 , 3006, 2)
-    setStyle (qcd_hist  , 7 , 3004, 2)
-    setStyle (sig_hist  , mass_colors[i_mass],    0, 3)
+    setStyle (wjets_hist, 6 , 3007, 1)
+    setStyle (ttbar_hist, 4 , 3005, 1)
+    setStyle (other_hist, 3 , 3006, 1)
+    setStyle (qcd_hist  , 7 , 3013, 1)
+    setStyle (sig_hist  , mass_colors[i_mass],    0, 4)
     setStyle (data_hist , 1 ,    0, 1)
-    setStyle (stack_hist, 1, 3002, 1 )
+    setStyle (stack_hist, 14, 3002, 1 )
   
     data_hist.SetMarkerStyle(20)
-    data_hist.SetMarkerSize (0.7)
+    data_hist.SetMarkerSize (1.5)
   
     stack = r.THStack ("stack", "stack")
     stack.Add ( qcd_hist   )
@@ -130,14 +137,14 @@ for i_mass, mass in enumerate(masses) :
     stack.GetXaxis().CenterTitle(1)
     stack.GetYaxis().CenterTitle(1)
   
-    leg = r.TLegend(0.426,0.584,0.789,0.894,"","brNDC")
+    leg = r.TLegend(0.41,0.57,0.73,0.87,"","brNDC")
     leg.SetTextFont(42);
     leg.SetFillColor(0);
     leg.SetBorderSize(0);
     leg.SetTextSize(.05)
     leg.AddEntry(data_hist ,"Data","lpe");
     leg.AddEntry(wjets_hist,"W + jets");
-    leg.AddEntry(ttbar_hist,"t#bar{t} + jets");
+    leg.AddEntry(ttbar_hist,"t#bar{t}");
     leg.AddEntry(other_hist,"Other background");
     leg.AddEntry(qcd_hist  ,"Multijet");
     leg.AddEntry(stack_hist,"Unc. (stat + syst)");
@@ -164,13 +171,34 @@ for i_mass, mass in enumerate(masses) :
     stack_hist.Draw("E2 SAME")
     data_hist.Draw("HIST P SAME")
     # convert to Poisson error bars
-    g = poissonErrGraph(data_hist)
+    # check if we need to stop error bars before the end
+    lastPopBin = getLastPopulatedBin([wjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig_hist],0.02)
+    g = poissonErrGraph(data_hist,lastPopBin)
     setStyle (g , 1 ,    0, 1)
     g.Draw("same z")
     sig_hist.Draw("HIST SAME")
     leg.Draw()
-    canvas.RedrawAxis()
     canvas.RedrawAxis('G')
+    canvas.RedrawAxis()
+    # redraw frame
+    r.gPad.Update()
+    line = r.TLine(r.gPad.GetUxmin(),r.gPad.GetUymin(),r.gPad.GetUxmax(),r.gPad.GetUymin())
+    line.Draw()
+    line = r.TLine(r.gPad.GetUxmax(),r.gPad.GetUymin(),r.gPad.GetUxmax(),r.gPad.GetUymax())
+    line.Draw()
+    r.gPad.Update()
+
+    ## TESTING
+    #canvas.SetLogy()
+    #data_hist.Draw('pe0')
+    #for bin in range(1,data_hist.GetNbinsX()):
+    #  print 'bin:',bin,'bin center:',data_hist.GetBinCenter(bin),'bin content:',data_hist.GetBinContent(bin)
+    ## convert to Poisson error bars
+    ## check if we need to stop error bars before the end
+    #lastPopBin = getLastPopulatedBin([wjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig_hist])
+    #g = poissonErrGraph(data_hist,lastPopBin)
+    #setStyle (g , 1 ,    0, 1)
+    #g.Draw("same z")
         
     # CMS/lumi/energy
     l1 = r.TLatex()
@@ -191,12 +219,11 @@ for i_mass, mass in enumerate(masses) :
     y_min = canvas.GetUymin()
     y_max = canvas.GetUymax()
 
-    line = r.TLine ( line_values[i_mass], y_min, line_values[i_mass], y_max )
-    line.SetLineWidth(3)
-    line.SetLineColor(r.kRed)
-    line.SetLineStyle(r.kDashed)
-
-    line.Draw("SAME")
+    #line = r.TLine ( line_values[i_mass], y_min, line_values[i_mass], y_max )
+    #line.SetLineWidth(3)
+    #line.SetLineColor(r.kRed)
+    #line.SetLineStyle(r.kDashed)
+    #line.Draw("SAME")
   
     canvas.SaveAs(save_name)
 

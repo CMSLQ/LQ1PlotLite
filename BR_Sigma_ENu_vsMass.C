@@ -27,7 +27,7 @@ Double_t y_pdf[202] = {10.006483831,7.732000484,6.06581922,4.781628951,3.8039318
  string fileNameEps = "BR_Sigma_ENu.eps";
   
  // axes labels for the final plot
- string title = ";M_{LQ} [GeV];#sigma#times2#beta(1-#beta) [pb]";
+ string title = ";M_{LQ} [GeV];#sigma #times 2#beta(1-#beta) [pb]";
 
  // integrated luminosity
  string lint = "19.7 fb^{-1}";
@@ -222,7 +222,7 @@ Double_t y_2sigma[38]={0.050342016375 , 0.019232736215 , 0.011166857289 , 0.0058
  legend->AddEntry(p2,"ATLAS exclusion (1.03 fb^{-1}, 7 TeV)","f");
  legend->AddEntry(pl,"CMS exclusion (5.0 fb^{-1}, 7 TeV)","f");
  legend->AddEntry(p3,"CMS exclusion (19.7 fb^{-1}, 8 TeV)","f");
- legend->AddEntry(xsTh_vs_m,"#sigma_{theory}#times2#beta(1-#beta) with unc., (#beta=1/2)","lf");
+ legend->AddEntry(xsTh_vs_m,"#sigma_{theory}#times2#beta(1-#beta) with unc., (#beta=0.5)","lf");
  legend->AddEntry(xsData_vs_m_expected, "Expected 95% CL upper limit","lp");
  legend->AddEntry(xsData_vs_m_observed, "Observed 95% CL upper limit","lp");
  legend->Draw();
@@ -392,7 +392,7 @@ void setTDRStyle() {
   tdrStyle->SetAxisColor(1, "XYZ");
   tdrStyle->SetStripDecimals(kTRUE);
   tdrStyle->SetTickLength(0.03, "XYZ");
-  tdrStyle->SetNdivisions(510, "XYZ");
+  tdrStyle->SetNdivisions(508, "XYZ");
   tdrStyle->SetPadTickX(1);  // To get tick marks on the opposite side of the frame
   tdrStyle->SetPadTickY(1);
 

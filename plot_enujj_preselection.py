@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 from plot_common import *
+import tdrstyle
+
+# set batch
+r.gROOT.SetBatch()
 
 
 masses = [ 450, 650 ]
@@ -28,10 +32,16 @@ r.gStyle.SetLabelFont ( 42, "XYZ" );
 r.gStyle.SetOptTitle(0);
 r.gStyle.SetOptStat(0);
 
+
+#set the tdr style
+tdrstyle.setTDRStyle()
+
 r.gStyle.SetPadTopMargin(0.1);
 r.gStyle.SetPadBottomMargin(0.16);
 r.gStyle.SetPadLeftMargin(0.12);
 r.gStyle.SetPadRightMargin(0.1);
+r.gStyle.SetPadTickX(0)
+r.gStyle.SetPadTickY(0)
 
 mass1 = 450
 mass2 = 650
@@ -57,16 +67,16 @@ for i_var, var in enumerate(vars):
     sig1_hist  = rebin ( sig1_hist  , x_bins[i_var] )
     sig2_hist  = rebin ( sig2_hist  , x_bins[i_var] )
 
-    setStyle (wjets_hist, 6 , 3007, 2)
-    setStyle (ttbar_hist, 4 , 3005, 2)
-    setStyle (other_hist, 3 , 3006, 2)
-    setStyle (qcd_hist  , 7 , 3004, 2)
-    setStyle (sig1_hist , 28,    0, 3)
-    setStyle (sig2_hist , 38,    0, 3)
+    setStyle (wjets_hist, 6 , 3007, 1)
+    setStyle (ttbar_hist, 4 , 3005, 1)
+    setStyle (other_hist, 3 , 3006, 1)
+    setStyle (qcd_hist  , 7 , 3013, 1)
+    setStyle (sig1_hist , 28,    0, 4)
+    setStyle (sig2_hist , 38,    0, 4)
     setStyle (data_hist , 1 ,    0, 1)
 
     data_hist.SetMarkerStyle(20)
-    data_hist.SetMarkerSize (0.7)
+    data_hist.SetMarkerSize (1.5)
     
     stack = r.THStack ("stack", "stack")
     stack.Add ( qcd_hist   );
@@ -112,14 +122,15 @@ for i_var, var in enumerate(vars):
     stack.GetYaxis().CenterTitle(1)
     
     
-    leg = r.TLegend(0.43,0.52,0.89,0.88,"","brNDC");
+    #leg = r.TLegend(0.43,0.52,0.89,0.88,"","brNDC");
+    leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC"); #used for LQ2 plots
     leg.SetTextFont(42);
     leg.SetFillColor(0);
     leg.SetBorderSize(0);
     leg.SetTextSize(.05)
     leg.AddEntry(data_hist ,"Data","lpe");
     leg.AddEntry(wjets_hist,"W + jets");
-    leg.AddEntry(ttbar_hist,"t#bar{t} + jets");
+    leg.AddEntry(ttbar_hist,"t#bar{t}");
     leg.AddEntry(other_hist,"Other background");
     leg.AddEntry(qcd_hist  ,"Multijet");
     leg.AddEntry(sig1_hist  ,"LQ, M = "+str(mass1)+" GeV, #beta = 0.5","l");
@@ -142,6 +153,15 @@ for i_var, var in enumerate(vars):
     g = poissonErrGraph(data_hist)
     g.Draw("ZPSAME")
     leg.Draw()
+    canvas.RedrawAxis('G')
+    canvas.RedrawAxis()
+    # redraw frame
+    r.gPad.Update()
+    line = r.TLine(r.gPad.GetUxmin(),r.gPad.GetUymin(),r.gPad.GetUxmax(),r.gPad.GetUymin())
+    line.Draw()
+    line = r.TLine(r.gPad.GetUxmax(),r.gPad.GetUymin(),r.gPad.GetUxmax(),r.gPad.GetUymax())
+    line.Draw()
+    r.gPad.Update()
 
     l1 = r.TLatex()
     l1.SetTextAlign(12)
