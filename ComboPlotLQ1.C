@@ -276,7 +276,8 @@ Double_t beta_CMS[116]={0.0333,0.0337,0.0345,0.0350,0.0357,0.0376,0.0411,0.0445,
  //legend->SetFillStyle(0);
  legend->SetTextFont(42);
  legend->SetMargin(0.15);
- legend->SetHeader("95% CL limits");
+ //legend->SetHeader("95% CL limits");
+ legend->SetHeader("95% CL limits, scalar LQ#bar{LQ}");
  legend->AddEntry(beta_vs_m_comb_observed,"CMS eejj + e#nujj (Obs.)","l");
   legend->AddEntry(beta_vs_m_comb_expected,"CMS eejj + e#nujj (Exp.)","l");
 
