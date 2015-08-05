@@ -78,7 +78,7 @@ for i_mass, mass in enumerate(masses):
     setStyle (stack_hist, 14, 3002, 1 )
   
     data_hist.SetMarkerStyle(20)
-    data_hist.SetMarkerSize (0.7)
+    data_hist.SetMarkerSize (1.5)
     
     stack = r.THStack ("stack", "stack")
     stack.Add ( qcd_hist   );
@@ -137,10 +137,10 @@ for i_mass, mass in enumerate(masses):
     leg.SetBorderSize(0);
     leg.SetTextSize(.05)
     leg.AddEntry(data_hist ,"Data","lpe");
-    leg.AddEntry(wjets_hist,"W + jets","lfe");
-    leg.AddEntry(ttbar_hist,"t#bar{t}","lfe");
-    leg.AddEntry(other_hist,"Other background","lfe");
-    leg.AddEntry(qcd_hist  ,"Multijet","lfe");
+    leg.AddEntry(wjets_hist,"W + jets","lf");
+    leg.AddEntry(ttbar_hist,"t#bar{t}","lf");
+    leg.AddEntry(other_hist,"Other background","lf");
+    leg.AddEntry(qcd_hist  ,"Multijet","lf");
     leg.AddEntry(stack_hist,"Unc. (stat + syst)");
     leg.AddEntry(sig_hist  ,"LQ, M = "+str(mass)+" GeV, #beta = 0.5","l");
   

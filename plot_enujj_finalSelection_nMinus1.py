@@ -143,10 +143,10 @@ for i_mass, mass in enumerate(masses) :
     leg.SetBorderSize(0);
     leg.SetTextSize(.05)
     leg.AddEntry(data_hist ,"Data","lpe");
-    leg.AddEntry(wjets_hist,"W + jets","lfe");
-    leg.AddEntry(ttbar_hist,"t#bar{t}","lfe");
-    leg.AddEntry(other_hist,"Other background","lfe");
-    leg.AddEntry(qcd_hist  ,"Multijet","lfe");
+    leg.AddEntry(wjets_hist,"W + jets","lf");
+    leg.AddEntry(ttbar_hist,"t#bar{t}","lf");
+    leg.AddEntry(other_hist,"Other background","lf");
+    leg.AddEntry(qcd_hist  ,"Multijet","lf");
     leg.AddEntry(stack_hist,"Unc. (stat + syst)");
     leg.AddEntry(sig_hist  ,"LQ, M = "+str(mass)+" GeV, #beta = 0.075","l");
   
@@ -172,7 +172,7 @@ for i_mass, mass in enumerate(masses) :
     data_hist.Draw("HIST P SAME")
     # convert to Poisson error bars
     # check if we need to stop error bars before the end
-    lastPopBin = getLastPopulatedBin([wjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig_hist],0.02)
+    lastPopBin = getLastPopulatedBin([wjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig_hist],0.1)
     g = poissonErrGraph(data_hist,lastPopBin)
     setStyle (g , 1 ,    0, 1)
     g.Draw("same z")

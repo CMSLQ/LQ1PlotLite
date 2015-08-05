@@ -129,10 +129,10 @@ for i_var, var in enumerate(vars):
     leg.SetBorderSize(0);
     leg.SetTextSize(.05)
     leg.AddEntry(data_hist ,"Data","lpe");
-    leg.AddEntry(wjets_hist,"W + jets","lfe");
-    leg.AddEntry(ttbar_hist,"t#bar{t}","lfe");
-    leg.AddEntry(other_hist,"Other background","lfe");
-    leg.AddEntry(qcd_hist  ,"Multijet","lfe");
+    leg.AddEntry(wjets_hist,"W + jets","lf");
+    leg.AddEntry(ttbar_hist,"t#bar{t}","lf");
+    leg.AddEntry(other_hist,"Other background","lf");
+    leg.AddEntry(qcd_hist  ,"Multijet","lf");
     leg.AddEntry(sig1_hist  ,"LQ, M = "+str(mass1)+" GeV, #beta = 0.5","l");
     leg.AddEntry(sig2_hist  ,"LQ, M = "+str(mass2)+" GeV, #beta = 0.5","l");
     
