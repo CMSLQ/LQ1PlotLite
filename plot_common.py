@@ -38,7 +38,7 @@ def poissonErrGraph(hist,lastPopBin=9999):
 
 def getLastPopulatedBin(histList,threshold=1e-2):
   n_bins = histList[0].GetNbinsX()
-  for bin in reversed(range ( 1, n_bins)):
+  for bin in reversed(range ( 1, n_bins+1)):
     for hist in histList:
       if hist.GetBinContent(bin) > threshold:
         #print 'found bincontent of:',hist.GetBinContent(bin),'in bin',bin,'with center',hist.GetBinCenter(bin),'in hist:',hist.GetName()
