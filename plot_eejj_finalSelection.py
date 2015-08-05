@@ -72,7 +72,7 @@ for i_mass, mass in enumerate(masses) :
     stack_hist.Add ( other_hist ) 
     stack_hist.Add ( qcd_hist ) 
 
-    setStyle (zjets_hist, 2 , 3007, 1)
+    setStyle (zjets_hist, 2 , 3004, 1)
     setStyle (ttbar_hist, 4 , 3005, 1)
     setStyle (other_hist, 3 , 3006, 1)
     setStyle (qcd_hist  , 7 , 3013, 1)
