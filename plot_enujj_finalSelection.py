@@ -137,10 +137,10 @@ for i_mass, mass in enumerate(masses):
     leg.SetBorderSize(0);
     leg.SetTextSize(.05)
     leg.AddEntry(data_hist ,"Data","lpe");
-    leg.AddEntry(wjets_hist,"W + jets");
-    leg.AddEntry(ttbar_hist,"t#bar{t}");
-    leg.AddEntry(other_hist,"Other background");
-    leg.AddEntry(qcd_hist  ,"Multijet");
+    leg.AddEntry(wjets_hist,"W + jets","lfe");
+    leg.AddEntry(ttbar_hist,"t#bar{t}","lfe");
+    leg.AddEntry(other_hist,"Other background","lfe");
+    leg.AddEntry(qcd_hist  ,"Multijet","lfe");
     leg.AddEntry(stack_hist,"Unc. (stat + syst)");
     leg.AddEntry(sig_hist  ,"LQ, M = "+str(mass)+" GeV, #beta = 0.5","l");
   
