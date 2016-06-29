@@ -7,25 +7,42 @@ import tdrstyle
 r.gROOT.SetBatch()
 
 
-mass1 = 450
-mass2 = 650
+mass1 = 650
+mass2 = 950
 
 mass_colors = [ 28, 38 ]
 
 vars     = [ 
+    "Pt1stEle_PAS",
+    "Pt2ndEle_PAS",
+    "Pt1stJet_PAS",
+    "Pt2ndJet_PAS",
     "sT_PAS",
-    "Mej_selected_min_PAS"
+    "Mej_selected_min_PAS",
+    "Mee_PAS"
 ] 
 
 x_labels = [ 
+    "p_{T} (e_{1}) [GeV]",
+    "p_{T} (e_{2}) [GeV]",
+    "p_{T} (jet_{1}) [GeV]",
+    "p_{T} (jet_{2}) [GeV]",
     "S_{T}^{eejj} [GeV]",
-    "M_{ej}^{min} [GeV]"
+    "M_{ej}^{min} [GeV]",
+    "M_{ee} [GeV]"
 ]
 
 x_bins = [ 
+    [i*20 for i in range(0,51)],
+    [i*20 for i in range(0,51)],
+    [i*20 for i in range(0,51)],
+    [i*20 for i in range(0,51)],
     [300, 330, 370, 420, 480, 550, 630, 720, 820, 930, 1050, 1180, 1320, 1470, 1630, 1800, 1980, 2170, 2370, 2580, 2800, 3000],
+    [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980],
     [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980]
 ]
+
+lumiEnergyString = "2.6 fb^{-1} (13 TeV)"
 
 r.gROOT.SetStyle('Plain')
 r.gStyle.SetTextFont ( 42 );
@@ -45,20 +62,21 @@ r.gStyle.SetPadRightMargin(0.1);
 r.gStyle.SetPadTickX(0)
 r.gStyle.SetPadTickY(0)
 
-
-bkgd_file = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_eejj_plots.root" )
-qcd_file  = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_eejj_QCD_plots.root")
+bkgd_file = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_2jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root" )
+qcd_file  = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_2jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_QCD_plots.root")
 
 for i_var, var in enumerate(vars):
-    
-    zjets_hist = bkgd_file.Get( "histo1D__ZJet_Madgraph__"     + var  )
-    ttbar_hist = bkgd_file.Get( "histo1D__TTbar_FromData__"    + var  )
-    other_hist = bkgd_file.Get( "histo1D__OTHERBKG__"          + var  )
-    qcd_hist   = qcd_file .Get( "histo1D__DATA__"              + var  )
+    print 'examine var:',var
+    zjets_hist = bkgd_file.Get( "histo1D__ZJet_Madgraph_HT__"     + var  )
+    #ttbar_hist = bkgd_file.Get( "histo1D__TTbar_FromData__"    + var  )
+    ttbar_hist = bkgd_file.Get( "histo1D__TTbar_Madgraph__"    + var  )
+    other_hist = bkgd_file.Get( "histo1D__OTHERBKG_MG_HT__"    + var  )
+    qcd_hist   = qcd_file .Get( "histo1D__QCDFakes_DATA__"     + var  )
     data_hist  = bkgd_file.Get( "histo1D__DATA__"              + var  )
     sig1_hist  = bkgd_file.Get( "histo1D__LQ_M"+str(mass1)+"__" + var )
     sig2_hist  = bkgd_file.Get( "histo1D__LQ_M"+str(mass2)+"__" + var )
 
+    # do not rebin Pt
     zjets_hist = rebin ( zjets_hist, x_bins[i_var] )
     ttbar_hist = rebin ( ttbar_hist, x_bins[i_var] )
     other_hist = rebin ( other_hist, x_bins[i_var] )
@@ -139,6 +157,8 @@ for i_var, var in enumerate(vars):
     canvas.cd()
     pad1   = r.TPad( pad_name, pad_name , 0.0, 0.0, 1.0, 1.0 )
     canvas.SetLogy()
+    r.SetOwnership(canvas, False)
+    r.SetOwnership(pad1, False)
 
     stack.Draw("HIST")
     sig1_hist.Draw("HIST SAME")
@@ -148,7 +168,8 @@ for i_var, var in enumerate(vars):
     lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig1_hist,sig2_hist])
     #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
     g = poissonErrGraph(data_hist,lastPopBin)
-    g.Draw("ZPSAME")
+    #g.Draw("ZPSAME")
+    g.Draw("ZP0SAME")
 
     leg.Draw()
     canvas.RedrawAxis('G')
@@ -172,16 +193,24 @@ for i_var, var in enumerate(vars):
     l2.SetTextFont(62)
     l2.SetNDC()
     l2.SetTextSize(0.08)
-    l1.DrawLatex(0.64,0.94,"19.7 fb^{-1} (8 TeV)")
+    l1.DrawLatex(0.64,0.94,lumiEnergyString)
     l2.DrawLatex(0.15,0.84,"CMS")
 
 
-    canvas.SaveAs(save_name)
     ### wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
     #if __name__ == '__main__':
     #   rep = ''
-    #   while not rep in [ 'q', 'Q' ]:
-    #      rep = raw_input( 'enter "q" to quit: ' )
+    #   while not rep in [ 'c', 'C' ]:
+    #      rep = raw_input( 'enter "c" to continue: ' )
     #      if 1 < len(rep):
     #         rep = rep[0]
+
+    print 'saving the canvas'
+    canvas.SaveAs(save_name)
+
+
+print 'closing files...',
+bkgd_file.Close()
+qcd_file.Close()
+print 'Done!'
 
