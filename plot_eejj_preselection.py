@@ -62,8 +62,10 @@ r.gStyle.SetPadRightMargin(0.1);
 r.gStyle.SetPadTickX(0)
 r.gStyle.SetPadTickY(0)
 
-bkgd_file = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_2jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root" )
-qcd_file  = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_2jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_QCD_plots.root")
+#bkgd_file = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_2jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root" )
+#qcd_file  = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_2jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_QCD_plots.root")
+bkgd_file = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_zJetsStCorrectionFinalSelections_21jul/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root" )
+qcd_file  = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_updatePlotRanges_29jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_QCD_plots.root")
 
 for i_var, var in enumerate(vars):
     print 'examine var:',var
