@@ -3,7 +3,7 @@
 from plot_common import *
 import tdrstyle
 import math
-from ROOT import kOrange, kGray
+from ROOT import kOrange, kGray, kBlue
 
 
 def GetBackgroundSyst(allBkg, zjets, ttbar, qcd):
@@ -46,7 +46,7 @@ def GetBackgroundSyst(allBkg, zjets, ttbar, qcd):
 
 
 # set batch
-#r.gROOT.SetBatch()
+r.gROOT.SetBatch()
 
 
 mass1 = 650
@@ -87,26 +87,29 @@ x_bins = [
 lumiEnergyString = "2.6 fb^{-1} (13 TeV)"
 
 r.gROOT.SetStyle('Plain')
-r.gStyle.SetTextFont ( 42 );
-r.gStyle.SetTitleFont ( 42, "XYZ" );
-r.gStyle.SetLabelFont ( 42, "XYZ" );
-r.gStyle.SetOptTitle(0);
-r.gStyle.SetOptStat(0);
+r.gStyle.SetTextFont ( 42 )
+r.gStyle.SetTitleFont ( 42, "XYZ" )
+r.gStyle.SetLabelFont ( 42, "XYZ" )
+r.gStyle.SetOptTitle(0)
+r.gStyle.SetOptStat(0)
 
 
 #set the tdr style
 tdrstyle.setTDRStyle()
 
-r.gStyle.SetPadTopMargin(0.1);
-r.gStyle.SetPadBottomMargin(0.16);
-r.gStyle.SetPadLeftMargin(0.12);
-r.gStyle.SetPadRightMargin(0.1);
-r.gStyle.SetPadTickX(0)
-r.gStyle.SetPadTickY(0)
+#r.gStyle.SetPadTopMargin(0.1);
+r.gStyle.SetPadTopMargin(0.075);
+#r.gStyle.SetPadBottomMargin(0.16);
+#r.gStyle.SetPadTopMargin(0.02)
+r.gStyle.SetPadBottomMargin(0.02)
+r.gStyle.SetPadLeftMargin(0.12)
+r.gStyle.SetPadRightMargin(0.1)
+#r.gStyle.SetPadTickX(0)
+#r.gStyle.SetPadTickY(0)
 
 #print 'GetPreselSyst'
 doSystErr = True
-doRatio = False
+doRatio = True
 
 if doSystErr:
   # allbkg, zjets, ttbar, qcd
@@ -159,30 +162,34 @@ for i_var, var in enumerate(vars):
     stack.Draw()
     stack.SetMaximum(200000)
     stack.SetMinimum(0.1)
-    #bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
+    bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
 
-    stack.GetXaxis().SetTitle( x_labels [i_var] )
     stack.GetYaxis().SetTitle( "Events / bin" )
-    stack.GetXaxis().CenterTitle()
     stack.GetYaxis().CenterTitle()
-
-    
-    stack.GetXaxis().SetTitleFont(42)
     stack.GetYaxis().SetTitleFont(42)
-    stack.GetXaxis().SetLabelFont(42)
     stack.GetYaxis().SetLabelFont(42)
-    stack.GetXaxis().SetLabelOffset(0.007)
     stack.GetYaxis().SetLabelOffset(0.007)
-    stack.GetXaxis().SetLabelSize(0.05)
     stack.GetYaxis().SetLabelSize(0.05)
-    
-    stack.GetXaxis().SetTitleOffset(0.92)
     stack.GetYaxis().SetTitleOffset(0.92)
-    stack.GetXaxis().SetTitleSize(0.06)
     stack.GetYaxis().SetTitleSize(0.06)
-    stack.GetXaxis().CenterTitle(1)
     stack.GetYaxis().CenterTitle(1)
     
+    if not doRatio:
+      stack.GetXaxis().SetTitle( x_labels [i_var] )
+      stack.GetXaxis().CenterTitle()
+      stack.GetXaxis().SetTitleFont(42)
+      stack.GetXaxis().SetLabelFont(42)
+      stack.GetXaxis().SetLabelOffset(0.007)
+      stack.GetXaxis().SetTitleOffset(0.92)
+      stack.GetXaxis().SetLabelSize(0.05)
+      stack.GetXaxis().SetTitleSize(0.06)
+      stack.GetXaxis().CenterTitle(1)
+    else:
+      stack.GetXaxis().SetLabelSize(0)
+      stack.GetXaxis().SetLabelOffset(0)
+      stack.GetXaxis().SetTitleSize(0)
+      stack.GetXaxis().SetTitleOffset(0)
+
     ## reduce x-axis labels for Mej plot
     #if 'Mej' in var:
     #  stack.GetXaxis().SetNdivisions(507)
@@ -192,83 +199,120 @@ for i_var, var in enumerate(vars):
     save_name = var 
     #save_name = save_name.replace("PAS", "preselection")
     save_name = save_name + "_eejj.pdf"
-    # TEST
-    canvas = r.TCanvas(canv_name,canv_name,800,550)
-    canvas.cd()
-    pad1   = r.TPad( pad_name, pad_name , 0.0, 0.0, 1.0, 1.0 )
-    canvas.SetLogy()
-    stack.Draw("HIST")
-    # TEST
 
+    ## WORKS
     #canvas = r.TCanvas(canv_name,canv_name,800,550)
-    #pad1  = r.TPad( pad_name+"1", pad_name+"1" , 0.0, 0.0, 1.0, 1.0 )
-    #pad2 = r.TPad()
-    r.SetOwnership(pad1, False)
-    #if doRatio:
-    #    pad1 = r.TPad(pad_name+"1", "", 0.00, 0.20, 0.99, 0.99)
-    #    pad2 = r.TPad(pad_name+"2", "", 0.00, 0.00, 0.99, 0.20)
-    #    pad1.SetFillColor(0)
-    #    pad1.SetLineColor(0)
-    #    pad2.SetFillColor(0)
-    #    pad2.SetLineColor(0)
-    #    r.SetOwnership(pad2, False)
+    #canvas.cd()
+    #pad1   = r.TPad( pad_name, pad_name , 0.0, 0.0, 1.0, 1.0 )
+    #canvas.SetLogy()
+    #stack.Draw("HIST")
+    ## WORKS
+
+    canvas = r.TCanvas(canv_name,canv_name,800,600)
+    canvas.cd()
+    canvas.SetLogy()
+    if not doRatio:
+        pad1  = r.TPad( pad_name+"1", pad_name+"1" , 0.0, 0.0, 1.0, 1.0 )
+        pad1.Draw()
+    else:
+        pad1 = r.TPad(pad_name+"1", pad_name+"1", 0.00, 0.275, 0.99, 0.99)
+        pad2 = r.TPad(pad_name+"2", pad_name+"2", 0.00, 0.00, 0.99, 0.275)
+        pad1.SetFillColor(0)
+        pad1.SetLineColor(0)
+        pad2.SetFillColor(0)
+        pad2.SetLineColor(0)
+        #r.SetOwnership(pad2, False)
+        pad1.Draw()
+        pad2.Draw()
+
+    #r.SetOwnership(pad1, False)
+    pad1.cd()
+    pad1.SetLogy()
+    stack.Draw('hist')
+    pad1.Draw()
 
     #canvas.cd()
     ##canvas.SetLogy()
-    r.SetOwnership(canvas, False)
     #pad1.cd()
     #pad1.SetLogy()
     #stack.Draw("HIST")
     #
-    ##-- 2nd pad (ratio)
-    #if doRatio:
-    #    h_bkgTot = copy.deepcopy(bkgTotalHist)
-    #    h_ratio = copy.deepcopy(data_hist)
-    #    h_nsigma = copy.deepcopy(data_hist)
-    #    #h_bkgTot1 = TH1F()
-    #    #h_ratio1 = TH1F()
-    #    #h_nsigma1 = TH1F()
-    #    h_bkgTot1 = h_bkgTot
-    #    h_ratio1 = h_ratio
-    #    h_nsigma1 = h_nsigma
+    #r.SetOwnership(canvas, False)
 
-    #    #if( self.xbins!="" and self.rebin!="var" ): ## Variable binning
-    #    #    xbinsFinal = array( 'd', self.xbins )
-    #    #    length = len(xbinsFinal)-1
-    #    #    h_bkgTot1 = h_bkgTot.Rebin( length , "h_bkgTot1", xbinsFinal)
-    #    #    h_ratio1 = h_ratio.Rebin( length , "h_ratio1" , xbinsFinal)
-    #    #    h_nsigma1 = h_nsigma.Rebin( length, "h_nsigma1", xbinsFinal)
-    #    #else:
-    #    #    h_bkgTot1 = h_bkgTot
-    #    #    h_ratio1 = h_ratio
-    #    #    h_nsigma1 = h_nsigma
+    #-- 2nd pad (ratio)
+    if doRatio:
+        h_bkgTot = copy.deepcopy(bkgTotalHist)
+        h_ratio = copy.deepcopy(data_hist)
+        h_nsigma = copy.deepcopy(data_hist)
+        #h_bkgTot1 = TH1F()
+        #h_ratio1 = TH1F()
+        #h_nsigma1 = TH1F()
+        h_bkgTot1 = h_bkgTot
+        h_ratio1 = h_ratio
+        h_nsigma1 = h_nsigma
 
-    #    h_ratio1.SetStats(0)
-    #    #if( self.xmin!="" and self.xmax!="" and self.rebin!="var" ):
-    #    #h_bkgTot1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
-    #    #h_ratio1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
-    #    #h_nsigma1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
+        #if( self.xbins!="" and self.rebin!="var" ): ## Variable binning
+        #    xbinsFinal = array( 'd', self.xbins )
+        #    length = len(xbinsFinal)-1
+        #    h_bkgTot1 = h_bkgTot.Rebin( length , "h_bkgTot1", xbinsFinal)
+        #    h_ratio1 = h_ratio.Rebin( length , "h_ratio1" , xbinsFinal)
+        #    h_nsigma1 = h_nsigma.Rebin( length, "h_nsigma1", xbinsFinal)
+        #else:
+        #    h_bkgTot1 = h_bkgTot
+        #    h_ratio1 = h_ratio
+        #    h_nsigma1 = h_nsigma
 
-    #    pad2.cd()
-    #    # fPads2.SetLogy()
-    #    h_ratio1.Divide(h_bkgTot1)
+        h_ratio1.SetStats(0)
+        #if( self.xmin!="" and self.xmax!="" and self.rebin!="var" ):
+        #h_bkgTot1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
+        #h_ratio1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
+        #h_nsigma1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
 
-    #    h_ratio1.GetXaxis().SetTitle("")
-    #    h_ratio1.GetXaxis().SetTitleSize(0.06)
-    #    h_ratio1.GetXaxis().SetLabelSize(0.1)
-    #    h_ratio1.GetYaxis().SetRangeUser(0.,2)
-    #    h_ratio1.GetYaxis().SetTitle("Data/MC")
-    #    h_ratio1.GetYaxis().SetLabelSize(0.1)
-    #    h_ratio1.GetYaxis().SetTitleSize(0.13)
-    #    h_ratio1.GetYaxis().SetTitleOffset(0.3)
-    #    h_ratio1.SetMarkerStyle ( 1 )
+        pad2.cd()
+        # fPads2.SetLogy()
+        pad2.SetGridy()
+        h_ratio1.Divide(h_bkgTot1)
 
-    #    h_ratio1.Draw("p")
+        #h_ratio1.GetXaxis().SetTitle("")
+        #h_ratio1.GetXaxis().SetTitleSize(0.06)
+        #h_ratio1.GetXaxis().SetLabelSize(0.1)
+        h_ratio1.GetYaxis().SetRangeUser(0.,2)
+        #h_ratio1.GetYaxis().SetTitle("Data/MC")
+        #h_ratio1.GetYaxis().SetLabelSize(0.1)
+        #h_ratio1.GetYaxis().SetTitleSize(0.13)
+        #h_ratio1.GetYaxis().SetTitleOffset(0.3)
+        h_ratio1.GetYaxis().SetTitle( "data / MC" )
+        h_ratio1.GetYaxis().SetTitleFont(42)
+        h_ratio1.GetYaxis().SetLabelFont(42)
+        h_ratio1.GetYaxis().SetLabelOffset(0.007)
+        h_ratio1.GetYaxis().SetLabelSize(0.12)
+        h_ratio1.GetYaxis().SetTitleOffset(0.3)
+        h_ratio1.GetYaxis().SetTitleSize(0.12)
+        h_ratio1.GetYaxis().CenterTitle()
+        h_ratio1.GetYaxis().CenterTitle(1)
 
-    #    #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
-    #    #lineAtOne.SetLineColor(2)
-    #    #lineAtOne.Draw()
-    #    pad1.cd()
+        h_ratio1.GetXaxis().SetTitle( x_labels [i_var] )
+        h_ratio1.GetXaxis().SetTitleFont(42)
+        h_ratio1.GetXaxis().SetLabelFont(42)
+        h_ratio1.GetXaxis().SetLabelOffset(0.025)
+        h_ratio1.GetXaxis().SetTitleOffset(1.1)
+        h_ratio1.GetXaxis().SetLabelSize(0.15)
+        h_ratio1.GetXaxis().SetTitleSize(0.15)
+        #h_ratio1.GetXaxis().CenterTitle()
+        #h_ratio1.GetXaxis().CenterTitle(1)
+        pad2.SetBottomMargin(0.37)
+    
+        h_ratio1.SetMarkerStyle ( 20 )
+        h_ratio1.SetMarkerSize ( 1 )
+        h_ratio1.SetMarkerColor ( kBlue )
+
+        h_ratio1.Draw("p")
+        h_ratio1.Draw("p")
+
+        #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
+        #lineAtOne.SetLineColor(2)
+        #lineAtOne.Draw()
+        pad1.cd()
 
 
     if doSystErr:
@@ -346,27 +390,28 @@ for i_var, var in enumerate(vars):
     l2.SetTextFont(62)
     l2.SetNDC()
     l2.SetTextSize(0.08)
-    l1.DrawLatex(0.64,0.94,lumiEnergyString)
+    l1.DrawLatex(0.64,0.96,lumiEnergyString)
     l2.DrawLatex(0.15,0.84,"CMS")
     r.gPad.Update()
 
 
-    if not r.gROOT.IsBatch():
-        ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
-        if __name__ == '__main__':
-           rep = ''
-           while not rep in [ 'c', 'C' ]:
-              rep = raw_input( 'enter "c" to continue: ' )
-              if 1 < len(rep):
-                 rep = rep[0]
+    #if not r.gROOT.IsBatch():
+    #    ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
+    #    if __name__ == '__main__':
+    #       rep = ''
+    #       while not rep in [ 'c', 'C' ]:
+    #          rep = raw_input( 'enter "c" to continue: ' )
+    #          if 1 < len(rep):
+    #             rep = rep[0]
+    # FOR TESTING
+    #break
 
-    exit(0)
-    #print 'saving the canvas'
-    #canvas.SaveAs(save_name)
+    print 'saving the canvas'
+    canvas.SaveAs(save_name)
 
 
-print 'closing files...',
-bkgd_file.Close()
-qcd_file.Close()
-print 'Done!'
+#print 'closing files...',
+#bkgd_file.Close()
+#qcd_file.Close()
+#print 'Done!'
 
