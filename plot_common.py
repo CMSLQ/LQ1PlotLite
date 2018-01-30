@@ -4,6 +4,51 @@ import os , math, copy
 import ROOT as r
 from numpy import array
 
+
+# from makeDatacard.py
+def GetSystDictFromFile(filename,syst_background_names):
+    # go custom text parsing :`(
+    # format is like:
+    # LQ300  :     0.0152215
+    # selection point, 100*(deltaX/X) [rel. change in %]
+    systDict = {}
+    if not os.path.isfile(filename):
+      print "ERROR: file'"+filename+"' not found; cannot proceed"
+      exit(-1)
+    with open(filename,'r') as thisFile:
+        for line in thisFile:
+            line = line.strip()
+            if len(line)==0:
+                continue
+            items = line.split(':')
+            selectionPoint = items[0].strip()
+            if '_' in selectionPoint:
+                bkgName = selectionPoint.split('_')[1]
+                if not bkgName in syst_background_names:
+                    print 'WARN: background named:',bkgName,' was not found in list of systematics background names:',syst_background_names
+                    print 'selectionPoint=',selectionPoint,'from',filename
+                selectionPoint = selectionPoint.split('_')[0]
+                if not bkgName in systDict.keys():
+                    systDict[bkgName] = {}
+                systDict[bkgName][selectionPoint] = float(items[1].strip())/100.0
+            # signal
+            systDict[selectionPoint] = float(items[1].strip())/100.0
+    return systDict
+
+def FillSystDicts(systNames,syst_background_names,systematics_filepaths,isBackground=True):
+    systDict = {}
+    for syst in systNames:
+        if isBackground:
+          filePath = systematics_filepaths[syst]+syst+'_sys.dat'
+        else:
+          filePath = systematics_filepaths[syst]+'LQ'+syst+'_sys.dat'
+        thisSystDict = GetSystDictFromFile(filePath,syst_background_names)
+        # this will give the form (for background):
+        #   systDict['Trigger'][bkgname]['LQXXXX'] = value
+        systDict[syst] = thisSystDict
+    return systDict
+
+
 def poissonErrGraph(hist,lastPopBin=9999):
     lastPopBinCenter = 9999
     if lastPopBin < 9999:
