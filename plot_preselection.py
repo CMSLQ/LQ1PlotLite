@@ -3,10 +3,86 @@
 from plot_common import *
 import tdrstyle
 import math
-from ROOT import kOrange, kGray, kBlue
+from ROOT import kOrange, kGray, kBlue, TGraphAsymmErrors
 
 
-def GetBackgroundSyst(allBkg, zjets, ttbar, qcd, isEEJJ=True):
+#def GetBackgroundSyst(allBkg, zjets, ttbar, qcd, isEEJJ=True):
+#    # /afs/cern.ch/user/m/mbhat/work/public/Systematics_4Preselection_02_11_2017/eejj_Preselection_sys.dat
+#    #  100*(deltaX/X) [rel. change in %]
+#    systDictEEJJ = {
+#      'EER'     : 10.6582,
+#      'JER'     : 0.785142,
+#      'JEC'     : 3.57184,
+#      'HEEP'    : 1.32785,
+#      'E_RECO'  : 2.13808,
+#      'EES'     : 1.31244,
+#      'PileUp'  : 7.24591,
+#      'PDF'     : 1.10962,
+#      'DY_Shape': 9.92748,
+#      'Lumi'    : 2.6,
+#      'Trigger' : 1.033228,
+#    }
+#    # /afs/cern.ch/user/m/mbhat/work/public/Systematics_4Preselection_02_11_2017/enujj_Preselection_sys.dat
+#    systDictENuJJ = {
+#      'EER'     : 4.668,
+#      'JER'     : 0.98,
+#      'JEC'     : 4.13745,
+#      'HEEP'    : 0.652002,
+#      'RECO'    : 1.01663,
+#      'EES'     : 1.69524,
+#      'PileUp'  : 9.99836,
+#      'PDF'     : 1.61953,
+#      'TTShape' : 6.4724,
+#      'WShape'  : 9.7182,
+#      'MET'     : 6.14723,
+#      'Lumi'    : 2.6,
+#      'Trigger' : 2.56837,
+#    }
+#    if isEEJJ:
+#      systDictList = systDictEEJJ.values()
+#    else:
+#      systDictList = systDictENuJJ.values()
+#    systDictList = [value/100.0 for value in systDictList]
+#    preselSyst = 0.0
+#    for item in systDictList:
+#      preselSyst+=pow(float(item)*allBkg,2)
+#    # that is on all background
+#    ## mine
+#    if isEEJJ:
+#      #'qcdNorm' : 40,
+#      qcdTerm = pow(qcd*0.4,2)
+#      #'ttbarNorm' : 1,
+#      ttbarNormTerm = pow(ttbar*0.01,2)
+#      #'zjetsNorm' : 0.75,
+#      zjetsNormTerm = pow(zjets*0.0075,2)
+#      ##special
+#      # 'ttshape' : 7.31,
+#      #ttShapeTerm = pow(ttbar*0.0731,2)
+#      ttShapeTerm = 0
+#      # 'zshape' : 8.28,
+#      zShapeTerm = pow(zjets*0.08,2)
+#      #
+#      preselSyst += qcdTerm+ttbarNormTerm+zjetsNormTerm+ttShapeTerm+zShapeTerm
+#    else:
+#      #'qcdNorm' : 20,
+#      qcdTerm = pow(qcd*0.2,2)
+#      #'ttbarNorm' : 1,
+#      ttbarNormTerm = pow(ttbar*0.01,2)
+#      #'wjetsNorm' : 1,
+#      wjetsNormTerm = pow(zjets*0.01,2)
+#      ##special
+#      # 'ttshape' : 7.31,
+#      #ttShapeTerm = pow(ttbar*0.0731,2)
+#      #ttShapeTerm = 0
+#      # 'wshape' : 8.28,
+#      #wShapeTerm = pow(zjets*0.08,2)
+#      #
+#      preselSyst += qcdTerm+ttbarNormTerm+wjetsNormTerm
+#    preselSyst = math.sqrt(preselSyst)
+#    return preselSyst
+
+def GetBackgroundSyst(systType, isEEJJ=True):
+    verbose = False
     # /afs/cern.ch/user/m/mbhat/work/public/Systematics_4Preselection_02_11_2017/eejj_Preselection_sys.dat
     #  100*(deltaX/X) [rel. change in %]
     systDictEEJJ = {
@@ -18,7 +94,7 @@ def GetBackgroundSyst(allBkg, zjets, ttbar, qcd, isEEJJ=True):
       'EES'     : 1.31244,
       'PileUp'  : 7.24591,
       'PDF'     : 1.10962,
-      'DY_Shape': 9.92748,
+      'DYShape' : 9.92748,
       'Lumi'    : 2.6,
       'Trigger' : 1.033228,
     }
@@ -39,46 +115,54 @@ def GetBackgroundSyst(allBkg, zjets, ttbar, qcd, isEEJJ=True):
       'Trigger' : 2.56837,
     }
     if isEEJJ:
-      systDictList = systDictEEJJ.values()
+      systDict = systDictEEJJ
     else:
-      systDictList = systDictENuJJ.values()
-    systDictList = [value/100.0 for value in systDictList]
+      systDict = systDictENuJJ
     preselSyst = 0.0
-    for item in systDictList:
-      preselSyst+=pow(float(item)*allBkg,2)
-    # that is on all background
+    for key in systDict.iterkeys():
+      # for QCD, take only QCD uncert
+      if 'qcd' in systType.lower():
+        break
+      # for data-driven ttbar, take only its uncert
+      if 'data' in systType.lower():
+        break
+      if not 'tt' in systType.lower() and 'ttshape' in key.lower():
+        continue
+      if not 'wjets' in systType.lower() and 'wshape' in key.lower():
+        continue
+      if not 'zjets' in systType.lower() and not 'dyjets' in systType.lower() and 'dyshape' in key.lower():
+        continue
+      item = float(systDict[key])/100.0
+      preselSyst+=pow(item,2)
+    if verbose:
+      print 'MC background systematic for systType=',systType,'(relative):',math.sqrt(preselSyst)
+    # that is on all MC background
     ## mine
+    term = 0
     if isEEJJ:
       #'qcdNorm' : 40,
-      qcdTerm = pow(qcd*0.4,2)
+      if 'qcd' in systType.lower():
+        term = pow(0.4,2)
       #'ttbarNorm' : 1,
-      ttbarNormTerm = pow(ttbar*0.01,2)
+      elif 'tt' in systType.lower():
+        term = pow(0.01,2)
       #'zjetsNorm' : 0.75,
-      zjetsNormTerm = pow(zjets*0.0075,2)
-      ##special
-      # 'ttshape' : 7.31,
-      #ttShapeTerm = pow(ttbar*0.0731,2)
-      ttShapeTerm = 0
-      # 'zshape' : 8.28,
-      zShapeTerm = pow(zjets*0.08,2)
-      #
-      preselSyst += qcdTerm+ttbarNormTerm+zjetsNormTerm+ttShapeTerm+zShapeTerm
+      elif 'zjets' in systType.lower() or 'dyjets' in systType.lower():
+        term = pow(0.0075,2)
     else:
       #'qcdNorm' : 20,
-      qcdTerm = pow(qcd*0.2,2)
+      if 'qcd' in systType.lower():
+        term = pow(0.2,2)
       #'ttbarNorm' : 1,
-      ttbarNormTerm = pow(ttbar*0.01,2)
+      elif 'tt' in systType.lower():
+        term = pow(0.01,2)
       #'wjetsNorm' : 1,
-      wjetsNormTerm = pow(zjets*0.01,2)
-      ##special
-      # 'ttshape' : 7.31,
-      #ttShapeTerm = pow(ttbar*0.0731,2)
-      #ttShapeTerm = 0
-      # 'wshape' : 8.28,
-      #wShapeTerm = pow(zjets*0.08,2)
-      #
-      preselSyst += qcdTerm+ttbarNormTerm+wjetsNormTerm
+      elif 'wjets' in systType.lower():
+        term = pow(0.01,2)
+    preselSyst += term
     preselSyst = math.sqrt(preselSyst)
+    if verbose:
+      print 'final background systematic for systType=',systType,'(relative):',preselSyst
     return preselSyst
 
 # set batch
@@ -148,15 +232,19 @@ x_binsENUJJ = [
     [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980]
 ]
 
+systTypesEEJJ  = ['qcd', 'mc', 'ttbarfromdata', 'zjets']
+systTypesENUJJ = ['qcd', 'mc', 'ttbar', 'wjets']
+
 if doEEJJ:
   vars = varsEEJJ
   x_labels = x_labelsEEJJ
   x_bins = x_binsEEJJ
-  File_preselection = os.environ["LQDATA"]+'/2016analysis/'+   'eejj_psk_nov24_fixTrigEff_finalSels_muonVetoDef35GeV_nEleGte2/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root'
-  datFile_preselection = os.environ["LQDATA"]+'/2016analysis/'+'eejj_psk_nov24_fixTrigEff_finalSels_muonVetoDef35GeV_nEleGte2/output_cutTable_lq_eejj/analysisClass_lq_eejj_tables.dat'
-  File_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+   'eejj_psk_nov27_finalSels_muonVeto35GeV_nEleGte2/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_plots.root'
-  datFile_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+'eejj_psk_nov27_finalSels_muonVeto35GeV_nEleGte2/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_tables.dat'
-  File_ttbar = os.environ["LQDATA"]+'/2016ttbar/'+ 'nov19_emujj/output_cutTable_lq_ttbar_emujj_correctTrig/analysisClass_lq_ttbarEst_plots.root'
+  systTypes = systTypesEEJJ
+  File_preselection = os.environ["LQDATA"]+'/2016analysis/'+   'eejj_psk_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root'
+  datFile_preselection = os.environ["LQDATA"]+'/2016analysis/'+'eejj_psk_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_tables.dat'
+  File_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+   'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_plots.root'
+  datFile_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_tables.dat'
+  File_ttbar = os.environ["LQDATA"]+'/2016ttbar/'+ 'feb2_newSkim_emujj_correctTrig_finalSelections/output_cutTable_lq_ttbar_emujj_correctTrig/analysisClass_lq_ttbarEst_plots.root'
   #
   bkgd_file = r.TFile.Open(File_preselection)
   bkgd_dat_file = open(datFile_preselection)
@@ -167,10 +255,11 @@ else:
   vars = varsENUJJ
   x_labels = x_labelsENUJJ
   x_bins = x_binsENUJJ
-  File_preselection     = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_dec13_fixTrigEff_usePtHeep_preselOnly/output_cutTable_lq_enujj_MT_preselOnly/analysisClass_lq_enujj_MT_plots.root"
-  datFile_preselection  = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_dec13_fixTrigEff_usePtHeep_preselOnly/output_cutTable_lq_enujj_MT_preselOnly/analysisClass_lq_enujj_MT_tables.dat"
-  File_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+   "enujj_newRsk237_jan17_preselOnly/output_cutTable_lq_enujj_MT_QCD_preselOnly/analysisClass_lq_enujj_QCD_plots.root"
-  datFile_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+"enujj_newRsk237_jan17_preselOnly/output_cutTable_lq_enujj_MT_QCD_preselOnly/analysisClass_lq_enujj_QCD_tables.dat"
+  systTypes = systTypesENUJJ
+  File_preselection     = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_feb4_v237_MET100_PtEMET70/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_plots.root"
+  datFile_preselection  = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_feb4_v237_MET100_PtEMET70/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_tables.dat"
+  File_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+   "/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_plots.root"
+  datFile_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+"/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_tables.dat"
   #
   bkgd_file = r.TFile(File_preselection)
   bkgd_dat_file = open(datFile_preselection)
@@ -197,17 +286,7 @@ r.gStyle.SetPadRightMargin(0.1)
 
 if doSystErr:
   #FIXME parse this from the dat files...
-  # allbkg, zjets, ttbar, qcd
-  if doEEJJ:
-    preselAllBkg = 50198.09
-    backgroundSyst = GetBackgroundSyst(preselAllBkg,41611.24,6143.98,27.48)
-    #print 'BG: 4237.1 +/- '+str(GetBackgroundSyst(4237.1,3176.7,897.13,2.7))
-    #backgroundSyst /= 4237.1
-    backgroundSyst /= preselAllBkg
-  else:
-    preselAllBkg = 730631.38
-    backgroundSyst = GetBackgroundSyst(preselAllBkg,287210.73,275094.71,72453.71)
-    backgroundSyst /= preselAllBkg
+  systs = [GetBackgroundSyst(systType,doEEJJ) for systType in systTypes]
 
 for i_var, var in enumerate(vars):
     print 'examine var:',var
@@ -225,13 +304,14 @@ for i_var, var in enumerate(vars):
     sig2_hist  = bkgd_file.Get( "histo1D__LQ_M"+str(mass2)+"__" + var )
 
     ## do not rebin Pt
-    zjets_hist = rebin ( zjets_hist, x_bins[i_var] )
-    ttbar_hist = rebin ( ttbar_hist, x_bins[i_var] )
-    other_hist = rebin ( other_hist, x_bins[i_var] )
-    qcd_hist   = rebin ( qcd_hist  , x_bins[i_var] )
-    data_hist  = rebin ( data_hist , x_bins[i_var] )
-    sig1_hist  = rebin ( sig1_hist , x_bins[i_var] )
-    sig2_hist  = rebin ( sig2_hist , x_bins[i_var] )
+    # rebinning in var bins with overflow in last bin
+    zjets_hist = rebin ( zjets_hist, x_bins[i_var])
+    ttbar_hist = rebin ( ttbar_hist, x_bins[i_var])
+    other_hist = rebin ( other_hist, x_bins[i_var])
+    qcd_hist   = rebin ( qcd_hist  , x_bins[i_var])
+    data_hist  = rebin ( data_hist , x_bins[i_var])
+    sig1_hist  = rebin ( sig1_hist , x_bins[i_var])
+    sig2_hist  = rebin ( sig2_hist , x_bins[i_var])
     #zjets_hist.Rebin (2)
     #ttbar_hist.Rebin (2)
     #other_hist.Rebin (2)
@@ -263,6 +343,12 @@ for i_var, var in enumerate(vars):
       stack.SetMaximum(20000000);
     stack.SetMinimum(0.1)
     bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
+    #bkgTotalHist = qcd_hist.Clone()
+    #bkgTotalHist.Add(other_hist)
+    #bkgTotalHist.Add(ttbar_hist)
+    #bkgTotalHist.Add(zjets_hist)
+
+    stkSystErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
 
     stack.GetYaxis().SetTitle( "Events / bin" )
     stack.GetYaxis().CenterTitle()
@@ -303,6 +389,8 @@ for i_var, var in enumerate(vars):
     else:
       save_name = save_name + "_enujj.pdf"
 
+    save_namePNG = save_name.replace('.pdf','.png')
+
     ## WORKS
     #canvas = r.TCanvas(canv_name,canv_name,800,550)
     #canvas.cd()
@@ -334,6 +422,42 @@ for i_var, var in enumerate(vars):
     stack.Draw('hist')
     pad1.Draw()
 
+    sig1_hist.Draw("HIST SAME")
+    sig2_hist.Draw("HIST SAME")
+    # convert to Poisson error bars
+    # check if we need to stop error bars before the end
+    lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig1_hist,sig2_hist])
+    #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
+    g = poissonErrGraph(data_hist,lastPopBin)
+    #g.Draw("ZPSAME")
+    g.Draw("ZP0SAME")
+
+
+    if doSystErr:
+      bkgUncHisto = copy.deepcopy(stack.GetStack().Last())
+      bkgUncHisto.Reset()
+      for idx,hist in enumerate(stkSystErrHistos):
+          syst = systs[idx]
+          for ibin in xrange(0,hist.GetNbinsX()+2):
+              hist.SetBinError(ibin,syst*hist.GetBinContent(ibin))
+              #print '[',hist.GetName(),'] set bin',ibin,'error to:',syst*hist.GetBinContent(ibin)
+          bkgUncHisto.Add(hist)
+      ##histoAll = copy.deepcopy(bkgTotalHist)
+      #histoAll = thStack.GetStack().Last()
+      #bkgUncHisto = copy.deepcopy(histoAll)
+      #for bin in range(0,histoAll.GetNbinsX()):
+      #    bkgUncHisto.SetBinError(bin+1,self.bkgSyst*histoAll.GetBinContent(bin+1))
+      bkgUncHisto.SetMarkerStyle(0)
+      bkgUncHisto.SetLineColor(0)
+      bkgUncHisto.SetFillColor(kGray+2)
+      bkgUncHisto.SetLineColor(kGray+2)
+      bkgUncHisto.SetFillStyle(3001)
+      bkgUncHisto.SetMarkerSize(0)
+      bkgUncHisto.Draw("E2same")
+      #for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
+      #    print '[',bkgUncHisto.GetName(),'] bin',ibin,'error is:',bkgUncHisto.GetBinError(ibin)
+      
+
     #canvas.cd()
     ##canvas.SetLogy()
     #pad1.cd()
@@ -344,6 +468,7 @@ for i_var, var in enumerate(vars):
 
     #-- 2nd pad (ratio)
     if doRatio:
+        pad2.cd()
         h_bkgTot = copy.deepcopy(bkgTotalHist)
         h_ratio = copy.deepcopy(data_hist)
         h_nsigma = copy.deepcopy(data_hist)
@@ -351,8 +476,10 @@ for i_var, var in enumerate(vars):
         #h_ratio1 = TH1F()
         #h_nsigma1 = TH1F()
         h_bkgTot1 = h_bkgTot
+        h_bkgUnc1 = copy.deepcopy(bkgUncHisto)
         h_ratio1 = h_ratio
         h_nsigma1 = h_nsigma
+        h_ratioSyst = copy.deepcopy(h_ratio1)
 
         #if( self.xbins!="" and self.rebin!="var" ): ## Variable binning
         #    xbinsFinal = array( 'd', self.xbins )
@@ -365,13 +492,14 @@ for i_var, var in enumerate(vars):
         #    h_ratio1 = h_ratio
         #    h_nsigma1 = h_nsigma
 
-        h_ratio1.SetStats(0)
+        #h_ratio1.SetStats(0)
+
         #if( self.xmin!="" and self.xmax!="" and self.rebin!="var" ):
         #h_bkgTot1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
         #h_ratio1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
         #h_nsigma1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
 
-        pad2.cd()
+        #pad2.cd()
         # fPads2.SetLogy()
         pad2.SetGridy()
         h_ratio1.Divide(h_bkgTot1)
@@ -409,22 +537,18 @@ for i_var, var in enumerate(vars):
         h_ratio1.SetMarkerSize ( 1 )
         h_ratio1.SetMarkerColor ( kBlue )
 
-        h_ratio1.Draw("p")
-        h_ratio1.Draw("p")
+        h_ratio1.Draw("e0p")
+        #h_ratio1.Draw("p")
+
         if doSystErr:
-            bgRatioErrs = h_ratio1.Clone()
-            bgRatioErrs.Reset()
-            bgRatioErrs.SetName('bgRatioErrs')
+            h_ratioSyst.Divide(h_bkgUnc1) # just divide by the bkgTotal hist with the systs as errors
+            bgRatioErrs = h_ratioSyst
+            # set bin contents to 1
             for binn in range(0,bgRatioErrs.GetNbinsX()):
-                #bgRatioErrs.SetBinContent(binn, zjets_hist.GetBinContent(binn)+ttbar_hist.GetBinContent(binn)+other_hist.GetBinContent(binn)+qcd_hist.GetBinContent(binn))
                 bgRatioErrs.SetBinContent(binn,1.0)
-            for binn in range(0,bgRatioErrs.GetNbinsX()):
-                bgRatioErrs.SetBinError(binn, bgRatioErrs.GetBinContent(binn)*backgroundSyst)
-            #for binn in range(0,bgRatioErrs.GetNbinsX()):
-            #    print 'bin=',bgRatioErrs.GetBinContent(binn),'+/-',bgRatioErrs.GetBinError(binn)
-            #bgRatioErrs.SetFillColor(kOrange-6)
-            bgRatioErrs.SetFillColor(kGray+2)
-            bgRatioErrs.SetLineColor(kGray+2)
+                #print 'ratio hist bin:',binn,'binError=',bgRatioErrs.GetBinError(binn)
+            bgRatioErrs.SetFillColor(kGray+1)
+            bgRatioErrs.SetLineColor(kGray+1)
             bgRatioErrs.SetFillStyle(3001)
             #bgRatioErrs.SetFillStyle(3018)
             #bgRatioErrs.SetFillStyle(3013)
@@ -435,7 +559,26 @@ for i_var, var in enumerate(vars):
             #bgRatioErrs.Draw('aE2 aE0 same')
             #bgRatioErrs.SetDrawOption('hist')
             #bgRatioErrs.Draw('aE2 E0 same')
-            bgRatioErrs.Draw('E2 same')
+            bgRatioErrs.GetXaxis().SetTitle("")
+            bgRatioErrs.GetXaxis().SetTitleSize(0.06)
+            bgRatioErrs.GetXaxis().SetLabelSize(0.1)
+            bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
+            bgRatioErrs.GetYaxis().SetTitle("Data/MC")
+            bgRatioErrs.GetYaxis().SetLabelSize(0.1)
+            bgRatioErrs.GetYaxis().SetTitleSize(0.13)
+            bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
+            bgRatioErrs.SetMarkerStyle ( 1 )
+            bgRatioErrs.Draw('E2')
+            h_ratio1.Draw("e0psame")
+
+            ## need to make hist with "1" in all bins
+            #bgRatioErrs = h_ratio1.Clone()
+            #bgRatioErrs.Reset()
+            #bgRatioErrs.SetName('bgRatioErrs')
+            #for binn in range(0,bgRatioErrs.GetNbinsX()):
+            #    bgRatioErrs.SetBinContent(binn,1.0)
+            #bgRatioErrsGraph = GetErrorsGraph([bgRatioErrs],backgroundSyst)
+            #bgRatioErrsGraph.Draw('E2 same')
 
         #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
         #lineAtOne.SetLineColor(2)
@@ -443,42 +586,7 @@ for i_var, var in enumerate(vars):
         pad1.cd()
 
 
-    if doSystErr:
-        bgErrs = zjets_hist.Clone()
-        bgErrs.Reset()
-        bgErrs.SetName('bgErrs')
-        for binn in range(0,bgErrs.GetNbinsX()):
-            bgErrs.SetBinContent(binn, zjets_hist.GetBinContent(binn)+ttbar_hist.GetBinContent(binn)+other_hist.GetBinContent(binn)+qcd_hist.GetBinContent(binn))
-        for binn in range(0,bgErrs.GetNbinsX()):
-            bgErrs.SetBinError(binn, bgErrs.GetBinContent(binn)*backgroundSyst)
-        for binn in range(0,bgErrs.GetNbinsX()):
-            print 'bin=',bgErrs.GetBinContent(binn),'+/-',bgErrs.GetBinError(binn)
-        #bgErrs.SetFillColor(kOrange-6)
-        bgErrs.SetFillColor(kGray+2)
-        bgErrs.SetLineColor(kGray+2)
-        bgErrs.SetFillStyle(3001)
-        #bgErrs.SetFillStyle(3018)
-        #bgErrs.SetFillStyle(3013)
-        #bgErrs.SetMarkerSize(1.1)
-        bgErrs.SetMarkerSize(0)
-        #bgErrs.SetLineColor(kOrange)
-        #bgErrs.SetLineWidth(3)
-        #bgErrs.Draw('aE2 aE0 same')
-        #bgErrs.SetDrawOption('hist')
-        #bgErrs.Draw('aE2 E0 same')
-        bgErrs.Draw('E2 same')
     
-    sig1_hist.Draw("HIST SAME")
-    sig2_hist.Draw("HIST SAME")
-    # convert to Poisson error bars
-    # check if we need to stop error bars before the end
-    lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig1_hist,sig2_hist])
-    #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
-    g = poissonErrGraph(data_hist,lastPopBin)
-    #g.Draw("ZPSAME")
-    g.Draw("ZP0SAME")
-
-
     #leg = r.TLegend(0.42,0.52,0.87,0.88,"","brNDC")
     leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
     leg.SetTextFont(42)
@@ -493,7 +601,7 @@ for i_var, var in enumerate(vars):
     leg.AddEntry(ttbar_hist,"t#bar{t}","lf")
     leg.AddEntry(other_hist,"Other background","lf")
     if doSystErr:
-      leg.AddEntry(bgErrs, 'Uncertainty band','f')
+      leg.AddEntry(bkgUncHisto, 'Uncertainty band','f')
     leg.AddEntry(qcd_hist  ,"Multijet","lf")
     if doEEJJ:
       beta = 1.0
@@ -543,6 +651,7 @@ for i_var, var in enumerate(vars):
 
     print 'saving the canvas'
     canvas.SaveAs(save_name)
+    canvas.SaveAs(save_namePNG)
 
 
 #print 'closing files...',
