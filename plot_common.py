@@ -49,6 +49,30 @@ def FillSystDicts(systNames,syst_background_names,systematics_filepaths,isBackgr
     return systDict
 
 
+def GetErrorsGraph(histList,backgroundSyst):
+    bgErrsHist = 0
+    for hist in histList:
+        if not bgErrsHist:
+            bgErrsHist = hist.Clone()
+        else:
+            bgErrsHist.Add(hist)
+    bgErrs = r.TGraphAsymmErrors(bgErrsHist)
+    #bgErrs.Reset()
+    bgErrs.SetName('bgErrs')
+    #for binn in range(0,bgErrs.GetNbinsX()):
+    #    bgErrs.SetBinContent(binn, zjets_hist.GetBinContent(binn)+ttbar_hist.GetBinContent(binn)+other_hist.GetBinContent(binn)+qcd_hist.GetBinContent(binn))
+    for point in range(0,bgErrsHist.GetNbinsX()):
+        bgErrs.SetPointEYlow(point, bgErrsHist.GetBinContent(point+1)*backgroundSyst)
+        bgErrs.SetPointEYhigh(point, bgErrsHist.GetBinContent(point+1)*backgroundSyst)
+    #for binn in range(0,bgErrs.GetNbinsX()):
+    #    print 'bin=',bgErrs.GetBinContent(binn),'+/-',bgErrs.GetBinError(binn)
+    # set style
+    bgErrs.SetFillColor(r.kGray+2)
+    bgErrs.SetLineColor(r.kGray+2)
+    bgErrs.SetFillStyle(3001)
+    bgErrs.SetMarkerSize(0)
+    return bgErrs
+
 def poissonErrGraph(hist,lastPopBin=9999):
     lastPopBinCenter = 9999
     if lastPopBin < 9999:
@@ -102,11 +126,19 @@ def setStyle ( plot, color, style, width ) :
     return
 
 
-def rebin ( plot, bins ) :
+def rebin ( plot, bins, addOverflow=True ) :
     n_bins    = len ( bins ) - 1
     bin_array = array ( bins, dtype=float ) 
     new_name  = plot.GetName() + "_rebin"
     new_plot  = plot.Rebin ( n_bins, new_name, bin_array ) 
+    if addOverflow:
+      lastBin = new_plot.GetNbinsX()
+      ovflBinContent = new_plot.GetBinContent(lastBin+1)
+      lastBinContent = new_plot.GetBinContent(lastBin)
+      new_plot.SetBinContent(lastBin, ovflBinContent+lastBinContent)
+      ovflBinError = new_plot.GetBinError(lastBin+1)
+      lastBinError = new_plot.GetBinError(lastBin)
+      new_plot.SetBinError( lastBin, math.sqrt(pow(ovflBinContent,2)+pow(lastBinContent,2)) )
     return new_plot
 
 
