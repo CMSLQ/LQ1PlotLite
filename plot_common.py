@@ -35,6 +35,7 @@ def GetSystDictFromFile(filename,syst_background_names):
             systDict[selectionPoint] = float(items[1].strip())/100.0
     return systDict
 
+
 def FillSystDicts(systNames,syst_background_names,systematics_filepaths,isBackground=True):
     systDict = {}
     for syst in systNames:
