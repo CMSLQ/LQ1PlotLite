@@ -6,81 +6,6 @@ import math
 from ROOT import kOrange, kGray, kBlue, TGraphAsymmErrors
 
 
-#def GetBackgroundSyst(allBkg, zjets, ttbar, qcd, isEEJJ=True):
-#    # /afs/cern.ch/user/m/mbhat/work/public/Systematics_4Preselection_02_11_2017/eejj_Preselection_sys.dat
-#    #  100*(deltaX/X) [rel. change in %]
-#    systDictEEJJ = {
-#      'EER'     : 10.6582,
-#      'JER'     : 0.785142,
-#      'JEC'     : 3.57184,
-#      'HEEP'    : 1.32785,
-#      'E_RECO'  : 2.13808,
-#      'EES'     : 1.31244,
-#      'PileUp'  : 7.24591,
-#      'PDF'     : 1.10962,
-#      'DY_Shape': 9.92748,
-#      'Lumi'    : 2.6,
-#      'Trigger' : 1.033228,
-#    }
-#    # /afs/cern.ch/user/m/mbhat/work/public/Systematics_4Preselection_02_11_2017/enujj_Preselection_sys.dat
-#    systDictENuJJ = {
-#      'EER'     : 4.668,
-#      'JER'     : 0.98,
-#      'JEC'     : 4.13745,
-#      'HEEP'    : 0.652002,
-#      'RECO'    : 1.01663,
-#      'EES'     : 1.69524,
-#      'PileUp'  : 9.99836,
-#      'PDF'     : 1.61953,
-#      'TTShape' : 6.4724,
-#      'WShape'  : 9.7182,
-#      'MET'     : 6.14723,
-#      'Lumi'    : 2.6,
-#      'Trigger' : 2.56837,
-#    }
-#    if isEEJJ:
-#      systDictList = systDictEEJJ.values()
-#    else:
-#      systDictList = systDictENuJJ.values()
-#    systDictList = [value/100.0 for value in systDictList]
-#    preselSyst = 0.0
-#    for item in systDictList:
-#      preselSyst+=pow(float(item)*allBkg,2)
-#    # that is on all background
-#    ## mine
-#    if isEEJJ:
-#      #'qcdNorm' : 40,
-#      qcdTerm = pow(qcd*0.4,2)
-#      #'ttbarNorm' : 1,
-#      ttbarNormTerm = pow(ttbar*0.01,2)
-#      #'zjetsNorm' : 0.75,
-#      zjetsNormTerm = pow(zjets*0.0075,2)
-#      ##special
-#      # 'ttshape' : 7.31,
-#      #ttShapeTerm = pow(ttbar*0.0731,2)
-#      ttShapeTerm = 0
-#      # 'zshape' : 8.28,
-#      zShapeTerm = pow(zjets*0.08,2)
-#      #
-#      preselSyst += qcdTerm+ttbarNormTerm+zjetsNormTerm+ttShapeTerm+zShapeTerm
-#    else:
-#      #'qcdNorm' : 20,
-#      qcdTerm = pow(qcd*0.2,2)
-#      #'ttbarNorm' : 1,
-#      ttbarNormTerm = pow(ttbar*0.01,2)
-#      #'wjetsNorm' : 1,
-#      wjetsNormTerm = pow(zjets*0.01,2)
-#      ##special
-#      # 'ttshape' : 7.31,
-#      #ttShapeTerm = pow(ttbar*0.0731,2)
-#      #ttShapeTerm = 0
-#      # 'wshape' : 8.28,
-#      #wShapeTerm = pow(zjets*0.08,2)
-#      #
-#      preselSyst += qcdTerm+ttbarNormTerm+wjetsNormTerm
-#    preselSyst = math.sqrt(preselSyst)
-#    return preselSyst
-
 def GetBackgroundSyst(systType, isEEJJ=True):
     verbose = False
     # /afs/cern.ch/user/m/mbhat/work/public/Systematics_4Preselection_02_11_2017/eejj_Preselection_sys.dat
@@ -140,9 +65,9 @@ def GetBackgroundSyst(systType, isEEJJ=True):
     ## mine
     term = 0
     if isEEJJ:
-      #'qcdNorm' : 40,
+      #'qcdNorm' : 50,
       if 'qcd' in systType.lower():
-        term = pow(0.4,2)
+        term = pow(0.5,2)
       #'ttbarNorm' : 1,
       elif 'tt' in systType.lower():
         term = pow(0.01,2)
@@ -150,9 +75,9 @@ def GetBackgroundSyst(systType, isEEJJ=True):
       elif 'zjets' in systType.lower() or 'dyjets' in systType.lower():
         term = pow(0.0075,2)
     else:
-      #'qcdNorm' : 20,
+      #'qcdNorm' : 25,
       if 'qcd' in systType.lower():
-        term = pow(0.2,2)
+        term = pow(0.25,2)
       #'ttbarNorm' : 1,
       elif 'tt' in systType.lower():
         term = pow(0.01,2)
@@ -343,10 +268,6 @@ for i_var, var in enumerate(vars):
       stack.SetMaximum(20000000);
     stack.SetMinimum(0.1)
     bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
-    #bkgTotalHist = qcd_hist.Clone()
-    #bkgTotalHist.Add(other_hist)
-    #bkgTotalHist.Add(ttbar_hist)
-    #bkgTotalHist.Add(zjets_hist)
 
     stkSystErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
 
@@ -432,7 +353,6 @@ for i_var, var in enumerate(vars):
     #g.Draw("ZPSAME")
     g.Draw("ZP0SAME")
 
-
     if doSystErr:
       bkgUncHisto = copy.deepcopy(stack.GetStack().Last())
       bkgUncHisto.Reset()
@@ -457,14 +377,6 @@ for i_var, var in enumerate(vars):
       #for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
       #    print '[',bkgUncHisto.GetName(),'] bin',ibin,'error is:',bkgUncHisto.GetBinError(ibin)
       
-
-    #canvas.cd()
-    ##canvas.SetLogy()
-    #pad1.cd()
-    #pad1.SetLogy()
-    #stack.Draw("HIST")
-    #
-    #r.SetOwnership(canvas, False)
 
     #-- 2nd pad (ratio)
     if doRatio:
@@ -538,7 +450,6 @@ for i_var, var in enumerate(vars):
         h_ratio1.SetMarkerColor ( kBlue )
 
         h_ratio1.Draw("e0p")
-        #h_ratio1.Draw("p")
 
         if doSystErr:
             h_ratioSyst.Divide(h_bkgUnc1) # just divide by the bkgTotal hist with the systs as errors
@@ -585,10 +496,10 @@ for i_var, var in enumerate(vars):
         #lineAtOne.Draw()
         pad1.cd()
 
-
     
     #leg = r.TLegend(0.42,0.52,0.87,0.88,"","brNDC")
-    leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
+    #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
+    leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
@@ -633,7 +544,7 @@ for i_var, var in enumerate(vars):
     l2.SetTextFont(62)
     l2.SetNDC()
     l2.SetTextSize(0.08)
-    l1.DrawLatex(0.64,0.96,lumiEnergyString)
+    l1.DrawLatex(0.675,0.965,lumiEnergyString)
     l2.DrawLatex(0.15,0.84,"CMS")
     r.gPad.Update()
 
