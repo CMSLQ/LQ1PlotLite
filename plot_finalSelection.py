@@ -6,121 +6,79 @@ import math
 from ROOT import kOrange, kGray, kBlue
 
 
-#def GetBackgroundSyst(syst_background_names, selection_name, backgroundSystDict, allBkg, zjets, ttbar, qcd, isEEJJ):
-#  systDictValsNames = {}
-#  for syst in backgroundSystDict.keys():
-#    for ibkg,background_name in enumerate(syst_background_names):
-#      if background_name=='' or 'QCD' in background_name or 'TTBarFromDATA' in background_name:
-#        continue
-#      #if selectionName not in backgroundSystDict[syst][background_name].keys():
-#      #    selectionNameBkgSyst = maxLQselectionBkg
-#      #else:
-#      #    selectionNameBkgSyst = selectionName
-#      selectionNameBkgSyst = selection_name
-#      try:
-#          # deltaX/X
-#          systVal = backgroundSystDict[syst][background_name][selectionNameBkgSyst]
-#          systDictValsNames[systVal] = '['+syst+']['+background_name+']['+selectionNameBkgSyst+']'
-#          print 'taking into account systVal of',systVal,'(*allBkg=',systVal*allBkg,') for systematic:',syst,'on background:',background_name,'for selection:',selectionNameBkgSyst
-#      except KeyError:
-#          print 'Got a KeyError with: backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']'
-#  totalSyst = 0.0
-#  for val,item in systDictValsNames.iteritems():
-#    totalSyst+=pow(float(val)*allBkg,2)
-#    print 'add',pow(float(val)*allBkg,2),'to totalSyst','total is now:',math.sqrt(totalSyst),'compared to allBkg=',allBkg,'item is:',item
-#  # that is on all background
-#  ## mine
-#  if isEEJJ:
-#    #'qcdNorm' : 40,
-#    qcdTerm = pow(qcd*0.4,2)
-#    #'ttbarNorm' : 1,
-#    ttbarNormTerm = pow(ttbar*0.01,2)
-#    #'zjetsNorm' : 0.75,
-#    zjetsNormTerm = pow(zjets*0.0075,2)
-#    ##special
-#    # 'ttshape' : 7.31,
-#    #ttShapeTerm = pow(ttbar*0.0731,2)
-#    ttShapeTerm = 0
-#    # 'zshape' : 8.28,
-#    zShapeTerm = pow(zjets*0.08,2)
-#    #
-#    totalSyst += qcdTerm+ttbarNormTerm+zjetsNormTerm+ttShapeTerm+zShapeTerm
-#  else:
-#    #'qcdNorm' : 20,
-#    qcdTerm = pow(qcd*0.2,2)
-#    #'ttbarNorm' : 1,
-#    ttbarNormTerm = pow(ttbar*0.01,2)
-#    #'wjetsNorm' : 1,
-#    wjetsNormTerm = pow(zjets*0.01,2)
-#    ##special
-#    # 'ttshape' : 7.31,
-#    #ttShapeTerm = pow(ttbar*0.0731,2)
-#    #ttShapeTerm = 0
-#    # 'wshape' : 8.28,
-#    #wShapeTerm = pow(zjets*0.08,2)
-#    #
-#    totalSyst += qcdTerm+ttbarNormTerm+wjetsNormTerm
-#  print 'added norm terms to totalSyst, which is now:',math.sqrt(totalSyst),'allBkg=',allBkg
-#  totalSyst = math.sqrt(totalSyst)
-#  return totalSyst
+# from makeDatacard.py
+def GetBackgroundSyst(background_name, selectionName):
+    verbose = False
+    #if selectionName=='preselection':
+    #  verbose=True
+    if verbose:
+      print 'INFO: GetBackgroundSyst('+background_name+','+selectionName+')'
+    firstSyst = 0
+    secondSyst = 0
+    thirdSyst = 0
+    if not 'QCD' in background_name and not 'data' in background_name.lower():
+      for syst in signalSystDict.keys():
+          if selectionName not in backgroundSystDict[syst][background_name].keys():
+              if 'LQ' in selectionName:
+                selectionNameBkgSyst = maxLQselectionBkg
+              else:
+                selectionNameBkgSyst = minLQselectionBkg
+              #print 'selectionName=',selectionName,'not found in',backgroundSystDict[syst][background_name].keys()
+          else:
+              selectionNameBkgSyst = selectionName
+          try:
+            firstSyst += pow(backgroundSystDict[syst][background_name][selectionNameBkgSyst],2) # deltaX/X
+            if verbose:
+              print 'INFO: add',syst,'for',background_name,'at selection',selectionNameBkgSyst,'to firstSyst=',backgroundSystDict[syst][background_name][selectionNameBkgSyst]
+          except KeyError:
+              print 'Got a KeyError with: backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']'
+
+    if verbose:
+      print 'INFO: firstSyst=',math.sqrt(firstSyst)
+
+    # background-only special systs: "DYShape", "TTShape", "WShape"
+    specialSysts = ["DYShape"] if doEEJJ else ["WShape","TTShape"]
+    for syst in specialSysts:
+        if syst=='DYShape' and not 'DY' in background_name or syst=='TTShape' and not 'TT' in background_name or 'TTBarFromDATA' in background_name or syst=='WShape' and not 'W' in background_name:
+            continue
+        if verbose:
+          print 'INFO: background_name=',background_name
+          print 'INFO: babackgroundSystDict['+syst+'].keys()=',backgroundSystDict[syst].keys()
+        if background_name not in backgroundSystDict[syst].keys():
+          print 'WARNING: could not find',background_name,'in backgroundSystDict['+syst+']=',backgroundSystDict[syst].keys()
+          continue
+        if selectionName not in backgroundSystDict[syst][background_name].keys():
+            selectionNameBkgSyst = maxLQselectionBkg
+        else:
+            selectionNameBkgSyst = selectionName
+        try:
+          secondSyst = pow(backgroundSystDict[syst][background_name][selectionNameBkgSyst],2)
+          #print 'backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']=',secondSyst
+        except KeyError:
+            print 'ERROR: Got a KeyError with: backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']'
+
+    if verbose:
+      print 'INFO: secondSyst (TT/DYShape)=',math.sqrt(secondSyst)
+
+    # XXX WARNING: hardcoded background name (ick); some checking is done at least
+    if 'TTbar' in background_name:
+        thirdSyst = pow(ttBarNormDeltaXOverX,2)
+    elif doEEJJ and 'DY' in background_name:
+        thirdSyst = pow(zJetNormDeltaXOverX,2)
+    elif not doEEJJ and 'W' in background_name:
+        thirdSyst = pow(zJetNormDeltaXOverX,2)
+    elif 'QCD' in background_name:
+        thirdSyst = pow(qcdNormDeltaXOverX,2)
+
+    if verbose:
+      print 'INFO: thirdSyst (extra norm uncertainty)=',math.sqrt(thirdSyst)
+
+    # now get the total deltaX/X
+    totalSyst = math.sqrt(firstSyst+secondSyst+thirdSyst)
+    return totalSyst
 
 
-def GetBackgroundSyst(syst_background_name, selection_name, backgroundSystDict, isEEJJ, verbose=True):
-  #systDictValsNames = {}
-  systVal = 0
-  for syst in backgroundSystDict.keys():
-    if syst_background_name=='' or 'QCD' in syst_background_name or 'TTBarFromDATA' in syst_background_name:
-      continue
-    #if selectionName not in backgroundSystDict[syst][background_name].keys():
-    #    selectionNameBkgSyst = maxLQselectionBkg
-    #else:
-    #    selectionNameBkgSyst = selectionName
-    selectionNameBkgSyst = selection_name
-    try:
-        # deltaX/X
-        systVal += pow(backgroundSystDict[syst][syst_background_name][selectionNameBkgSyst],2)
-        #systDictValsNames[systVal] = '['+syst+']['+syst_background_name+']['+selectionNameBkgSyst+']'
-        #print 'taking into account systVal of',systVal,'(*allBkg=',systVal*allBkg,') for systematic:',syst,'on background:',background_name,'for selection:',selectionNameBkgSyst
-        print 'got systVal of',systVal,'for syst:',syst,'; background:',syst_background_name,'; at selection:',selectionNameBkgSyst
-    except KeyError:
-        print 'Got a KeyError with: backgroundSystDict['+syst+']['+syst_background_name+']['+selectionNameBkgSyst+']'
-  # the point of the above is to get all the systematics on a particular background/selection:
-  print 'systVal total=',math.sqrt(systVal)
 
-  totalSyst = 0.0
-  #for val,item in systDictValsNames.iteritems():
-  #  totalSyst+=pow(float(val)*allBkg,2)
-  #  print 'add',pow(float(val)*allBkg,2),'to totalSyst','total is now:',math.sqrt(totalSyst),'compared to allBkg=',allBkg,'item is:',item
-  #FIXME
-  # that is on all background
-  ## mine
-  term = 0
-  if isEEJJ:
-    #'qcdNorm' : 50,
-    if 'qcd' in systType.lower():
-      term = pow(0.5,2)
-    #'ttbarNorm' : 1,
-    elif 'tt' in systType.lower():
-      term = pow(0.01,2)
-    #'zjetsNorm' : 0.1,
-    elif 'zjets' in systType.lower() or 'dyjets' in systType.lower() or 'dy' in systType.lower():
-      term = pow(0.01,2)
-  else:
-    #'qcdNorm' : 25,
-    if 'qcd' in systType.lower():
-      term = pow(0.25,2)
-    #'ttbarNorm' : 1,
-    elif 'tt' in systType.lower():
-      term = pow(0.01,2)
-    #'wjetsNorm' : 1,
-    elif 'wjets' in systType.lower():
-      term = pow(0.01,2)
-  systVal += term
-  systVal = math.sqrt(systVal)
-  if verbose:
-    print 'added extra term of:',term
-    print 'final background systematic for systType=',systType,'(relative):',systVal
-  return systVal
 
 
 # set batch
@@ -190,10 +148,17 @@ if doEEJJ:
   #
   systematicsNamesBackground = [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER", "DYShape" ]
   syst_background_names = ['GJets', 'QCDFakes_DATA', 'TTBarFromDATA', 'DY', 'WJets', 'Diboson', 'Singletop']
+  systematicsNamesSignal =  [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER"]
   # allBkg, zjets, ttbar, qcd
   #FIXME must update by hand at the moment; should extract from dat files
   #yields = {650: [30.34,15.54,5.52,0.075], 1200: [2.6,1.73,0.21,0.0069]}
   #statUncerts = {650: [], 1200: []}
+  # systs
+  zjetsSF = 0.9742
+  zjetsSFerr = 0.0076
+  zJetNormDeltaXOverX=zjetsSFerr/zjetsSF
+  ttBarNormDeltaXOverX = 0.01
+  qcdNormDeltaXOverX = 0.50
 else:
   vars = varsENUJJ
   x_labels = x_labelsENUJJ
@@ -210,15 +175,18 @@ else:
   #
   systematicsNamesBackground = [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER", "MET", "WShape", "TTShape" ]
   syst_background_names = ['GJets', 'QCDFakes_DATA', 'TTbar', 'DY', 'WJets', 'Diboson', 'Singletop']
+  systematicsNamesSignal =  [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER", "MET" ]
   # allBkg, zjets, ttbar, qcd
   #FIXME must update by hand at the moment; should extract from dat files
   #yields = {650: [74.37,32.23,13.55,4.88], 1200: [9.13,4.93,0.53,0.37]}
   #statUncerts = {650: [], 1200: [5.19]}
-
-
-lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
-
-
+  # systs
+  # W scale factor
+  zjetsSF = 0.8782
+  zjetsSFerr = 0.0067
+  zJetNormDeltaXOverX=zjetsSFerr/zjetsSF
+  ttBarNormDeltaXOverX = 0.01
+  qcdNormDeltaXOverX = 0.25
 if doSystErr:
   systematics_filepaths = {}
   for systName in systematicsNamesBackground:
@@ -227,6 +195,17 @@ if doSystErr:
     else:
       systematics_filepaths[systName] = '/afs/cern.ch/user/m/mbhat/work/public/Systematics_4enujj_1_09_2017/'
   backgroundSystDict = FillSystDicts(systematicsNamesBackground,syst_background_names,systematics_filepaths)
+  signalSystDict     = FillSystDicts(systematicsNamesSignal,syst_background_names,systematics_filepaths,False)
+
+
+lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
+
+
+print 'Using tables:'
+print '\t Data/MC:',File_preselection
+print '\t QCD(data):',File_QCD_preselection
+print 'Using systematics files:',systematics_filepaths
+
 
 r.gROOT.SetStyle('Plain')
 r.gStyle.SetTextFont ( 42 )
@@ -248,7 +227,21 @@ r.gStyle.SetPadTickY(0)
 for i_mass, mass in enumerate(masses):
 
   if doSystErr:
-    systs = [GetBackgroundSyst(systType,'LQ'+str(mass),backgroundSystDict,doEEJJ) for systType in syst_background_names]
+    #systs = [GetBackgroundSyst(systType,'LQ'+str(mass)) for systType in syst_background_names]
+    #print 'syst_background_names=',syst_background_names
+    #print 'systs=',systs
+    # need to combine some systs and put in order
+    systs = [GetBackgroundSyst('QCDFakes_DATA','LQ'+str(mass))]
+    gjetsSyst = GetBackgroundSyst('GJets','LQ'+str(mass))
+    dibosonSyst = GetBackgroundSyst('Diboson','LQ'+str(mass))
+    singleTopSyst = GetBackgroundSyst('Singletop','LQ'+str(mass))
+    systs.append(math.sqrt(pow(gjetsSyst,2)+pow(dibosonSyst,2)+pow(singleTopSyst,2)))
+    if doEEJJ:
+        systs.append(GetBackgroundSyst('TTBarFromDATA','LQ'+str(mass)))
+        systs.append(GetBackgroundSyst('DY','LQ'+str(mass)))
+    else:
+        systs.append(GetBackgroundSyst('TTbar','LQ'+str(mass)))
+        systs.append(GetBackgroundSyst('WJets','LQ'+str(mass)))
 
   for i_var, var in enumerate(vars):
     print 'examine var:',var
@@ -341,10 +334,9 @@ for i_mass, mass in enumerate(masses):
     #save_name = save_name.replace("PAS", "preselection")
     if doEEJJ:
       save_name = save_name + "_eejj.pdf"
-      save_name_png = save_name + '_eejj.png'
     else:
       save_name = save_name + "_enujj.pdf"
-      save_name_png = save_name + '_enujj.png'
+    save_name_png = save_name.replace('.pdf','.png')
   
     ## WORKS
     #canvas = r.TCanvas(canv_name,canv_name,800,550)
@@ -388,13 +380,18 @@ for i_mass, mass in enumerate(masses):
       g.Draw("ZP0SAME")
   
     if doSystErr:
+      verbose=False
       bkgUncHisto = copy.deepcopy(stack.GetStack().Last())
       bkgUncHisto.Reset()
+      bkgUncHisto.SetNameTitle('bkgUncHisto','bkgUncHisto')
       for idx,hist in enumerate(stkSystErrHistos):
           syst = systs[idx]
+          if verbose:
+            print '[',hist.GetName(),']: look at systs['+str(idx)+']'
           for ibin in xrange(0,hist.GetNbinsX()+2):
               hist.SetBinError(ibin,syst*hist.GetBinContent(ibin))
-              #print '[',hist.GetName(),'] set bin',ibin,'error to:',syst*hist.GetBinContent(ibin)
+              if verbose:
+                print '[',hist.GetName(),'] set bin with center',hist.GetBinCenter(ibin),'error to:',syst*hist.GetBinContent(ibin)
           bkgUncHisto.Add(hist)
       ##histoAll = copy.deepcopy(bkgTotalHist)
       #histoAll = thStack.GetStack().Last()
@@ -408,8 +405,9 @@ for i_mass, mass in enumerate(masses):
       bkgUncHisto.SetFillStyle(3001)
       bkgUncHisto.SetMarkerSize(0)
       bkgUncHisto.Draw("E2same")
-      #for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
-      #    print '[',bkgUncHisto.GetName(),'] bin',ibin,'error is:',bkgUncHisto.GetBinError(ibin)
+      if verbose:
+        for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
+            print '[',bkgUncHisto.GetName(),'] bin with center',bkgUncHisto.GetBinCenter(ibin),'error is:',bkgUncHisto.GetBinError(ibin)
 
     #-- 2nd pad (ratio)
     if doRatio:
@@ -532,8 +530,8 @@ for i_mass, mass in enumerate(masses):
     
 
     #leg = r.TLegend(0.42,0.52,0.87,0.88,"","brNDC")
-    leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
-    #leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
+    #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
+    leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
