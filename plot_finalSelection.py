@@ -88,7 +88,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ=True
+doEEJJ=False
 doSystErr = True
 doRatio = False
 blind = True
@@ -134,17 +134,21 @@ if doEEJJ:
   vars = varsEEJJ
   x_labels = x_labelsEEJJ
   x_bins = x_binsEEJJ
-  File_preselection = os.environ["LQDATA"]+'/2016analysis/'+   'eejj_psk_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root'
-  datFile_preselection = os.environ["LQDATA"]+'/2016analysis/'+'eejj_psk_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_tables.dat'
-  File_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+   'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_plots.root'
-  datFile_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_tables.dat'
-  File_ttbar = os.environ["LQDATA"]+'/2016ttbar/'+ 'feb2_newSkim_emujj_correctTrig_finalSelections/output_cutTable_lq_ttbar_emujj_correctTrig/analysisClass_lq_ttbarEst_plots.root'
+  #File_preselection = os.environ["LQDATA"]+'/2016analysis/'+   'eejj_psk_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root'
+  #datFile_preselection = os.environ["LQDATA"]+'/2016analysis/'+'eejj_psk_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_tables.dat'
+  #File_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+   'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_plots.root'
+  #datFile_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_tables.dat'
+  #File_ttbar = os.environ["LQDATA"]+'/2016ttbar/'+ 'feb2_newSkim_emujj_correctTrig_finalSelections/output_cutTable_lq_ttbar_emujj_correctTrig/analysisClass_lq_ttbarEst_plots.root'
   #
-  bkgd_file = r.TFile.Open(File_preselection)
-  bkgd_dat_file = open(datFile_preselection)
-  qcd_file = r.TFile.Open(File_QCD_preselection)
-  qcd_dat_file = open(datFile_QCD_preselection)
-  ttbar_file = r.TFile.Open(File_ttbar)
+  filePath = os.environ["LQDATA"] + '/2016analysis/eejj_psk_feb10_bugfix/output_cutTable_lq_eejj/'
+  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/eejj_QCD_feb10_bugfix/output_cutTable_lq_eejj_QCD/'
+  ttbarFilePath = os.environ["LQDATA"] + '/2016ttbar/feb11_emujj_correctTrig/output_cutTable_lq_ttbar_emujj_correctTrig/'
+  #
+  bkgd_file = r.TFile.Open(filePath+'analysisClass_lq_eejj_plots.root')
+  bkgd_dat_file = open(filePath+'analysisClass_lq_eejj_tables.dat')
+  qcd_file = r.TFile.Open(qcdFilePath+'analysisClass_lq_eejj_QCD_plots.root')
+  qcd_dat_file = open(qcdFilePath+'analysisClass_lq_eejj_QCD_tables.dat')
+  ttbar_file = r.TFile.Open(ttbarFilePath+'analysisClass_lq_ttbarEst_plots.root')
   #
   systematicsNamesBackground = [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER", "DYShape" ]
   syst_background_names = ['GJets', 'QCDFakes_DATA', 'TTBarFromDATA', 'DY', 'WJets', 'Diboson', 'Singletop']
@@ -163,15 +167,19 @@ else:
   vars = varsENUJJ
   x_labels = x_labelsENUJJ
   x_bins = x_binsENUJJ
-  File_preselection     = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_feb4_v237_MET100_PtEMET70/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_plots.root"
-  datFile_preselection  = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_feb4_v237_MET100_PtEMET70/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_tables.dat"
-  File_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+   "/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_plots.root"
-  datFile_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+"/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_tables.dat"
+  #File_preselection     = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_feb4_v237_MET100_PtEMET70/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_plots.root"
+  #datFile_preselection  = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_feb4_v237_MET100_PtEMET70/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_tables.dat"
+  #File_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+   "/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_plots.root"
+  #datFile_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+"/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_tables.dat"
   #
-  bkgd_file = r.TFile(File_preselection)
-  bkgd_dat_file = open(datFile_preselection)
-  qcd_file  = r.TFile(File_QCD_preselection)
-  qcd_dat_file  = open(datFile_QCD_preselection)
+  filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_feb10_v237_bugfix/output_cutTable_lq_enujj_MT/'
+  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_feb10_bugfix/output_cutTable_lq_enujj_MT_QCD/'
+  ttbarFilePath = filePath
+  #
+  bkgd_file = r.TFile(filePath+'analysisClass_lq_enujj_MT_plots.root')
+  bkgd_dat_file = open(filePath+'analysisClass_lq_enujj_MT_tables.dat')
+  qcd_file  = r.TFile(qcdFilePath+'analysisClass_lq_enujj_QCD_plots.root')
+  qcd_dat_file  = open(qcdFilePath+'analysisClass_lq_enujj_QCD_tables.dat')
   #
   systematicsNamesBackground = [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER", "MET", "WShape", "TTShape" ]
   syst_background_names = ['GJets', 'QCDFakes_DATA', 'TTbar', 'DY', 'WJets', 'Diboson', 'Singletop']
@@ -202,8 +210,8 @@ lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
 
 
 print 'Using tables:'
-print '\t Data/MC:',File_preselection
-print '\t QCD(data):',File_QCD_preselection
+print '\t Data/MC:',bkgd_file.GetName()
+print '\t QCD(data):',qcd_file.GetName()
 print 'Using systematics files:',systematics_filepaths
 
 
@@ -266,6 +274,7 @@ for i_mass, mass in enumerate(masses):
     if not blind:
       data_hist  = rebin ( data_hist , x_bins[i_var] )
     sig_hist   = rebin ( sig_hist , x_bins[i_var] )
+    ZeroNegativeBins([qcd_hist,other_hist,ttbar_hist,zjets_hist])
     #zjets_hist.Rebin (2)
     #ttbar_hist.Rebin (2)
     #other_hist.Rebin (2)
