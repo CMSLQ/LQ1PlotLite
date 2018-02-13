@@ -152,3 +152,13 @@ def makeSafe ( plot ) :
             plot.SetBinError  (i, 0. )
     
 
+def ZeroNegativeBins(plotList):
+    verbose=False
+    for hist in plotList:
+        for binn in range(0,hist.GetNbinsX()+2):
+            if hist.GetBinContent(binn) < 0:
+                if verbose:
+                    print 'INFO: hist',hist.GetName(),'had bin',binn,'with content<0:',hist.GetBinContent(binn),'; set to zero'
+                hist.SetBinContent(binn,0)
+
+
