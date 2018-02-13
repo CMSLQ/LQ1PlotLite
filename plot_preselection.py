@@ -97,7 +97,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ=False
+doEEJJ = True
 doSystErr = True
 doRatio = True
 
@@ -165,31 +165,39 @@ if doEEJJ:
   x_labels = x_labelsEEJJ
   x_bins = x_binsEEJJ
   systTypes = systTypesEEJJ
-  File_preselection = os.environ["LQDATA"]+'/2016analysis/'+   'eejj_psk_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root'
-  datFile_preselection = os.environ["LQDATA"]+'/2016analysis/'+'eejj_psk_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_tables.dat'
-  File_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+   'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_plots.root'
-  datFile_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_tables.dat'
-  File_ttbar = os.environ["LQDATA"]+'/2016ttbar/'+ 'feb2_newSkim_emujj_correctTrig_finalSelections/output_cutTable_lq_ttbar_emujj_correctTrig/analysisClass_lq_ttbarEst_plots.root'
+  #File_preselection = os.environ["LQDATA"]+'/2016analysis/'+   'eejj_psk_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root'
+  #datFile_preselection = os.environ["LQDATA"]+'/2016analysis/'+'eejj_psk_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_tables.dat'
+  #File_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+   'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_plots.root'
+  #datFile_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_tables.dat'
+  #File_ttbar = os.environ["LQDATA"]+'/2016ttbar/'+ 'feb2_newSkim_emujj_correctTrig_finalSelections/output_cutTable_lq_ttbar_emujj_correctTrig/analysisClass_lq_ttbarEst_plots.root'
   #
-  bkgd_file = r.TFile.Open(File_preselection)
-  bkgd_dat_file = open(datFile_preselection)
-  qcd_file = r.TFile.Open(File_QCD_preselection)
-  qcd_dat_file = open(datFile_QCD_preselection)
-  ttbar_file = r.TFile.Open(File_ttbar)
+  filePath = os.environ["LQDATA"] + '/2016analysis/eejj_psk_feb10_bugfix/output_cutTable_lq_eejj/'
+  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/eejj_QCD_feb10_bugfix/output_cutTable_lq_eejj_QCD/'
+  ttbarFilePath = os.environ["LQDATA"] + '/2016ttbar/feb11_emujj_correctTrig/output_cutTable_lq_ttbar_emujj_correctTrig/'
+  #
+  bkgd_file = r.TFile.Open(filePath+'analysisClass_lq_eejj_plots.root')
+  bkgd_dat_file = open(filePath+'analysisClass_lq_eejj_tables.dat')
+  qcd_file = r.TFile.Open(qcdFilePath+'analysisClass_lq_eejj_QCD_plots.root')
+  qcd_dat_file = open(qcdFilePath+'analysisClass_lq_eejj_QCD_tables.dat')
+  ttbar_file = r.TFile.Open(ttbarFilePath+'analysisClass_lq_ttbarEst_plots.root')
 else:
   vars = varsENUJJ
   x_labels = x_labelsENUJJ
   x_bins = x_binsENUJJ
   systTypes = systTypesENUJJ
-  File_preselection     = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_feb4_v237_MET100_PtEMET70/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_plots.root"
-  datFile_preselection  = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_feb4_v237_MET100_PtEMET70/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_tables.dat"
-  File_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+   "/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_plots.root"
-  datFile_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+"/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_tables.dat"
+  #File_preselection     = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_feb4_v237_MET100_PtEMET70/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_plots.root"
+  #datFile_preselection  = os.environ["LQDATA"]+"/2016analysis/"+"enujj_psk_feb4_v237_MET100_PtEMET70/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_tables.dat"
+  #File_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+   "/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_plots.root"
+  #datFile_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+"/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_tables.dat"
   #
-  bkgd_file = r.TFile(File_preselection)
-  bkgd_dat_file = open(datFile_preselection)
-  qcd_file  = r.TFile(File_QCD_preselection)
-  qcd_dat_file  = open(datFile_QCD_preselection)
+  filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_feb10_v237_bugfix/output_cutTable_lq_enujj_MT/'
+  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_feb10_bugfix/output_cutTable_lq_enujj_MT_QCD/'
+  ttbarFilePath = filePath
+  #
+  bkgd_file = r.TFile(filePath+'analysisClass_lq_enujj_MT_plots.root')
+  bkgd_dat_file = open(filePath+'analysisClass_lq_enujj_MT_tables.dat')
+  qcd_file  = r.TFile(qcdFilePath+'analysisClass_lq_enujj_QCD_plots.root')
+  qcd_dat_file  = open(qcdFilePath+'analysisClass_lq_enujj_QCD_tables.dat')
 
 
 lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
@@ -237,6 +245,7 @@ for i_var, var in enumerate(vars):
     data_hist  = rebin ( data_hist , x_bins[i_var])
     sig1_hist  = rebin ( sig1_hist , x_bins[i_var])
     sig2_hist  = rebin ( sig2_hist , x_bins[i_var])
+    ZeroNegativeBins([qcd_hist,other_hist,ttbar_hist,zjets_hist])
     #zjets_hist.Rebin (2)
     #ttbar_hist.Rebin (2)
     #other_hist.Rebin (2)
@@ -300,6 +309,7 @@ for i_var, var in enumerate(vars):
     ## reduce x-axis labels for Mej plot
     #if 'Mej' in var:
     #  stack.GetXaxis().SetNdivisions(507)
+    stack.GetXaxis().SetNdivisions(515)
     
     canv_name = var + "_canv"
     pad_name  = var + "_pad"
@@ -384,11 +394,11 @@ for i_var, var in enumerate(vars):
         h_bkgTot = copy.deepcopy(bkgTotalHist)
         h_ratio = copy.deepcopy(data_hist)
         h_nsigma = copy.deepcopy(data_hist)
+        dataCopy = copy.deepcopy(data_hist)
         #h_bkgTot1 = TH1F()
         #h_ratio1 = TH1F()
         #h_nsigma1 = TH1F()
         h_bkgTot1 = h_bkgTot
-        h_bkgUnc1 = copy.deepcopy(bkgUncHisto)
         h_ratio1 = h_ratio
         h_nsigma1 = h_nsigma
         h_ratioSyst = copy.deepcopy(h_ratio1)
@@ -414,33 +424,31 @@ for i_var, var in enumerate(vars):
         #pad2.cd()
         # fPads2.SetLogy()
         pad2.SetGridy()
-        h_ratio1.Divide(h_bkgTot1)
+        #h_ratio1.Divide(h_bkgTot1)
+        h_ratio1 = TGraphAsymmErrors()
+        h_ratio1.Divide(dataCopy,h_bkgTot1,'poiscp')
+        #print '2ndlast bin of data plot has:',dataCopy.GetBinContent(dataCopy.GetNbinsX()-1),'entries and error=',dataCopy.GetBinError(dataCopy.GetNbinsX()-1)
+        #print 'last bin of data plot has:',dataCopy.GetBinContent(dataCopy.GetNbinsX()),'entries and error=',dataCopy.GetBinError(dataCopy.GetNbinsX())
+        #print '2ndlast bin of bkg plot has:',h_bkgTot1.GetBinContent(h_bkgTot1.GetNbinsX()-1),'entries and error=',h_bkgTot1.GetBinError(h_bkgTot1.GetNbinsX()-1)
+        #print '2ndlast bin of zjets plot has:',zjets_hist.GetBinContent(zjets_hist.GetNbinsX()-1),'entries and error=',zjets_hist.GetBinError(zjets_hist.GetNbinsX()-1)
+        #print '2ndlast bin of ttbar plot has:',ttbar_hist.GetBinContent(ttbar_hist.GetNbinsX()-1),'entries and error=',ttbar_hist.GetBinError(ttbar_hist.GetNbinsX()-1)
+        #print '2ndlast bin of other plot has:',other_hist.GetBinContent(other_hist.GetNbinsX()-1),'entries and error=',other_hist.GetBinError(other_hist.GetNbinsX()-1)
+        #print '2ndlast bin of qcd plot has:',qcd_hist.GetBinContent(qcd_hist.GetNbinsX()-1),'entries and error=',qcd_hist.GetBinError(qcd_hist.GetNbinsX()-1)
+        #print 'last bin of bkg plot has:',h_bkgTot1.GetBinContent(h_bkgTot1.GetNbinsX()),'entries and error=',h_bkgTot1.GetBinError(h_bkgTot1.GetNbinsX())
+        #print '2ndlast bin of bkg plot center:',h_bkgTot1.GetBinCenter(h_bkgTot1.GetNbinsX()-1)
+        #print 'last bin of bkg plot center:',h_bkgTot1.GetBinCenter(h_bkgTot1.GetNbinsX())
+        ##print '2ndlast bin of ratio plot has:',h_ratio1.GetBinContent(h_ratio1.GetNbinsX()-1),'entries and error=',h_ratio1.GetBinError(h_ratio1.GetNbinsX()-1)
+        ##print 'last bin of ratio plot has:',h_ratio1.GetBinContent(h_ratio1.GetNbinsX()),'entries and error=',h_ratio1.GetBinError(h_ratio1.GetNbinsX())
 
         #h_ratio1.GetXaxis().SetTitle("")
         #h_ratio1.GetXaxis().SetTitleSize(0.06)
         #h_ratio1.GetXaxis().SetLabelSize(0.1)
         h_ratio1.GetYaxis().SetRangeUser(0.,2)
+        h_ratio1.GetYaxis().SetNdivisions(505)
         #h_ratio1.GetYaxis().SetTitle("Data/MC")
         #h_ratio1.GetYaxis().SetLabelSize(0.1)
         #h_ratio1.GetYaxis().SetTitleSize(0.13)
         #h_ratio1.GetYaxis().SetTitleOffset(0.3)
-        h_ratio1.GetYaxis().SetTitle( "data / MC" )
-        h_ratio1.GetYaxis().SetTitleFont(42)
-        h_ratio1.GetYaxis().SetLabelFont(42)
-        h_ratio1.GetYaxis().SetLabelOffset(0.007)
-        h_ratio1.GetYaxis().SetLabelSize(0.12)
-        h_ratio1.GetYaxis().SetTitleOffset(0.3)
-        h_ratio1.GetYaxis().SetTitleSize(0.12)
-        h_ratio1.GetYaxis().CenterTitle()
-        h_ratio1.GetYaxis().CenterTitle(1)
-
-        h_ratio1.GetXaxis().SetTitle( x_labels [i_var] )
-        h_ratio1.GetXaxis().SetTitleFont(42)
-        h_ratio1.GetXaxis().SetLabelFont(42)
-        h_ratio1.GetXaxis().SetLabelOffset(0.025)
-        h_ratio1.GetXaxis().SetTitleOffset(1.1)
-        h_ratio1.GetXaxis().SetLabelSize(0.15)
-        h_ratio1.GetXaxis().SetTitleSize(0.15)
         #h_ratio1.GetXaxis().CenterTitle()
         #h_ratio1.GetXaxis().CenterTitle(1)
         pad2.SetBottomMargin(0.37)
@@ -449,9 +457,23 @@ for i_var, var in enumerate(vars):
         h_ratio1.SetMarkerSize ( 1 )
         h_ratio1.SetMarkerColor ( kBlue )
 
-        h_ratio1.Draw("e0p")
+        # make bins with zero data have no marker ("empty" them)
+        #h_ratio2 = copy.deepcopy(h_ratio1)
+        #h_ratio2.Reset()
+        #for binn in range(0,h_ratio1.GetNbinsX()):
+        #    #if h_ratio1.GetBinContent(binn)<1e-1:
+        #    #    h_ratio1.SetBinContent(binn,0.0)
+        #    #    h_ratio1.SetBinError(binn,0.0)
+        #    #    print 'bin content was:',h_ratio1.GetBinContent(binn),'for bin:',binn,'in plot',h_ratio1.GetName(),'set bin content/error to zero'
+        #    if h_ratio1.GetBinContent(binn) > 0:
+        #        h_ratio2.SetBinContent(binn,h_ratio1.GetBinContent(binn))
+        #        h_ratio2.SetBinError(binn,h_ratio1.GetBinError(binn))
+        #        print 'bin content was:',h_ratio1.GetBinContent(binn),'for bin:',binn,'of',h_ratio1.GetNbinsX(),'in plot',h_ratio1.GetName(),'set bin content/error'
+        #print 'last bin of ratio plot has:',h_ratio2.GetBinContent(h_ratio2.GetNbinsX()),'entries and error=',h_ratio2.GetBinError(h_ratio2.GetNbinsX())
+        ##h_ratio1.Draw("pe0")
 
         if doSystErr:
+            h_bkgUnc1 = copy.deepcopy(bkgUncHisto)
             h_ratioSyst.Divide(h_bkgUnc1) # just divide by the bkgTotal hist with the systs as errors
             bgRatioErrs = h_ratioSyst
             # set bin contents to 1
@@ -470,17 +492,26 @@ for i_var, var in enumerate(vars):
             #bgRatioErrs.Draw('aE2 aE0 same')
             #bgRatioErrs.SetDrawOption('hist')
             #bgRatioErrs.Draw('aE2 E0 same')
-            bgRatioErrs.GetXaxis().SetTitle("")
-            bgRatioErrs.GetXaxis().SetTitleSize(0.06)
-            bgRatioErrs.GetXaxis().SetLabelSize(0.1)
             bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
-            bgRatioErrs.GetYaxis().SetTitle("Data/MC")
-            bgRatioErrs.GetYaxis().SetLabelSize(0.1)
-            bgRatioErrs.GetYaxis().SetTitleSize(0.13)
-            bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
             bgRatioErrs.SetMarkerStyle ( 1 )
+            bgRatioErrs.GetYaxis().SetTitle( "data / MC" )
+            bgRatioErrs.GetYaxis().SetTitleFont(42)
+            bgRatioErrs.GetYaxis().SetLabelFont(42)
+            bgRatioErrs.GetYaxis().SetLabelOffset(0.007)
+            bgRatioErrs.GetYaxis().SetLabelSize(0.12)
+            bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
+            bgRatioErrs.GetYaxis().SetTitleSize(0.12)
+            bgRatioErrs.GetYaxis().CenterTitle()
+            bgRatioErrs.GetYaxis().CenterTitle(1)
+            bgRatioErrs.GetXaxis().SetTitle( x_labels [i_var] )
+            bgRatioErrs.GetXaxis().SetTitleFont(42)
+            bgRatioErrs.GetXaxis().SetLabelFont(42)
+            bgRatioErrs.GetXaxis().SetLabelOffset(0.025)
+            bgRatioErrs.GetXaxis().SetTitleOffset(1.1)
+            bgRatioErrs.GetXaxis().SetLabelSize(0.15)
+            bgRatioErrs.GetXaxis().SetTitleSize(0.15)
             bgRatioErrs.Draw('E2')
-            h_ratio1.Draw("e0psame")
+            #h_ratio1.Draw("pe0same")
 
             ## need to make hist with "1" in all bins
             #bgRatioErrs = h_ratio1.Clone()
@@ -490,6 +521,28 @@ for i_var, var in enumerate(vars):
             #    bgRatioErrs.SetBinContent(binn,1.0)
             #bgRatioErrsGraph = GetErrorsGraph([bgRatioErrs],backgroundSyst)
             #bgRatioErrsGraph.Draw('E2 same')
+            h_ratio1.Draw("zp0same")
+        else:
+            h_ratio1.GetYaxis().SetTitle( "data / MC" )
+            h_ratio1.GetYaxis().SetTitleFont(42)
+            h_ratio1.GetYaxis().SetLabelFont(42)
+            h_ratio1.GetYaxis().SetLabelOffset(0.007)
+            h_ratio1.GetYaxis().SetLabelSize(0.12)
+            h_ratio1.GetYaxis().SetTitleOffset(0.3)
+            h_ratio1.GetYaxis().SetTitleSize(0.12)
+            h_ratio1.GetYaxis().CenterTitle()
+            h_ratio1.GetYaxis().CenterTitle(1)
+            h_ratio1.GetXaxis().SetTitle( x_labels [i_var] )
+            h_ratio1.GetXaxis().SetTitleFont(42)
+            h_ratio1.GetXaxis().SetLabelFont(42)
+            h_ratio1.GetXaxis().SetLabelOffset(0.025)
+            h_ratio1.GetXaxis().SetTitleOffset(1.1)
+            h_ratio1.GetXaxis().SetLabelSize(0.15)
+            h_ratio1.GetXaxis().SetTitleSize(0.15)
+            h_ratio1.Draw("zp0a")
+        #h_ratio1.Draw("esame")
+        #h_ratio2.Draw("samee0")
+        #h_ratio2.Draw("ZP0SAME")
 
         #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
         #lineAtOne.SetLineColor(2)
