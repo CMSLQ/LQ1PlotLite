@@ -571,9 +571,8 @@ for i_var, var in enumerate(vars):
         pad1.cd()
 
     
-    #leg = r.TLegend(0.42,0.52,0.87,0.88,"","brNDC")
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
-    leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
+    leg = r.TLegend(0.53,0.54,0.77,0.90,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
