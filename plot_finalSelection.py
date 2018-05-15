@@ -306,12 +306,12 @@ r.gStyle.SetOptStat(0)
 
 tdrstyle.setTDRStyle()
 
-r.gStyle.SetPadTopMargin(0.1);
-r.gStyle.SetPadBottomMargin(0.16)
+r.gStyle.SetPadTopMargin(0.075);
+r.gStyle.SetPadBottomMargin(0.02)
 r.gStyle.SetPadLeftMargin(0.12)
 r.gStyle.SetPadRightMargin(0.1)
-r.gStyle.SetPadTickX(0)
-r.gStyle.SetPadTickY(0)
+#r.gStyle.SetPadTickX(0)
+#r.gStyle.SetPadTickY(0)
 
 
 for i_mass, mass in enumerate(masses):
@@ -409,11 +409,11 @@ for i_mass, mass in enumerate(masses):
       stack.GetXaxis().SetLabelSize(0.05)
       stack.GetXaxis().SetTitleSize(0.06)
       stack.GetXaxis().CenterTitle(1)
-    #else:
-    #  stack.GetXaxis().SetLabelSize(0)
-    #  stack.GetXaxis().SetLabelOffset(0)
-    #  stack.GetXaxis().SetTitleSize(0)
-    #  stack.GetXaxis().SetTitleOffset(0)
+    else:
+      stack.GetXaxis().SetLabelSize(0)
+      stack.GetXaxis().SetLabelOffset(0)
+      stack.GetXaxis().SetTitleSize(0)
+      stack.GetXaxis().SetTitleOffset(0)
   
     ## reduce x-axis labels for Mej plot
     #if 'Mej' in var:
@@ -632,9 +632,9 @@ for i_mass, mass in enumerate(masses):
         pad1.cd()
     
 
-    #leg = r.TLegend(0.42,0.52,0.87,0.88,"","brNDC")
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
-    leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
+    #leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
+    leg = r.TLegend(0.53,0.54,0.77,0.90,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
@@ -679,7 +679,7 @@ for i_mass, mass in enumerate(masses):
     l2.SetTextFont(62)
     l2.SetNDC()
     l2.SetTextSize(0.08)
-    l1.DrawLatex(0.59,0.94,lumiEnergyString)
+    l1.DrawLatex(0.675,0.965,lumiEnergyString)
     l2.DrawLatex(0.15,0.84,"CMS")
     r.gPad.Update()
   
