@@ -9,6 +9,7 @@ from ROOT import kOrange, kGray, kBlue, TGraphAsymmErrors
 def GetBackgroundSyst(systType, isEEJJ=True):
     verbose = False
     # /afs/cern.ch/user/m/mbhat/work/public/Systematics_4Preselection_02_11_2017/eejj_Preselection_sys.dat
+    # /afs/cern.ch/user/m/mbhat/work/public/Systematics_4Preselection_02_11_2017/eejj_Preselection_sys_05_03_2018.dat
     #  100*(deltaX/X) [rel. change in %]
     systDictEEJJ = {
       'EER'     : 10.6582,
@@ -24,6 +25,7 @@ def GetBackgroundSyst(systType, isEEJJ=True):
       'Trigger' : 1.033228,
     }
     # /afs/cern.ch/user/m/mbhat/work/public/Systematics_4Preselection_02_11_2017/enujj_Preselection_sys.dat
+    # /afs/cern.ch/user/m/mbhat/work/public/Systematics_4Preselection_02_11_2017/enujj_Preselection_sys_05_03_2018.dat
     systDictENuJJ = {
       'EER'     : 4.668,
       'JER'     : 0.98,
@@ -97,7 +99,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ = True
+doEEJJ = False
 doSystErr = True
 doRatio = True
 
@@ -171,9 +173,17 @@ if doEEJJ:
   #datFile_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_tables.dat'
   #File_ttbar = os.environ["LQDATA"]+'/2016ttbar/'+ 'feb2_newSkim_emujj_correctTrig_finalSelections/output_cutTable_lq_ttbar_emujj_correctTrig/analysisClass_lq_ttbarEst_plots.root'
   #
-  filePath = os.environ["LQDATA"] + '/2016analysis/eejj_psk_feb10_bugfix/output_cutTable_lq_eejj/'
-  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/eejj_QCD_feb10_bugfix/output_cutTable_lq_eejj_QCD/'
-  ttbarFilePath = os.environ["LQDATA"] + '/2016ttbar/feb11_emujj_correctTrig/output_cutTable_lq_ttbar_emujj_correctTrig/'
+  #filePath = os.environ["LQDATA"] + '/2016analysis/eejj_psk_feb10_bugfix/output_cutTable_lq_eejj/'
+  #qcdFilePath = os.environ["LQDATA"] + '/2016qcd/eejj_QCD_feb10_bugfix/output_cutTable_lq_eejj_QCD/'
+  #ttbarFilePath = os.environ["LQDATA"] + '/2016ttbar/feb11_emujj_correctTrig/output_cutTable_lq_ttbar_emujj_correctTrig/'
+  #
+  #filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_feb20_dPhiEleMet0p8_newSingTop/output_cutTable_lq_enujj_MT/'
+  #qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_feb14_dPhiEleMET0p8/output_cutTable_lq_enujj_MT_QCD/'
+  #ttbarFilePath = os.environ["LQDATA"] + '/2016ttbar/mar1_emujj_RedoRTrig/output_cutTable_lq_ttbar_emujj_correctTrig/'
+  #
+  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/eejj_QCD_mar16_fixMuons/output_cutTable_lq_eejj_QCD/'
+  filePath = os.environ["LQDATA"] + '/2016analysis/eejj_psk_mar16_fixMuons/output_cutTable_lq_eejj/'
+  ttbarFilePath = os.environ["LQDATA"] + '/2016ttbar/mar17_emujj_fixMuons/output_cutTable_lq_ttbar_emujj_correctTrig/'
   #
   bkgd_file = r.TFile.Open(filePath+'analysisClass_lq_eejj_plots.root')
   bkgd_dat_file = open(filePath+'analysisClass_lq_eejj_tables.dat')
@@ -190,8 +200,15 @@ else:
   #File_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+   "/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_plots.root"
   #datFile_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+"/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_tables.dat"
   #
-  filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_feb10_v237_bugfix/output_cutTable_lq_enujj_MT/'
-  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_feb10_bugfix/output_cutTable_lq_enujj_MT_QCD/'
+  #filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_feb10_v237_bugfix/output_cutTable_lq_enujj_MT/'
+  #qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_feb10_bugfix/output_cutTable_lq_enujj_MT_QCD/'
+  #
+  #filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_feb20_dPhiEleMet0p8_newSingTop/output_cutTable_lq_enujj_MT/'
+  #qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_feb14_dPhiEleMET0p8/output_cutTable_lq_enujj_MT_QCD/'
+  #
+  filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_mar16_fixMuons/output_cutTable_lq_enujj_MT/'
+  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_mar16_fixMuons/output_cutTable_lq_enujj_MT_QCD/'
+  #
   ttbarFilePath = filePath
   #
   bkgd_file = r.TFile(filePath+'analysisClass_lq_enujj_MT_plots.root')
@@ -426,6 +443,9 @@ for i_var, var in enumerate(vars):
         pad2.SetGridy()
         #h_ratio1.Divide(h_bkgTot1)
         h_ratio1 = TGraphAsymmErrors()
+        print 'doing h_ratio1.Divide()'
+        print 'Nbins dataCopy=',dataCopy.GetNbinsX()
+        print 'Nbins h_bkgTot1=',h_bkgTot1.GetNbinsX()
         h_ratio1.Divide(dataCopy,h_bkgTot1,'poiscp')
         #print '2ndlast bin of data plot has:',dataCopy.GetBinContent(dataCopy.GetNbinsX()-1),'entries and error=',dataCopy.GetBinError(dataCopy.GetNbinsX()-1)
         #print 'last bin of data plot has:',dataCopy.GetBinContent(dataCopy.GetNbinsX()),'entries and error=',dataCopy.GetBinError(dataCopy.GetNbinsX())
@@ -474,6 +494,7 @@ for i_var, var in enumerate(vars):
 
         if doSystErr:
             h_bkgUnc1 = copy.deepcopy(bkgUncHisto)
+            print 'doing h_ratioSyst.Divide()'
             h_ratioSyst.Divide(h_bkgUnc1) # just divide by the bkgTotal hist with the systs as errors
             bgRatioErrs = h_ratioSyst
             # set bin contents to 1
@@ -613,7 +634,7 @@ for i_var, var in enumerate(vars):
     # FOR TESTING
     #break
 
-    print 'saving the canvas'
+    #print 'saving the canvas'
     canvas.SaveAs(save_name)
     canvas.SaveAs(save_namePNG)
 

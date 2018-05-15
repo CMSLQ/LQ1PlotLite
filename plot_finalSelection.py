@@ -7,12 +7,82 @@ from ROOT import kOrange, kGray, kBlue
 
 
 # from makeDatacard.py
+#def GetBackgroundSyst(background_name, selectionName):
+#    verbose = False
+#    #if selectionName=='preselection':
+#    #  verbose=True
+#    if verbose:
+#      print 'INFO: GetBackgroundSyst('+background_name+','+selectionName+')'
+#    firstSyst = 0
+#    secondSyst = 0
+#    thirdSyst = 0
+#    if not 'QCD' in background_name and not 'data' in background_name.lower():
+#      for syst in signalSystDict.keys():
+#          if selectionName not in backgroundSystDict[syst][background_name].keys():
+#              if 'LQ' in selectionName:
+#                selectionNameBkgSyst = maxLQselectionBkg
+#              else:
+#                selectionNameBkgSyst = minLQselectionBkg
+#              #print 'selectionName=',selectionName,'not found in',backgroundSystDict[syst][background_name].keys()
+#          else:
+#              selectionNameBkgSyst = selectionName
+#          try:
+#            firstSyst += pow(backgroundSystDict[syst][background_name][selectionNameBkgSyst],2) # deltaX/X
+#            if verbose:
+#              print 'INFO: add',syst,'for',background_name,'at selection',selectionNameBkgSyst,'to firstSyst=',backgroundSystDict[syst][background_name][selectionNameBkgSyst]
+#          except KeyError:
+#              print 'Got a KeyError with: backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']'
+#
+#    if verbose:
+#      print 'INFO: firstSyst=',math.sqrt(firstSyst)
+#
+#    # background-only special systs: "DYShape", "TTShape", "WShape"
+#    specialSysts = ["DYShape"] if doEEJJ else ["WShape","TTShape"]
+#    for syst in specialSysts:
+#        if syst=='DYShape' and not 'DY' in background_name or syst=='TTShape' and not 'TT' in background_name or 'TTBarFromDATA' in background_name or syst=='WShape' and not 'W' in background_name:
+#            continue
+#        if verbose:
+#          print 'INFO: background_name=',background_name
+#          print 'INFO: babackgroundSystDict['+syst+'].keys()=',backgroundSystDict[syst].keys()
+#        if background_name not in backgroundSystDict[syst].keys():
+#          print 'WARNING: could not find',background_name,'in backgroundSystDict['+syst+']=',backgroundSystDict[syst].keys()
+#          continue
+#        if selectionName not in backgroundSystDict[syst][background_name].keys():
+#            selectionNameBkgSyst = maxLQselectionBkg
+#        else:
+#            selectionNameBkgSyst = selectionName
+#        try:
+#          secondSyst = pow(backgroundSystDict[syst][background_name][selectionNameBkgSyst],2)
+#          #print 'backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']=',secondSyst
+#        except KeyError:
+#            print 'ERROR: Got a KeyError with: backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']'
+#
+#    if verbose:
+#      print 'INFO: secondSyst (TT/DYShape)=',math.sqrt(secondSyst)
+#
+#    # XXX WARNING: hardcoded background name (ick); some checking is done at least
+#    if 'TTbar' in background_name:
+#        thirdSyst = pow(ttBarNormDeltaXOverX,2)
+#    elif doEEJJ and 'DY' in background_name:
+#        thirdSyst = pow(zJetNormDeltaXOverX,2)
+#    elif not doEEJJ and 'W' in background_name:
+#        thirdSyst = pow(zJetNormDeltaXOverX,2)
+#    elif 'QCD' in background_name:
+#        thirdSyst = pow(qcdNormDeltaXOverX,2)
+#
+#    if verbose:
+#      print 'INFO: thirdSyst (extra norm uncertainty)=',math.sqrt(thirdSyst)
+#
+#    # now get the total deltaX/X
+#    totalSyst = math.sqrt(firstSyst+secondSyst+thirdSyst)
+#    return totalSyst
+
 def GetBackgroundSyst(background_name, selectionName):
-    verbose = False
+    verbose = True
     #if selectionName=='preselection':
     #  verbose=True
     if verbose:
-      print 'INFO: GetBackgroundSyst('+background_name+','+selectionName+')'
+      print 'GetBackgroundSyst('+background_name+','+selectionName+')'
     firstSyst = 0
     secondSyst = 0
     thirdSyst = 0
@@ -29,21 +99,20 @@ def GetBackgroundSyst(background_name, selectionName):
           try:
             firstSyst += pow(backgroundSystDict[syst][background_name][selectionNameBkgSyst],2) # deltaX/X
             if verbose:
-              print 'INFO: add',syst,'for',background_name,'at selection',selectionNameBkgSyst,'to firstSyst=',backgroundSystDict[syst][background_name][selectionNameBkgSyst]
+                print 'add',syst,'for',background_name,'at selection',selectionNameBkgSyst,'to firstSyst=',backgroundSystDict[syst][background_name][selectionNameBkgSyst]
           except KeyError:
               print 'Got a KeyError with: backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']'
 
     if verbose:
-      print 'INFO: firstSyst=',math.sqrt(firstSyst)
+      print 'firstSyst=',math.sqrt(firstSyst)
 
     # background-only special systs: "DYShape", "TTShape", "WShape"
-    specialSysts = ["DYShape"] if doEEJJ else ["WShape","TTShape"]
+    specialSysts = ["DYShape",'DY_Norm','Diboson_shape'] if doEEJJ else ["WShape","TTShape",'W_Norm','W_btag_Norm','W_RMt_Norm','TT_Norm','TTbar_btag_Norm','Diboson_shape']
     for syst in specialSysts:
-        if syst=='DYShape' and not 'DY' in background_name or syst=='TTShape' and not 'TT' in background_name or 'TTBarFromDATA' in background_name or syst=='WShape' and not 'W' in background_name:
+        if 'TTBarFromDATA' in background_name or 'DY' in syst and not 'DY' in background_name or 'TT' in syst and not 'TT' in background_name or 'W' in syst and not 'W' in background_name or 'Diboson' in syst and not 'Diboson' in background_name:
             continue
         if verbose:
-          print 'INFO: background_name=',background_name
-          print 'INFO: babackgroundSystDict['+syst+'].keys()=',backgroundSystDict[syst].keys()
+            print 'consider systematic:',syst,'for background_name=',background_name
         if background_name not in backgroundSystDict[syst].keys():
           print 'WARNING: could not find',background_name,'in backgroundSystDict['+syst+']=',backgroundSystDict[syst].keys()
           continue
@@ -53,30 +122,28 @@ def GetBackgroundSyst(background_name, selectionName):
             selectionNameBkgSyst = selectionName
         try:
           secondSyst = pow(backgroundSystDict[syst][background_name][selectionNameBkgSyst],2)
-          #print 'backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']=',secondSyst
+          if verbose:
+            print 'backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']=',secondSyst
         except KeyError:
             print 'ERROR: Got a KeyError with: backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']'
 
     if verbose:
-      print 'INFO: secondSyst (TT/DYShape)=',math.sqrt(secondSyst)
-
-    # XXX WARNING: hardcoded background name (ick); some checking is done at least
-    if 'TTbar' in background_name:
+      print 'secondSyst (TT/DYShape)=',math.sqrt(secondSyst)
+        
+    ## XXX WARNING: hardcoded background name (ick); some checking is done at least
+    if doEEJJ and 'TTbar' in background_name:
         thirdSyst = pow(ttBarNormDeltaXOverX,2)
-    elif doEEJJ and 'DY' in background_name:
-        thirdSyst = pow(zJetNormDeltaXOverX,2)
-    elif not doEEJJ and 'W' in background_name:
-        thirdSyst = pow(zJetNormDeltaXOverX,2)
-    elif 'QCD' in background_name:
+    #elif not doEEJJ and 'W' in background_name:
+    #    thirdSyst = pow(zJetNormDeltaXOverX,2)
+    if 'QCD' in background_name:
         thirdSyst = pow(qcdNormDeltaXOverX,2)
 
     if verbose:
-      print 'INFO: thirdSyst (extra norm uncertainty)=',math.sqrt(thirdSyst)
+      print 'thirdSyst (extra norm uncertainty)=',math.sqrt(thirdSyst)
 
     # now get the total deltaX/X
     totalSyst = math.sqrt(firstSyst+secondSyst+thirdSyst)
     return totalSyst
-
 
 
 
@@ -88,10 +155,10 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ=False
+doEEJJ= False
 doSystErr = True
-doRatio = False
-blind = True
+doRatio = True
+blind = False
 
 masses = [ 650, 1200 ]
 
@@ -140,9 +207,17 @@ if doEEJJ:
   #datFile_QCD_preselection = os.environ["LQDATA"]+'/2016qcd/'+'eejj_QCD_jan26_gsfEtaCheck_finalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_tables.dat'
   #File_ttbar = os.environ["LQDATA"]+'/2016ttbar/'+ 'feb2_newSkim_emujj_correctTrig_finalSelections/output_cutTable_lq_ttbar_emujj_correctTrig/analysisClass_lq_ttbarEst_plots.root'
   #
-  filePath = os.environ["LQDATA"] + '/2016analysis/eejj_psk_feb10_bugfix/output_cutTable_lq_eejj/'
-  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/eejj_QCD_feb10_bugfix/output_cutTable_lq_eejj_QCD/'
-  ttbarFilePath = os.environ["LQDATA"] + '/2016ttbar/feb11_emujj_correctTrig/output_cutTable_lq_ttbar_emujj_correctTrig/'
+  #filePath = os.environ["LQDATA"] + '/2016analysis/eejj_psk_feb10_bugfix/output_cutTable_lq_eejj/'
+  #qcdFilePath = os.environ["LQDATA"] + '/2016qcd/eejj_QCD_feb10_bugfix/output_cutTable_lq_eejj_QCD/'
+  #ttbarFilePath = os.environ["LQDATA"] + '/2016ttbar/feb11_emujj_correctTrig/output_cutTable_lq_ttbar_emujj_correctTrig/'
+  #
+  #qcdFilePath = os.environ["LQDATA"] + '/2016qcd/eejj_QCD_feb10_bugfix/output_cutTable_lq_eejj_QCD/'
+  #filePath = os.environ["LQDATA"] + '/2016analysis/eejj_psk_feb20_newSingTop/output_cutTable_lq_eejj/'
+  #ttbarFilePath = os.environ["LQDATA"] + '/2016ttbar/mar1_emujj_RedoRTrig/output_cutTable_lq_ttbar_emujj_correctTrig/'
+  #
+  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/eejj_QCD_mar16_fixMuons/output_cutTable_lq_eejj_QCD/'
+  filePath = os.environ["LQDATA"] + '/2016analysis/eejj_psk_mar16_fixMuons/output_cutTable_lq_eejj/'
+  ttbarFilePath = os.environ["LQDATA"] + '/2016ttbar/mar17_emujj_fixMuons/output_cutTable_lq_ttbar_emujj_correctTrig/'
   #
   bkgd_file = r.TFile.Open(filePath+'analysisClass_lq_eejj_plots.root')
   bkgd_dat_file = open(filePath+'analysisClass_lq_eejj_tables.dat')
@@ -150,7 +225,7 @@ if doEEJJ:
   qcd_dat_file = open(qcdFilePath+'analysisClass_lq_eejj_QCD_tables.dat')
   ttbar_file = r.TFile.Open(ttbarFilePath+'analysisClass_lq_ttbarEst_plots.root')
   #
-  systematicsNamesBackground = [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER", "DYShape" ]
+  systematicsNamesBackground = [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER", "DYShape", 'DY_Norm', "Diboson_shape" ]
   syst_background_names = ['GJets', 'QCDFakes_DATA', 'TTBarFromDATA', 'DY', 'WJets', 'Diboson', 'Singletop']
   systematicsNamesSignal =  [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER"]
   # allBkg, zjets, ttbar, qcd
@@ -158,9 +233,9 @@ if doEEJJ:
   #yields = {650: [30.34,15.54,5.52,0.075], 1200: [2.6,1.73,0.21,0.0069]}
   #statUncerts = {650: [], 1200: []}
   # systs
-  zjetsSF = 0.9742
-  zjetsSFerr = 0.0076
-  zJetNormDeltaXOverX=zjetsSFerr/zjetsSF
+  #zjetsSF = 0.9742
+  #zjetsSFerr = 0.0076
+  #zJetNormDeltaXOverX=zjetsSFerr/zjetsSF
   ttBarNormDeltaXOverX = 0.01
   qcdNormDeltaXOverX = 0.50
 else:
@@ -172,8 +247,15 @@ else:
   #File_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+   "/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_plots.root"
   #datFile_QCD_preselection = os.environ["LQDATA"]+"/2016qcd/"+"/enujj_newRsk237_feb4_gsfEtaCheck_MET100_PtEMET70/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_tables.dat"
   #
-  filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_feb10_v237_bugfix/output_cutTable_lq_enujj_MT/'
-  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_feb10_bugfix/output_cutTable_lq_enujj_MT_QCD/'
+  #filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_feb10_v237_bugfix/output_cutTable_lq_enujj_MT/'
+  #qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_feb10_bugfix/output_cutTable_lq_enujj_MT_QCD/'
+  #
+  #filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_feb20_dPhiEleMet0p8_newSingTop/output_cutTable_lq_enujj_MT/'
+  #qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_feb14_dPhiEleMET0p8/output_cutTable_lq_enujj_MT_QCD/'
+  #
+  filePath = os.environ["LQDATA"] + '/2016analysis/enujj_psk_mar16_fixMuons/output_cutTable_lq_enujj_MT/'
+  qcdFilePath = os.environ["LQDATA"] + '/2016qcd/enujj_mar16_fixMuons/output_cutTable_lq_enujj_MT_QCD/'
+  #
   ttbarFilePath = filePath
   #
   bkgd_file = r.TFile(filePath+'analysisClass_lq_enujj_MT_plots.root')
@@ -181,7 +263,7 @@ else:
   qcd_file  = r.TFile(qcdFilePath+'analysisClass_lq_enujj_QCD_plots.root')
   qcd_dat_file  = open(qcdFilePath+'analysisClass_lq_enujj_QCD_tables.dat')
   #
-  systematicsNamesBackground = [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER", "MET", "WShape", "TTShape" ]
+  systematicsNamesBackground = [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER", "MET", "WShape", 'W_Norm', 'W_btag_Norm', 'W_RMt_Norm', "TTShape", 'TT_Norm', 'TTbar_btag_Norm', "Diboson_shape" ]
   syst_background_names = ['GJets', 'QCDFakes_DATA', 'TTbar', 'DY', 'WJets', 'Diboson', 'Singletop']
   systematicsNamesSignal =  [ "Trigger", "Reco", "PU", "PDF", "Lumi", "JER", "JEC", "HEEP", "E_scale", "EER", "MET" ]
   # allBkg, zjets, ttbar, qcd
@@ -190,18 +272,18 @@ else:
   #statUncerts = {650: [], 1200: [5.19]}
   # systs
   # W scale factor
-  zjetsSF = 0.8782
-  zjetsSFerr = 0.0067
-  zJetNormDeltaXOverX=zjetsSFerr/zjetsSF
-  ttBarNormDeltaXOverX = 0.01
+  #zjetsSF = 0.8782
+  #zjetsSFerr = 0.0067
+  #zJetNormDeltaXOverX=zjetsSFerr/zjetsSF
+  #ttBarNormDeltaXOverX = 0.01
   qcdNormDeltaXOverX = 0.25
 if doSystErr:
   systematics_filepaths = {}
   for systName in systematicsNamesBackground:
     if doEEJJ:
-      systematics_filepaths[systName] = '/afs/cern.ch/user/m/mbhat/work/public/Systematics_4eejj_05_09_2017/'
+      systematics_filepaths[systName] = '/afs/cern.ch/user/m/mbhat/work/public/Systematics_4eejj_DibosonAMCATNLO_18_02_2018/'
     else:
-      systematics_filepaths[systName] = '/afs/cern.ch/user/m/mbhat/work/public/Systematics_4enujj_1_09_2017/'
+      systematics_filepaths[systName] = '/afs/cern.ch/user/m/mbhat/work/public/Systematics_4enujj_DibosonamcATnlo_18_02_2018/'
   backgroundSystDict = FillSystDicts(systematicsNamesBackground,syst_background_names,systematics_filepaths)
   signalSystDict     = FillSystDicts(systematicsNamesSignal,syst_background_names,systematics_filepaths,False)
 
@@ -327,11 +409,11 @@ for i_mass, mass in enumerate(masses):
       stack.GetXaxis().SetLabelSize(0.05)
       stack.GetXaxis().SetTitleSize(0.06)
       stack.GetXaxis().CenterTitle(1)
-    else:
-      stack.GetXaxis().SetLabelSize(0)
-      stack.GetXaxis().SetLabelOffset(0)
-      stack.GetXaxis().SetTitleSize(0)
-      stack.GetXaxis().SetTitleOffset(0)
+    #else:
+    #  stack.GetXaxis().SetLabelSize(0)
+    #  stack.GetXaxis().SetLabelOffset(0)
+    #  stack.GetXaxis().SetTitleSize(0)
+    #  stack.GetXaxis().SetTitleOffset(0)
   
     ## reduce x-axis labels for Mej plot
     #if 'Mej' in var:
@@ -357,7 +439,6 @@ for i_mass, mass in enumerate(masses):
   
     canvas = r.TCanvas(canv_name,canv_name,800,600)
     canvas.cd()
-    canvas.SetLogy()
     if not doRatio:
         pad1  = r.TPad( pad_name+"1", pad_name+"1" , 0.0, 0.0, 1.0, 1.0 )
         pad1.Draw()
@@ -374,8 +455,11 @@ for i_mass, mass in enumerate(masses):
   
     #r.SetOwnership(pad1, False)
     pad1.cd()
-    pad1.SetLogy()
     stack.Draw('hist')
+    stack.GetYaxis().SetRangeUser(1e-1,stack.GetMaximum()*1.1)
+    stack.GetXaxis().SetTitle( x_labels [i_var] )
+    #canvas.SetLogy()
+    pad1.SetLogy()
     pad1.Draw()
   
     sig_hist.Draw("HIST SAME")
@@ -452,15 +536,22 @@ for i_mass, mass in enumerate(masses):
         #h_ratio1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
         #h_nsigma1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
   
-        #pad2.cd()
+        pad2.cd()
         # fPads2.SetLogy()
         pad2.SetGridy()
         h_ratio1.Divide(h_bkgTot1)
+        #oldRatioHist = copy.deepcopy(h_ratio1)
+        #h_ratio1.Reset()
+        #for ibin in range(0,h_ratio1.GetNbinsX()+1):
+        #    oldBinContent = oldRatioHist.GetBinContent(ibin)
+        #    if oldBinContent > 0:
+        #        h_ratio1.SetBinContent(ibin,oldBinContent)
+        #        h_ratio1.SetBinError(ibin,oldRatioHist.GetBinError(ibin))
   
         #h_ratio1.GetXaxis().SetTitle("")
         #h_ratio1.GetXaxis().SetTitleSize(0.06)
         #h_ratio1.GetXaxis().SetLabelSize(0.1)
-        h_ratio1.GetYaxis().SetRangeUser(0.,2)
+        #h_ratio1.GetYaxis().SetRangeUser(0.,2)
         #h_ratio1.GetYaxis().SetTitle("Data/MC")
         #h_ratio1.GetYaxis().SetLabelSize(0.1)
         #h_ratio1.GetYaxis().SetTitleSize(0.13)
@@ -490,7 +581,7 @@ for i_mass, mass in enumerate(masses):
         h_ratio1.SetMarkerSize ( 1 )
         h_ratio1.SetMarkerColor ( kBlue )
   
-        h_ratio1.Draw("e0p")
+        h_ratio1.Draw("e0")
 
         if doSystErr:
             h_ratioSyst.Divide(h_bkgUnc1) # just divide by the bkgTotal hist with the systs as errors
@@ -511,17 +602,18 @@ for i_mass, mass in enumerate(masses):
             #bgRatioErrs.Draw('aE2 aE0 same')
             #bgRatioErrs.SetDrawOption('hist')
             #bgRatioErrs.Draw('aE2 E0 same')
-            bgRatioErrs.GetXaxis().SetTitle("")
+            bgRatioErrs.GetXaxis().SetTitle('')
             bgRatioErrs.GetXaxis().SetTitleSize(0.06)
             bgRatioErrs.GetXaxis().SetLabelSize(0.1)
-            bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
             bgRatioErrs.GetYaxis().SetTitle("Data/MC")
             bgRatioErrs.GetYaxis().SetLabelSize(0.1)
             bgRatioErrs.GetYaxis().SetTitleSize(0.13)
             bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
             bgRatioErrs.SetMarkerStyle ( 1 )
             bgRatioErrs.Draw('E2')
-            h_ratio1.Draw("e0psame")
+            #h_ratio1.Draw("e0psame")
+            h_ratio1.Draw("e0same")
+            bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
 
             ## need to make hist with "1" in all bins
             #bgRatioErrs = h_ratio1.Clone()
@@ -531,6 +623,8 @@ for i_mass, mass in enumerate(masses):
             #    bgRatioErrs.SetBinContent(binn,1.0)
             #bgRatioErrsGraph = GetErrorsGraph([bgRatioErrs],backgroundSyst)
             #bgRatioErrsGraph.Draw('E2 same')
+
+        h_ratio1.GetYaxis().SetRangeUser(0.,2)
 
         #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
         #lineAtOne.SetLineColor(2)
