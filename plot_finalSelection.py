@@ -3,7 +3,7 @@
 from plot_common import *
 import tdrstyle
 import math
-from ROOT import kOrange, kGray, kBlue
+from ROOT import kOrange, kGray, kBlue, TH1F
 
 
 # from makeDatacard.py
@@ -539,15 +539,29 @@ for i_mass, mass in enumerate(masses):
         pad2.cd()
         # fPads2.SetLogy()
         pad2.SetGridy()
+        
         h_ratio1.Divide(h_bkgTot1)
-        #oldRatioHist = copy.deepcopy(h_ratio1)
+
+        oldRatioHist = copy.deepcopy(h_ratio1)
+        h_ratio1.Delete()
+        del h_ratio1
         #h_ratio1.Reset()
-        #for ibin in range(0,h_ratio1.GetNbinsX()+1):
-        #    oldBinContent = oldRatioHist.GetBinContent(ibin)
-        #    if oldBinContent > 0:
-        #        h_ratio1.SetBinContent(ibin,oldBinContent)
-        #        h_ratio1.SetBinError(ibin,oldRatioHist.GetBinError(ibin))
-  
+        h_ratio1 = TH1F('ratio','ratio',oldRatioHist.GetNbinsX(),oldRatioHist.GetXaxis().GetXbins().GetArray())
+        for ibin in range(0,oldRatioHist.GetNbinsX()+1):
+            oldBinContent = oldRatioHist.GetBinContent(ibin)
+            if oldBinContent > 0:
+                print '1) set bin content for bin:',ibin,'to:',oldBinContent
+                h_ratio1.SetBinContent(ibin,oldBinContent)
+                h_ratio1.SetBinError(ibin,oldRatioHist.GetBinError(ibin))
+            #elif h_bkgTot1.GetBinContent(ibin) > 0:
+            #    print '2) set bin content for bin:',ibin,'to:',oldBinContent
+            #    h_ratio1.SetBinContent(ibin,oldBinContent)
+            #    h_ratio1.SetBinError(ibin,oldRatioHist.GetBinError(ibin))
+            else:
+                print '3) set bin content for bin:',ibin,'to -1'
+                h_ratio1.SetBinContent(ibin,-1)
+                h_ratio1.SetBinError(ibin,-1)
+
         #h_ratio1.GetXaxis().SetTitle("")
         #h_ratio1.GetXaxis().SetTitleSize(0.06)
         #h_ratio1.GetXaxis().SetLabelSize(0.1)
@@ -581,7 +595,8 @@ for i_mass, mass in enumerate(masses):
         h_ratio1.SetMarkerSize ( 1 )
         h_ratio1.SetMarkerColor ( kBlue )
   
-        h_ratio1.Draw("e0")
+        #h_ratio1.Draw("e0")
+        h_ratio1.Draw('p')
 
         if doSystErr:
             h_ratioSyst.Divide(h_bkgUnc1) # just divide by the bkgTotal hist with the systs as errors
@@ -602,8 +617,9 @@ for i_mass, mass in enumerate(masses):
             #bgRatioErrs.Draw('aE2 aE0 same')
             #bgRatioErrs.SetDrawOption('hist')
             #bgRatioErrs.Draw('aE2 E0 same')
-            bgRatioErrs.GetXaxis().SetTitle('')
-            bgRatioErrs.GetXaxis().SetTitleSize(0.06)
+            #bgRatioErrs.GetXaxis().SetTitle('')
+            bgRatioErrs.GetXaxis().SetTitle( x_labels [i_var] )
+            bgRatioErrs.GetXaxis().SetTitleSize(0.15)
             bgRatioErrs.GetXaxis().SetLabelSize(0.1)
             bgRatioErrs.GetYaxis().SetTitle("Data/MC")
             bgRatioErrs.GetYaxis().SetLabelSize(0.1)
@@ -634,7 +650,7 @@ for i_mass, mass in enumerate(masses):
 
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
     #leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
-    leg = r.TLegend(0.53,0.54,0.77,0.90,"","brNDC")
+    leg = r.TLegend(0.52,0.53,0.74,0.88,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
