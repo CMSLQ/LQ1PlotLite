@@ -99,7 +99,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ = False
+doEEJJ = True
 doSystErr = True
 doRatio = True
 
@@ -149,7 +149,7 @@ x_labelsENUJJ = [
     "S_{T}^{e#nujj} [GeV]",
     "M_{ej} [GeV]",
     "M_{T} [GeV]",
-    "E_{T}^{miss} [GeV]"
+    "#it{p}_{T}^{miss} [GeV]"
 ]
 
 x_binsENUJJ = [ 
@@ -572,7 +572,7 @@ for i_var, var in enumerate(vars):
 
     
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
-    leg = r.TLegend(0.53,0.54,0.77,0.90,"","brNDC")
+    leg = r.TLegend(0.52,0.53,0.76,0.88,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
