@@ -156,6 +156,7 @@ r.gROOT.SetBatch()
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
 doEEJJ= False
+doPrelim = True
 doSystErr = True
 doRatio = True
 blind = False
@@ -602,7 +603,7 @@ for i_mass, mass in enumerate(masses):
             h_ratioSyst.Divide(h_bkgUnc1) # just divide by the bkgTotal hist with the systs as errors
             bgRatioErrs = h_ratioSyst
             # set bin contents to 1
-            for binn in range(0,bgRatioErrs.GetNbinsX()):
+            for binn in range(0,bgRatioErrs.GetNbinsX()+1):
                 bgRatioErrs.SetBinContent(binn,1.0)
                 #print 'ratio hist bin:',binn,'binError=',bgRatioErrs.GetBinError(binn)
             bgRatioErrs.SetFillColor(kGray+1)
@@ -663,9 +664,9 @@ for i_mass, mass in enumerate(masses):
       leg.AddEntry(zjets_hist,"W + jets","lf")
     leg.AddEntry(ttbar_hist,"t#bar{t}","lf")
     leg.AddEntry(other_hist,"Other background","lf")
+    leg.AddEntry(qcd_hist  ,"Multijet","lf")
     if doSystErr:
       leg.AddEntry(bkgUncHisto, 'Uncertainty band','f')
-    leg.AddEntry(qcd_hist  ,"Multijet","lf")
     if doEEJJ:
       beta = 1.0
     else:
@@ -690,12 +691,21 @@ for i_mass, mass in enumerate(masses):
     l1.SetTextFont(42)
     l1.SetNDC()
     l1.SetTextSize(0.06)
+    l1.DrawLatex(0.675,0.965,lumiEnergyString)
+
     l2 = r.TLatex()
     l2.SetTextAlign(12)
     l2.SetTextFont(62)
     l2.SetNDC()
     l2.SetTextSize(0.08)
-    l1.DrawLatex(0.675,0.965,lumiEnergyString)
+
+    l3 = r.TLatex()
+    l3.SetTextAlign(12)
+    l3.SetTextFont(42)
+    l3.SetNDC()
+    l3.SetTextSize(0.08)
+    if doPrelim:
+      l3.DrawLatex(0.25,0.83,"#it{Preliminary}")
     l2.DrawLatex(0.15,0.84,"CMS")
     r.gPad.Update()
   
