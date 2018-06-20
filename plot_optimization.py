@@ -93,7 +93,7 @@ r.gStyle.SetPadRightMargin(0.1)
 
 print 'Using table file:',tableFilePath
 # parse the table file
-histList = ParseTable(doEEJJ,tableFilePath,True)
+histList = ParseTable(doEEJJ,tableFilePath)
 st_hist = histList[0]
 mej_hist = histList[1]
 mee_hist = histList[2]
@@ -166,7 +166,7 @@ mee_hist.Draw('samelp')
 if not doEEJJ:
     met_hist.Draw('samelp')
 
-leg = r.TLegend(0.1867,0.58,0.338,0.760,"","brNDC")
+leg = r.TLegend(0.1867,0.545,0.338,0.760,"","brNDC")
 leg.SetTextFont(42)
 leg.SetFillColor(0)
 leg.SetBorderSize(0)
@@ -176,8 +176,8 @@ if not doEEJJ:
     leg.SetHeader()
 else:
     leg.SetHeader('eejj')
-leg.AddEntry(st_hist,"s_{T}","lp")
-leg.AddEntry(mej_hist  ,"M_{ej}","lp")
+leg.AddEntry(st_hist,"S_{T}","lp")
+leg.AddEntry(mej_hist  ,"M^{min}_{ej}","lp")
 leg.AddEntry(mee_hist,"M_{ee}","lp")
 if not doEEJJ:
     leg.AddEntry(met_hist,"METFIXME","lp")
