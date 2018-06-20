@@ -24,7 +24,7 @@ from ROOT import kOrange, kGray, kBlue, TH1F
 #            elif 'rate' in line:
 
 # parse the pretty table and return hists
-def ParseTable(isEEJJ,tableFile):
+def ParseTable(isEEJJ,tableFile,verbose=False):
     nBins = 37 # M=200 to M=2000
     vjets = r.TH1F('vjets','vjets',37,200,2050)
     ttbar = r.TH1F('ttbar','ttbar',37,200,2050)
@@ -47,17 +47,20 @@ def ParseTable(isEEJJ,tableFile):
                 continue
             if not 'LQ_' in split[1] or 'presel' in split[1]:
                 continue
-            print 'consider line:',line
-            print 'split=',split
+            if verbose:
+                print 'consider line:',line
+                print 'split=',split
             ibin+=1
             histIdx = -1
             for item in split:
-                print 'item=',item
+                if verbose:
+                    print 'item=',item
                 # split the "item" which is the event yield per category, into yield, stat (and/or syst)
                 yieldList = item.strip().split()
                 if len(yieldList) < 1:
                     continue
-                print yieldList
+                if verbose:
+                    print yieldList
                 if 'presel' in yieldList[0]:
                     break # ignore preselection line
                 elif 'LQ' in yieldList[0]:
@@ -70,24 +73,28 @@ def ParseTable(isEEJJ,tableFile):
                             stat1 = float(yieldList[0][yieldList[0].find('+')+1:yieldList[0].find('}')])
                             stat2 = float(yieldList[0][yieldList[0].find('-')+1:-2])
                             stat = max(stat1,stat2)
-                            print 'found stat=',stat
+                            if verbose:
+                                print 'found stat=',stat
                             syst = float(yieldList[2])
-                            print 'found syst=',syst
+                            if verbose:
+                                print 'found syst=',syst
                             statSyst = math.sqrt(stat**2+syst**2)
                             histList[histIdx].SetBinContent(ibin,statSyst)
                         elif '+/-' in yieldList[1]:
                             stat = float(yieldList[2])
-                            print 'found stat=',stat
+                            if verbose:
+                                print 'found stat=',stat
                             syst = float(yieldList[4])
-                            print 'found syst=',syst
+                            if verbose:
+                                print 'found syst=',syst
                             statSyst = math.sqrt(stat**2+syst**2)
                             histList[histIdx].SetBinContent(ibin,statSyst)
-                        #else:
-                        #    histList[histIdx].SetBinContent(ibin,float(yieldList[1]))
-                        print 'hist:',histIdx,'set bin:',ibin,'to',statSyst
+                        if verbose:
+                            print 'hist:',histIdx,'set bin:',ibin,'to',statSyst
                     else:
                         histList[histIdx].SetBinContent(ibin,float(yieldList[0]))
-                        print 'hist:',histIdx,'set bin:',ibin,'to',float(yieldList[0])
+                        if verbose:
+                            print 'hist:',histIdx,'set bin:',ibin,'to',float(yieldList[0])
     return histList
 
 
@@ -99,7 +106,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= True
+doEEJJ= False
 doPrelim = True
 doSystErr = True
 doRatio = True
@@ -108,7 +115,7 @@ blind = False
 if doEEJJ:
     tableFilePath = os.environ["LQANA"] + '/versionsOfAnalysis_eejj/mar17/scaled/table_mar19.txt'
 else:
-    tableFilePath = os.environ["LQDATA"] + '/2016analysis/eejj_psk_mar16_fixMuons/output_cutTable_lq_eejj/'
+    tableFilePath = os.environ["LQANA"] + '/versionsOfAnalysis_enujj/mar17/scaled/table_mar19.txt'
 
 
 lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
@@ -123,7 +130,7 @@ r.gStyle.SetOptStat(0)
 tdrstyle.setTDRStyle()
 
 r.gStyle.SetPadTopMargin(0.075);
-r.gStyle.SetPadBottomMargin(0.02)
+r.gStyle.SetPadBottomMargin(0.125)
 r.gStyle.SetPadLeftMargin(0.12)
 r.gStyle.SetPadRightMargin(0.1)
 #r.gStyle.SetPadTickX(0)
@@ -137,19 +144,24 @@ sig_hist = histList[0]
 zjets_hist = histList[1]
 ttbar_hist = histList[2]
 qcd_hist = histList[3]
-vv_hist = histList[4]
+
+#vv_hist = histList[4]
 other_hist = histList[5]
 other_hist.Add(histList[6])
 other_hist.Add(histList[7])
+other_hist.Add(histList[4])
+
 bkgUncHisto = histList[8]
 data_hist = histList[9]
 # combine 'other' bkg components into 'other' hist
 
 setStyle (zjets_hist, 2 , 3004, 1)
 setStyle (ttbar_hist, 4 , 3005, 1)
+#setStyle (vv_hist   , 4 , 3005, 1)
 setStyle (other_hist, 3 , 3006, 1)
 setStyle (qcd_hist  , 7 , 3013, 1)
-setStyle (sig_hist  , 28,    0, 3)
+setStyle (sig_hist  , 28,    2, 3)
+sig_hist.SetLineStyle(2)
 
 if not blind:
   setStyle (data_hist , 1 ,    0, 1)
@@ -158,6 +170,7 @@ if not blind:
 
 stack = r.THStack ("stack", "stack")
 stack.Add ( qcd_hist   )
+#stack.Add ( vv_hist    )
 stack.Add ( other_hist )
 stack.Add ( ttbar_hist )
 stack.Add ( zjets_hist )
@@ -170,6 +183,17 @@ stack.SetMinimum(0.1)
 bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
 
 stkSystErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
+
+for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
+    bkgUncHisto.SetBinError(ibin,bkgUncHisto.GetBinContent(ibin))
+    bkgUncHisto.SetBinContent(ibin,bkgTotalHist.GetBinContent(ibin))
+    #print 'set bkgUncHist bin:',ibin,'to',bkgUncHisto.GetBinContent(ibin),'with error:',bkgUncHisto.GetBinError(ibin)
+bkgUncHisto.SetMarkerStyle(0)
+bkgUncHisto.SetLineColor(0)
+bkgUncHisto.SetFillColor(kGray+2)
+bkgUncHisto.SetLineColor(kGray+2)
+bkgUncHisto.SetFillStyle(3001)
+bkgUncHisto.SetMarkerSize(0)
 
 stack.GetYaxis().SetTitle( "Events / bin" )
 stack.GetYaxis().CenterTitle()
@@ -215,6 +239,8 @@ stack.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
 pad1.SetLogy()
 pad1.Draw()
 
+bkgUncHisto.Draw("E2same")
+
 sig_hist.Draw("HIST SAME")
 ## convert to Poisson error bars
 ## check if we need to stop error bars before the end
@@ -224,6 +250,7 @@ sig_hist.Draw("HIST SAME")
 #  g = poissonErrGraph(data_hist,lastPopBin)
 #  #g.Draw("ZPSAME")
 #  g.Draw("ZP0SAME")
+data_hist.Draw('pesame')
 
 #if doSystErr:
 #  verbose=False
@@ -258,11 +285,12 @@ sig_hist.Draw("HIST SAME")
 
 #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
 #leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
-leg = r.TLegend(0.52,0.53,0.74,0.88,"","brNDC")
+leg = r.TLegend(0.56,0.53,0.75,0.88,"","brNDC")
 leg.SetTextFont(42)
 leg.SetFillColor(0)
 leg.SetBorderSize(0)
-leg.SetTextSize(.05)
+#leg.SetTextSize(.05)
+leg.SetTextSize(.04)
 if not blind:
   leg.AddEntry(data_hist ,"Data","lpe")
 if doEEJJ:
@@ -270,10 +298,10 @@ if doEEJJ:
 else:
   leg.AddEntry(zjets_hist,"W + jets","lf")
 leg.AddEntry(ttbar_hist,"t#bar{t}","lf")
-leg.AddEntry(other_hist,"Other background","lf")
 leg.AddEntry(qcd_hist  ,"Multijet","lf")
+leg.AddEntry(other_hist,"Other background","lf")
 if doSystErr:
-  leg.AddEntry(bkgUncHisto, 'Uncertainty band','f')
+  leg.AddEntry(bkgUncHisto, 'stat + syst uncertainty','f')
 if doEEJJ:
   beta = 1.0
 else:
@@ -298,22 +326,22 @@ l1.SetTextAlign(12)
 l1.SetTextFont(42)
 l1.SetNDC()
 l1.SetTextSize(0.06)
-l1.DrawLatex(0.675,0.965,lumiEnergyString)
+l1.DrawLatex(0.595,0.965,lumiEnergyString)
 
 l2 = r.TLatex()
 l2.SetTextAlign(12)
 l2.SetTextFont(62)
 l2.SetNDC()
-l2.SetTextSize(0.08)
+l2.SetTextSize(0.07)
 
 l3 = r.TLatex()
 l3.SetTextAlign(12)
 l3.SetTextFont(42)
 l3.SetNDC()
-l3.SetTextSize(0.08)
+l3.SetTextSize(0.07)
 if doPrelim:
-  l3.DrawLatex(0.25,0.83,"#it{Preliminary}")
-l2.DrawLatex(0.15,0.84,"CMS")
+  l3.DrawLatex(0.30,0.83,"#it{Preliminary}")
+l2.DrawLatex(0.19,0.84,"CMS")
 r.gPad.Update()
 
 
@@ -325,8 +353,8 @@ r.gPad.Update()
 #          rep = raw_input( 'enter "c" to continue: ' )
 #          if 1 < len(rep):
 #             rep = rep[0]
-# FOR TESTING
-#break
+## FOR TESTING
+##break
 
 print 'saving the canvas'
 canvas.SaveAs(save_name)
