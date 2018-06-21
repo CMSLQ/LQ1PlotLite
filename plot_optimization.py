@@ -63,13 +63,13 @@ def ParseTable(isEEJJ,tableFile,verbose=False):
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= True
+doEEJJ= False
 doPrelim = True
 
 if doEEJJ:
     tableFilePath = os.environ["LQANA"] + '/versionsOfAnalysis_eejj/nov24_muonVeto35GeV/opt/optThresholds.txt'
 else:
-    tableFilePath = os.environ["LQANA"] + '/versionsOfAnalysis_enujj/mar17/scaled/table_mar19.txt'
+    tableFilePath = os.environ["LQANA"] + '/versionsOfAnalysis_enujj/jan17/opt_jan19/optThresholds.log'
 
 
 lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
@@ -96,7 +96,7 @@ print 'Using table file:',tableFilePath
 histList = ParseTable(doEEJJ,tableFilePath)
 st_hist = histList[0]
 mej_hist = histList[1]
-mee_hist = histList[2]
+mee_hist = histList[2] # M_T for enujj
 if not doEEJJ:
     met_hist = histList[3]
 
@@ -107,8 +107,8 @@ mej_hist.SetMarkerColor(2)
 mee_hist.SetLineColor(4)
 mee_hist.SetMarkerColor(4)
 if not doEEJJ:
-    met_hist.SetLineColor(7)
-    met_hist.SetMarkerColor(7)
+    met_hist.SetLineColor(8)
+    met_hist.SetMarkerColor(8)
 for hist in histList:
     hist.SetLineWidth(2)
 
@@ -166,21 +166,27 @@ mee_hist.Draw('samelp')
 if not doEEJJ:
     met_hist.Draw('samelp')
 
-leg = r.TLegend(0.1867,0.545,0.338,0.760,"","brNDC")
+if doEEJJ:
+    leg = r.TLegend(0.1867,0.545,0.338,0.760,"","brNDC")
+else:
+    leg = r.TLegend(0.1854,0.5279,0.344,0.761,"","brNDC")
 leg.SetTextFont(42)
 leg.SetFillColor(0)
 leg.SetBorderSize(0)
 #leg.SetTextSize(.05)
 leg.SetTextSize(.04)
 if not doEEJJ:
-    leg.SetHeader()
+    leg.SetHeader('e#nujj')
 else:
     leg.SetHeader('eejj')
 leg.AddEntry(st_hist,"S_{T}","lp")
-leg.AddEntry(mej_hist  ,"M^{min}_{ej}","lp")
-leg.AddEntry(mee_hist,"M_{ee}","lp")
-if not doEEJJ:
-    leg.AddEntry(met_hist,"METFIXME","lp")
+if doEEJJ:
+    leg.AddEntry(mej_hist,"M^{min}_{ej}","lp")
+    leg.AddEntry(mee_hist,"M_{ee}","lp")
+else:
+    leg.AddEntry(mej_hist,"M^{min}_{ej}","lp")
+    leg.AddEntry(mee_hist,"M_{T}","lp")
+    leg.AddEntry(met_hist,"p^{miss}_{T}","lp")
 leg.Draw()
 
 canvas.RedrawAxis('G')
