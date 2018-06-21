@@ -56,15 +56,15 @@ def ParseTable(isEEJJ,tableFile,verbose=False):
 
 
 # set batch
-#r.gROOT.SetBatch()
+r.gROOT.SetBatch()
 
 
 ####################################################################################################
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= False
-doPrelim = True
+doEEJJ= True
+doPrelim = False
 
 if doEEJJ:
     tableFilePath = os.environ["LQANA"] + '/versionsOfAnalysis_eejj/nov24_muonVeto35GeV/opt/optThresholds.txt'
@@ -84,7 +84,7 @@ r.gStyle.SetOptStat(0)
 tdrstyle.setTDRStyle()
 
 r.gStyle.SetPadTopMargin(0.075);
-r.gStyle.SetPadBottomMargin(0.125)
+r.gStyle.SetPadBottomMargin(0.15)
 r.gStyle.SetPadLeftMargin(0.15)
 r.gStyle.SetPadRightMargin(0.1)
 #r.gStyle.SetPadTickX(0)
@@ -127,8 +127,8 @@ st_hist.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
 st_hist.GetXaxis().CenterTitle()
 st_hist.GetXaxis().SetTitleFont(42)
 st_hist.GetXaxis().SetLabelFont(42)
-st_hist.GetXaxis().SetLabelOffset(0.007)
-st_hist.GetXaxis().SetTitleOffset(0.92)
+st_hist.GetXaxis().SetLabelOffset(0.02)
+st_hist.GetXaxis().SetTitleOffset(1.0)
 st_hist.GetXaxis().SetLabelSize(0.05)
 st_hist.GetXaxis().SetTitleSize(0.06)
 st_hist.GetXaxis().CenterTitle(1)
@@ -156,7 +156,7 @@ pad1.Draw()
 #r.SetOwnership(pad1, False)
 pad1.cd()
 st_hist.Draw('lp')
-st_hist.GetYaxis().SetRangeUser(1e-1,st_hist.GetMaximum()*1.3)
+st_hist.GetYaxis().SetRangeUser(0,st_hist.GetMaximum()*1.3)
 st_hist.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
 pad1.Draw()
 
