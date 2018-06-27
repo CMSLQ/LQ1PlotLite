@@ -100,7 +100,7 @@ r.gROOT.SetBatch()
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
 doEEJJ = False
-doPrelim = True
+doPrelim = False
 doSystErr = True
 doRatio = True
 
@@ -297,6 +297,7 @@ for i_var, var in enumerate(vars):
     bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
 
     stkSystErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
+    stkSystStatErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
 
     stack.GetYaxis().SetTitle( "Events / bin" )
     stack.GetYaxis().CenterTitle()
@@ -373,21 +374,16 @@ for i_var, var in enumerate(vars):
 
     sig1_hist.Draw("HIST SAME")
     sig2_hist.Draw("HIST SAME")
-    # convert to Poisson error bars
-    # check if we need to stop error bars before the end
-    lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig1_hist,sig2_hist])
-    #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
-    g = poissonErrGraph(data_hist,lastPopBin)
-    #g.Draw("ZPSAME")
-    g.Draw("ZP0SAME")
-
     if doSystErr:
       bkgUncHisto = copy.deepcopy(stack.GetStack().Last())
       bkgUncHisto.Reset()
+      bkgUncHisto.SetNameTitle('bkgUncHisto','bkgUncHisto')
+      h_bkgUnc1 = copy.deepcopy(bkgUncHisto)
       for idx,hist in enumerate(stkSystErrHistos):
           syst = systs[idx]
           for ibin in xrange(0,hist.GetNbinsX()+2):
-              hist.SetBinError(ibin,syst*hist.GetBinContent(ibin))
+              #hist.SetBinError(ibin,syst*hist.GetBinContent(ibin))
+              hist.SetBinError(ibin,math.sqrt( (syst*hist.GetBinContent(ibin))**2+hist.GetBinError(ibin)**2 ))
               #print '[',hist.GetName(),'] set bin',ibin,'error to:',syst*hist.GetBinContent(ibin)
           bkgUncHisto.Add(hist)
       ##histoAll = copy.deepcopy(bkgTotalHist)
@@ -397,14 +393,22 @@ for i_var, var in enumerate(vars):
       #    bkgUncHisto.SetBinError(bin+1,self.bkgSyst*histoAll.GetBinContent(bin+1))
       bkgUncHisto.SetMarkerStyle(0)
       bkgUncHisto.SetLineColor(0)
-      bkgUncHisto.SetFillColor(kGray+2)
-      bkgUncHisto.SetLineColor(kGray+2)
+      bkgUncHisto.SetFillColor(kGray+1)
+      bkgUncHisto.SetLineColor(kGray+1)
       bkgUncHisto.SetFillStyle(3001)
       bkgUncHisto.SetMarkerSize(0)
       bkgUncHisto.Draw("E2same")
       #for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
       #    print '[',bkgUncHisto.GetName(),'] bin',ibin,'error is:',bkgUncHisto.GetBinError(ibin)
       
+    # convert to Poisson error bars
+    # check if we need to stop error bars before the end
+    lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig1_hist,sig2_hist])
+    #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
+    g = poissonErrGraph(data_hist,lastPopBin)
+    #g.Draw("ZPSAME")
+    g.Draw("ZP0SAME")
+
 
     #-- 2nd pad (ratio)
     if doRatio:
@@ -476,7 +480,7 @@ for i_var, var in enumerate(vars):
     
         h_ratio1.SetMarkerStyle ( 20 )
         h_ratio1.SetMarkerSize ( 1 )
-        h_ratio1.SetMarkerColor ( kBlue )
+        #h_ratio1.SetMarkerColor ( kBlue )
 
         # make bins with zero data have no marker ("empty" them)
         #h_ratio2 = copy.deepcopy(h_ratio1)
@@ -494,9 +498,35 @@ for i_var, var in enumerate(vars):
         ##h_ratio1.Draw("pe0")
 
         if doSystErr:
-            h_bkgUnc1 = copy.deepcopy(bkgUncHisto)
-            print 'doing h_ratioSyst.Divide()'
+            verbose=False
+            #h_bkgUnc1 = copy.deepcopy(bkgUncHisto)
+            #print 'doing h_ratioSyst.Divide()'
             h_ratioSyst.Divide(h_bkgUnc1) # just divide by the bkgTotal hist with the systs as errors
+            # need combined background hists with errors as sqrt[syst^2+stat^2]
+            for idx,hist in enumerate(stkSystStatErrHistos):
+                syst = systs[idx]
+                if verbose:
+                  print '[',hist.GetName(),']: look at systs['+str(idx)+']'
+                for ibin in xrange(0,hist.GetNbinsX()+2):
+                    if verbose:
+                        print '[',hist.GetName(),'] set bin with center',hist.GetBinCenter(ibin),'content:',hist.GetBinContent(ibin),'set error to:',syst*hist.GetBinError(ibin),'[syst] (+)',hist.GetBinError(ibin),'[stat]'
+                    hist.SetBinError(ibin,math.sqrt( (syst*hist.GetBinContent(ibin))**2+hist.GetBinError(ibin)**2 ))
+                h_bkgUnc1.Add(hist)
+            if verbose:
+              for ibin in xrange(0,h_bkgUnc1.GetNbinsX()+2):
+                  print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin)
+            # h_bkgUnc1 now has each bin's error set as SUM{sqrt[syst^2+stat^2]}; h_ratioSyst --> dataHist
+            # where there's no data, set it to the background pred. so we get the division done in those bins
+            for ibin in range(0,h_ratioSyst.GetNbinsX()+1):
+                if h_ratioSyst.GetBinContent(ibin) <= 0:
+                    h_ratioSyst.SetBinContent(ibin,h_bkgTot1.GetBinContent(ibin))
+            # for the bkg uncert, we don't want any errors coming from the data
+            for ibin in range(0,h_ratioSyst.GetNbinsX()+1):
+                h_ratioSyst.SetBinError(ibin,0)
+                if verbose:
+                    print 'ratio hist bin with center:',h_ratioSyst.GetBinCenter(ibin),'binError=',h_ratioSyst.GetBinError(ibin)
+            # now just divide the error-free data by the bkgTotal hist with the stat/syst as the errors
+            h_ratioSyst.Divide(h_bkgUnc1)
             bgRatioErrs = h_ratioSyst
             # set bin contents to 1
             for binn in range(0,bgRatioErrs.GetNbinsX()+1):
