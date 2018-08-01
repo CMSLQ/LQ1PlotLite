@@ -99,8 +99,8 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ = False
-doPrelim = False
+doEEJJ = True
+doPrelim = True
 doSystErr = True
 doRatio = True
 
@@ -124,7 +124,7 @@ x_labelsEEJJ = [
     "p_{T} (e_{2}) [GeV]",
     "p_{T} (jet_{1}) [GeV]",
     "p_{T} (jet_{2}) [GeV]",
-    "S_{T}^{eejj} [GeV]",
+    "S_{T} [GeV]",
     "M_{ej}^{min} [GeV]",
     "M_{ee} [GeV]"
 ]
@@ -147,7 +147,7 @@ varsENUJJ     = [
 ] 
 
 x_labelsENUJJ = [ 
-    "S_{T}^{e#nujj} [GeV]",
+    "S_{T} [GeV]",
     "M_{ej} [GeV]",
     "M_{T} [GeV]",
     "#it{p}_{T}^{miss} [GeV]"
@@ -304,7 +304,7 @@ for i_var, var in enumerate(vars):
     stack.GetYaxis().SetTitleFont(42)
     stack.GetYaxis().SetLabelFont(42)
     stack.GetYaxis().SetLabelOffset(0.007)
-    stack.GetYaxis().SetLabelSize(0.05)
+    stack.GetYaxis().SetLabelSize(0.09)
     stack.GetYaxis().SetTitleOffset(0.92)
     stack.GetYaxis().SetTitleSize(0.06)
     stack.GetYaxis().CenterTitle(1)
@@ -316,8 +316,8 @@ for i_var, var in enumerate(vars):
       stack.GetXaxis().SetLabelFont(42)
       stack.GetXaxis().SetLabelOffset(0.007)
       stack.GetXaxis().SetTitleOffset(0.92)
-      stack.GetXaxis().SetLabelSize(0.05)
-      stack.GetXaxis().SetTitleSize(0.06)
+      stack.GetXaxis().SetLabelSize(0.09)
+      stack.GetXaxis().SetTitleSize(0.09)
       stack.GetXaxis().CenterTitle(1)
     else:
       stack.GetXaxis().SetLabelSize(0)
@@ -476,7 +476,8 @@ for i_var, var in enumerate(vars):
         #h_ratio1.GetYaxis().SetTitleOffset(0.3)
         #h_ratio1.GetXaxis().CenterTitle()
         #h_ratio1.GetXaxis().CenterTitle(1)
-        pad2.SetBottomMargin(0.37)
+        #pad2.SetBottomMargin(0.37)
+        pad2.SetBottomMargin(0.5)
     
         h_ratio1.SetMarkerStyle ( 20 )
         h_ratio1.SetMarkerSize ( 1 )
@@ -559,9 +560,9 @@ for i_var, var in enumerate(vars):
             bgRatioErrs.GetXaxis().SetTitleFont(42)
             bgRatioErrs.GetXaxis().SetLabelFont(42)
             bgRatioErrs.GetXaxis().SetLabelOffset(0.025)
-            bgRatioErrs.GetXaxis().SetTitleOffset(1.1)
+            bgRatioErrs.GetXaxis().SetTitleOffset(0.8)
             bgRatioErrs.GetXaxis().SetLabelSize(0.15)
-            bgRatioErrs.GetXaxis().SetTitleSize(0.15)
+            bgRatioErrs.GetXaxis().SetTitleSize(0.25)
             bgRatioErrs.Draw('E2')
             #h_ratio1.Draw("pe0same")
 
