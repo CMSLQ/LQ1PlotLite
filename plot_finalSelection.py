@@ -155,7 +155,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= False
+doEEJJ= True
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -168,13 +168,13 @@ mass_colors = [ 28, 38 ]
 varsEEJJ     = [ 
     "sT_eejj",
     "Mej_selected_min",
-    "Meejj"
+    #"Meejj"
 ] 
 
 x_labelsEEJJ = [ 
-    "S_{T}^{eejj} [GeV]",
+    "S_{T} [GeV]",
     "M_{ej}^{min} [GeV]",
-    "M_{eejj} [GeV]"
+    #"M_{eejj} [GeV]"
 ]
 
 x_binsEEJJ = [ 
@@ -189,7 +189,7 @@ varsENUJJ     = [
 ] 
 
 x_labelsENUJJ = [ 
-    "S_{T}^{e#nujj} [GeV]",
+    "S_{T} [GeV]",
     "M_{ej} [GeV]",
 ]
 
@@ -518,7 +518,8 @@ for i_mass, mass in enumerate(masses):
         #h_bkgTot1 = TH1F()
         #h_ratio1 = TH1F()
         #h_nsigma1 = TH1F()
-        h_bkgTot1 = h_bkgTot
+        #h_bkgTot1 = h_bkgTot
+        h_bkgTot1 = bkgUncHisto # for ratio, divide using bkgTot with error=sqrt[stat^2+syst^2]
         h_ratio1 = h_ratio
         h_nsigma1 = h_nsigma
         h_ratioSyst = copy.deepcopy(h_ratio1)
@@ -627,6 +628,11 @@ for i_mass, mass in enumerate(masses):
                 h_ratioSyst.SetBinError(ibin,0)
                 if verbose:
                     print 'ratio hist bin with center:',h_ratioSyst.GetBinCenter(ibin),'binError=',h_ratioSyst.GetBinError(ibin)
+            if verbose:
+                # manual calc
+                for binn in range(0,h_ratioSyst.GetNbinsX()+1):
+                    if h_bkgUnc1.GetBinContent(binn) != 0:
+                        print '[manual] bin with center:',h_ratioSyst.GetBinCenter(binn),'binError=',(h_bkgUnc1.GetBinContent(binn)*h_ratioSyst.GetBinError(binn)-h_ratioSyst.GetBinContent(binn)*h_bkgUnc1.GetBinError(binn))/h_bkgUnc1.GetBinContent(binn)**2
             # now just divide the error-free data by the bkgTotal hist with the stat/syst as the errors
             h_ratioSyst.Divide(h_bkgUnc1)
             bgRatioErrs = h_ratioSyst
@@ -634,7 +640,11 @@ for i_mass, mass in enumerate(masses):
             for binn in range(0,bgRatioErrs.GetNbinsX()+1):
                 bgRatioErrs.SetBinContent(binn,1.0)
                 if verbose:
-                    print 'ratio hist bin with center:',bgRatioErrs.GetBinCenter(binn),'binError=',bgRatioErrs.GetBinError(binn)
+                    print 'bgRatioErrs bin with center:',bgRatioErrs.GetBinCenter(binn),'bgRatioErrs binError=',bgRatioErrs.GetBinError(binn)
+            if verbose:
+                for binn in range(0,data_hist.GetNbinsX()+1):
+                    print 'data bin with center:',data_hist.GetBinCenter(binn),'content=',data_hist.GetBinContent(binn),'error=',data_hist.GetBinError(binn)
+
             bgRatioErrs.SetFillColor(kGray+1)
             bgRatioErrs.SetLineColor(kGray+1)
             bgRatioErrs.SetFillStyle(3001)
