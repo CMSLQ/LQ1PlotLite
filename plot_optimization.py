@@ -63,7 +63,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= True
+doEEJJ= False
 doPrelim = False
 
 if doEEJJ:
@@ -167,18 +167,22 @@ if not doEEJJ:
     met_hist.Draw('samelp')
 
 if doEEJJ:
-    leg = r.TLegend(0.1867,0.545,0.338,0.760,"","brNDC")
+    leg = r.TLegend(0.1867,0.5,0.4,0.78,"","brNDC")
 else:
-    leg = r.TLegend(0.1854,0.5279,0.344,0.761,"","brNDC")
+    leg = r.TLegend(0.1867,0.47,0.4,0.8,"","brNDC")
 leg.SetTextFont(42)
 leg.SetFillColor(0)
+leg.SetFillStyle(0)
 leg.SetBorderSize(0)
 #leg.SetTextSize(.05)
-leg.SetTextSize(.04)
+leg.SetTextSize(.06)
 if not doEEJJ:
     leg.SetHeader('e#nujj')
 else:
     leg.SetHeader('eejj')
+header = leg.GetListOfPrimitives().First()
+header.SetTextFont(42)
+header.SetTextSize(0.06)
 leg.AddEntry(st_hist,"S_{T}","lp")
 if doEEJJ:
     leg.AddEntry(mej_hist,"M^{min}_{ej}","lp")
