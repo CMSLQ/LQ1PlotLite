@@ -390,7 +390,7 @@ for i_mass, mass in enumerate(masses):
 
     stkSystErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
     stkSystStatErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
-  
+
     stack.GetYaxis().SetTitle( "Events / bin" )
     stack.GetYaxis().CenterTitle()
     stack.GetYaxis().SetTitleFont(42)
@@ -416,7 +416,7 @@ for i_mass, mass in enumerate(masses):
       stack.GetXaxis().SetLabelOffset(0)
       stack.GetXaxis().SetTitleSize(0)
       stack.GetXaxis().SetTitleOffset(0)
-  
+
     ## reduce x-axis labels for Mej plot
     #if 'Mej' in var:
     #  stack.GetXaxis().SetNdivisions(507)
@@ -438,7 +438,7 @@ for i_mass, mass in enumerate(masses):
     #canvas.SetLogy()
     #stack.Draw("HIST")
     ## WORKS
-  
+
     canvas = r.TCanvas(canv_name,canv_name,800,600)
     canvas.cd()
     if not doRatio:
@@ -454,7 +454,7 @@ for i_mass, mass in enumerate(masses):
         #r.SetOwnership(pad2, False)
         pad1.Draw()
         pad2.Draw()
-  
+
     #r.SetOwnership(pad1, False)
     pad1.cd()
     stack.Draw('hist')
@@ -463,7 +463,7 @@ for i_mass, mass in enumerate(masses):
     #canvas.SetLogy()
     pad1.SetLogy()
     pad1.Draw()
-  
+
     sig_hist.Draw("HIST SAME")
   
     if doSystErr:
@@ -524,7 +524,7 @@ for i_mass, mass in enumerate(masses):
         h_ratio1 = TGraphAsymmErrors()
         h_nsigma1 = h_nsigma
         h_ratioSyst = copy.deepcopy(h_ratio)
-  
+
         pad2.cd()
         # fPads2.SetLogy()
         pad2.SetGridy()
@@ -678,7 +678,7 @@ for i_mass, mass in enumerate(masses):
       beta = 0.5
     leg.AddEntry(sig_hist  ,"LQ, M = "+str(mass)+" GeV, #beta = "+str(beta),"l")
     leg.Draw()
-  
+
     canvas.RedrawAxis('G')
     canvas.RedrawAxis()
     canvas.Modified()
@@ -713,8 +713,8 @@ for i_mass, mass in enumerate(masses):
       l3.DrawLatex(0.25,0.83,"#it{Preliminary}")
     l2.DrawLatex(0.15,0.84,"CMS")
     r.gPad.Update()
-  
-  
+
+
     #if not r.gROOT.IsBatch():
     #    ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
     #    if __name__ == '__main__':
@@ -725,7 +725,7 @@ for i_mass, mass in enumerate(masses):
     #             rep = rep[0]
     # FOR TESTING
     #break
-  
+
     print 'saving the canvas'
     canvas.SaveAs(save_name)
     canvas.SaveAs(save_name_png)

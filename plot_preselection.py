@@ -3,7 +3,7 @@
 from plot_common import *
 import tdrstyle
 import math
-from ROOT import kOrange, kGray, kBlue, TGraphAsymmErrors
+from ROOT import kOrange, kGray, kBlue, TH1F, TGraphAsymmErrors, Double
 
 
 def GetBackgroundSyst(systType, isEEJJ=True):
@@ -100,7 +100,7 @@ r.gROOT.SetBatch()
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
 doEEJJ = True
-doPrelim = True
+doPrelim = False
 doSystErr = True
 doRatio = True
 
@@ -293,7 +293,7 @@ for i_var, var in enumerate(vars):
       stack.SetMaximum(200000)
     else:
       stack.SetMaximum(20000000);
-    stack.SetMinimum(0.1)
+    stack.SetMinimum(1e-1)
     bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
 
     stkSystErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
@@ -304,7 +304,7 @@ for i_var, var in enumerate(vars):
     stack.GetYaxis().SetTitleFont(42)
     stack.GetYaxis().SetLabelFont(42)
     stack.GetYaxis().SetLabelOffset(0.007)
-    stack.GetYaxis().SetLabelSize(0.09)
+    stack.GetYaxis().SetLabelSize(0.05)
     stack.GetYaxis().SetTitleOffset(0.92)
     stack.GetYaxis().SetTitleSize(0.06)
     stack.GetYaxis().CenterTitle(1)
@@ -316,8 +316,8 @@ for i_var, var in enumerate(vars):
       stack.GetXaxis().SetLabelFont(42)
       stack.GetXaxis().SetLabelOffset(0.007)
       stack.GetXaxis().SetTitleOffset(0.92)
-      stack.GetXaxis().SetLabelSize(0.09)
-      stack.GetXaxis().SetTitleSize(0.09)
+      stack.GetXaxis().SetLabelSize(0.05)
+      stack.GetXaxis().SetTitleSize(0.06)
       stack.GetXaxis().CenterTitle(1)
     else:
       stack.GetXaxis().SetLabelSize(0)
@@ -420,30 +420,14 @@ for i_var, var in enumerate(vars):
         #h_bkgTot1 = TH1F()
         #h_ratio1 = TH1F()
         #h_nsigma1 = TH1F()
-        h_bkgTot1 = h_bkgTot
-        h_ratio1 = h_ratio
+        #h_bkgTot1 = h_bkgTot
+        h_bkgTot1 = bkgUncHisto # for ratio, divide using bkgTot with error=sqrt[stat^2+syst^2]
+        #h_ratio1 = h_ratio
+        h_ratio1 = TGraphAsymmErrors()
         h_nsigma1 = h_nsigma
-        h_ratioSyst = copy.deepcopy(h_ratio1)
+        h_ratioSyst = copy.deepcopy(h_ratio)
 
-        #if( self.xbins!="" and self.rebin!="var" ): ## Variable binning
-        #    xbinsFinal = array( 'd', self.xbins )
-        #    length = len(xbinsFinal)-1
-        #    h_bkgTot1 = h_bkgTot.Rebin( length , "h_bkgTot1", xbinsFinal)
-        #    h_ratio1 = h_ratio.Rebin( length , "h_ratio1" , xbinsFinal)
-        #    h_nsigma1 = h_nsigma.Rebin( length, "h_nsigma1", xbinsFinal)
-        #else:
-        #    h_bkgTot1 = h_bkgTot
-        #    h_ratio1 = h_ratio
-        #    h_nsigma1 = h_nsigma
-
-        #h_ratio1.SetStats(0)
-
-        #if( self.xmin!="" and self.xmax!="" and self.rebin!="var" ):
-        #h_bkgTot1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
-        #h_ratio1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
-        #h_nsigma1.GetXaxis().SetRangeUser(self.xmin,self.xmax-0.000001)
-
-        #pad2.cd()
+        pad2.cd()
         # fPads2.SetLogy()
         pad2.SetGridy()
         #h_ratio1.Divide(h_bkgTot1)
@@ -500,9 +484,6 @@ for i_var, var in enumerate(vars):
 
         if doSystErr:
             verbose=False
-            #h_bkgUnc1 = copy.deepcopy(bkgUncHisto)
-            #print 'doing h_ratioSyst.Divide()'
-            h_ratioSyst.Divide(h_bkgUnc1) # just divide by the bkgTotal hist with the systs as errors
             # need combined background hists with errors as sqrt[syst^2+stat^2]
             for idx,hist in enumerate(stkSystStatErrHistos):
                 syst = systs[idx]
@@ -516,23 +497,16 @@ for i_var, var in enumerate(vars):
             if verbose:
               for ibin in xrange(0,h_bkgUnc1.GetNbinsX()+2):
                   print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin)
-            # h_bkgUnc1 now has each bin's error set as SUM{sqrt[syst^2+stat^2]}; h_ratioSyst --> dataHist
-            # where there's no data, set it to the background pred. so we get the division done in those bins
-            for ibin in range(0,h_ratioSyst.GetNbinsX()+1):
-                if h_ratioSyst.GetBinContent(ibin) <= 0:
-                    h_ratioSyst.SetBinContent(ibin,h_bkgTot1.GetBinContent(ibin))
-            # for the bkg uncert, we don't want any errors coming from the data
-            for ibin in range(0,h_ratioSyst.GetNbinsX()+1):
-                h_ratioSyst.SetBinError(ibin,0)
-                if verbose:
-                    print 'ratio hist bin with center:',h_ratioSyst.GetBinCenter(ibin),'binError=',h_ratioSyst.GetBinError(ibin)
-            # now just divide the error-free data by the bkgTotal hist with the stat/syst as the errors
-            h_ratioSyst.Divide(h_bkgUnc1)
-            bgRatioErrs = h_ratioSyst
-            # set bin contents to 1
-            for binn in range(0,bgRatioErrs.GetNbinsX()+1):
-                bgRatioErrs.SetBinContent(binn,1.0)
-                #print 'ratio hist bin:',binn,'binError=',bgRatioErrs.GetBinError(binn)
+
+            # set bin error to the relative error on the background
+            for ibin in xrange(0,h_bkgUnc1.GetNbinsX()+2):
+                #print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin)
+                if h_bkgUnc1.GetBinContent(ibin) != 0:
+                    print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin),'relative error=',h_bkgUnc1.GetBinError(ibin)/h_bkgUnc1.GetBinContent(ibin)
+                    h_bkgUnc1.SetBinError(ibin,h_bkgUnc1.GetBinError(ibin)/h_bkgUnc1.GetBinContent(ibin))
+                h_bkgUnc1.SetBinContent(ibin,1.0)
+            bgRatioErrs = h_bkgUnc1
+
             bgRatioErrs.SetFillColor(kGray+1)
             bgRatioErrs.SetLineColor(kGray+1)
             bgRatioErrs.SetFillStyle(3001)
@@ -564,7 +538,12 @@ for i_var, var in enumerate(vars):
             bgRatioErrs.GetXaxis().SetLabelSize(0.15)
             bgRatioErrs.GetXaxis().SetTitleSize(0.25)
             bgRatioErrs.Draw('E2')
-            #h_ratio1.Draw("pe0same")
+            #bgRatioErrs.Draw('3')
+            #h_ratio1.Draw("e0psame")
+            # below is for th1f
+            #h_ratio1.Draw("e0same")
+            h_ratio1.Draw("pz0same")
+            bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
 
             ## need to make hist with "1" in all bins
             #bgRatioErrs = h_ratio1.Clone()
@@ -651,7 +630,7 @@ for i_var, var in enumerate(vars):
     l2.SetTextFont(62)
     l2.SetNDC()
     l2.SetTextSize(0.08)
-    
+
     l3 = r.TLatex()
     l3.SetTextAlign(12)
     l3.SetTextFont(42)
