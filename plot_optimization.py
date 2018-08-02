@@ -169,7 +169,7 @@ if not doEEJJ:
 if doEEJJ:
     leg = r.TLegend(0.1867,0.5,0.4,0.78,"","brNDC")
 else:
-    leg = r.TLegend(0.1867,0.47,0.4,0.8,"","brNDC")
+    leg = r.TLegend(0.175,0.47,0.38,0.8,"","brNDC")
 leg.SetTextFont(42)
 leg.SetFillColor(0)
 leg.SetFillStyle(0)
