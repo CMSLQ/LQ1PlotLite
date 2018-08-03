@@ -3,7 +3,7 @@
 from plot_common import *
 import tdrstyle
 import math
-from ROOT import kOrange, kGray, kBlue, TH1F
+from ROOT import kOrange, kGray, kBlue, TH1F, TGraphAsymmErrors
 
 
 ## return lists of masses, vjets, ttbar, qcd, vv, other, data
@@ -106,8 +106,8 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= False
-doPrelim = True
+doEEJJ= True
+doPrelim = False
 doSystErr = True
 doRatio = True
 blind = False
@@ -130,7 +130,7 @@ r.gStyle.SetOptStat(0)
 tdrstyle.setTDRStyle()
 
 r.gStyle.SetPadTopMargin(0.075);
-r.gStyle.SetPadBottomMargin(0.125)
+r.gStyle.SetPadBottomMargin(0.02)
 r.gStyle.SetPadLeftMargin(0.12)
 r.gStyle.SetPadRightMargin(0.1)
 #r.gStyle.SetPadTickX(0)
@@ -176,24 +176,13 @@ stack.Add ( ttbar_hist )
 stack.Add ( zjets_hist )
 stack.Draw()
 if doEEJJ:
-  stack.SetMaximum(200000)
+  stack.SetMaximum(2000000)
 else:
   stack.SetMaximum(20000000);
 stack.SetMinimum(0.1)
 bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
 
 stkSystErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
-
-for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
-    bkgUncHisto.SetBinError(ibin,bkgUncHisto.GetBinContent(ibin))
-    bkgUncHisto.SetBinContent(ibin,bkgTotalHist.GetBinContent(ibin))
-    #print 'set bkgUncHist bin:',ibin,'to',bkgUncHisto.GetBinContent(ibin),'with error:',bkgUncHisto.GetBinError(ibin)
-bkgUncHisto.SetMarkerStyle(0)
-bkgUncHisto.SetLineColor(0)
-bkgUncHisto.SetFillColor(kGray+2)
-bkgUncHisto.SetLineColor(kGray+2)
-bkgUncHisto.SetFillStyle(3001)
-bkgUncHisto.SetMarkerSize(0)
 
 stack.GetYaxis().SetTitle( "Events / bin" )
 stack.GetYaxis().CenterTitle()
@@ -205,15 +194,22 @@ stack.GetYaxis().SetTitleOffset(0.92)
 stack.GetYaxis().SetTitleSize(0.06)
 stack.GetYaxis().CenterTitle(1)
 
-stack.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
-stack.GetXaxis().CenterTitle()
-stack.GetXaxis().SetTitleFont(42)
-stack.GetXaxis().SetLabelFont(42)
-stack.GetXaxis().SetLabelOffset(0.007)
-stack.GetXaxis().SetTitleOffset(0.92)
-stack.GetXaxis().SetLabelSize(0.05)
-stack.GetXaxis().SetTitleSize(0.06)
-stack.GetXaxis().CenterTitle(1)
+if not doRatio:
+    stack.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
+    stack.GetXaxis().CenterTitle()
+    stack.GetXaxis().SetTitleFont(42)
+    stack.GetXaxis().SetLabelFont(42)
+    stack.GetXaxis().SetLabelOffset(0.007)
+    stack.GetXaxis().SetTitleOffset(0.92)
+    stack.GetXaxis().SetLabelSize(0.05)
+    stack.GetXaxis().SetTitleSize(0.06)
+    stack.GetXaxis().CenterTitle(1)
+else:
+    stack.GetXaxis().SetLabelSize(0)
+    stack.GetXaxis().SetLabelOffset(0)
+    stack.GetXaxis().SetTitleSize(0)
+    stack.GetXaxis().SetTitleOffset(0)
+
 
 canv_name = "eventYield_LQ" + "FinalSelections" + "_canv"
 pad_name  = "eventYield_LQ" + "FinalSelections" + "_pad"
@@ -227,60 +223,205 @@ save_name_png = save_name.replace('.pdf','.png')
 
 canvas = r.TCanvas(canv_name,canv_name,800,600)
 canvas.cd()
-pad1  = r.TPad( pad_name+"1", pad_name+"1" , 0.0, 0.0, 1.0, 1.0 )
-pad1.Draw()
+#pad1  = r.TPad( pad_name+"1", pad_name+"1" , 0.0, 0.0, 1.0, 1.0 )
+#pad1.Draw()
+#
+##r.SetOwnership(pad1, False)
+#pad1.cd()
+#stack.Draw('hist')
+#stack.GetYaxis().SetRangeUser(1e-1,stack.GetMaximum()*1.1)
+#stack.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
+##canvas.SetLogy()
+#pad1.SetLogy()
+#pad1.Draw()
+if not doRatio:
+    pad1  = r.TPad( pad_name+"1", pad_name+"1" , 0.0, 0.0, 1.0, 1.0 )
+    pad1.Draw()
+else:
+    pad1 = r.TPad(pad_name+"1", pad_name+"1", 0.00, 0.275, 0.99, 0.99)
+    pad2 = r.TPad(pad_name+"2", pad_name+"2", 0.00, 0.00, 0.99, 0.275)
+    pad1.SetFillColor(0)
+    pad1.SetLineColor(0)
+    pad2.SetFillColor(0)
+    pad2.SetLineColor(0)
+    #r.SetOwnership(pad2, False)
+    pad1.Draw()
+    pad2.Draw()
 
-#r.SetOwnership(pad1, False)
 pad1.cd()
 stack.Draw('hist')
 stack.GetYaxis().SetRangeUser(1e-1,stack.GetMaximum()*1.1)
-stack.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
+#stack.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
 #canvas.SetLogy()
 pad1.SetLogy()
 pad1.Draw()
 
-bkgUncHisto.Draw("E2same")
-
 sig_hist.Draw("HIST SAME")
-## convert to Poisson error bars
-## check if we need to stop error bars before the end
-#if not blind:
-#  lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig_hist])
-#  #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
-#  g = poissonErrGraph(data_hist,lastPopBin)
-#  #g.Draw("ZPSAME")
-#  g.Draw("ZP0SAME")
-data_hist.Draw('pesame')
 
-#if doSystErr:
-#  verbose=False
-#  bkgUncHisto = copy.deepcopy(stack.GetStack().Last())
-#  bkgUncHisto.Reset()
-#  bkgUncHisto.SetNameTitle('bkgUncHisto','bkgUncHisto')
-#  for idx,hist in enumerate(stkSystErrHistos):
-#      syst = systs[idx]
-#      if verbose:
-#        print '[',hist.GetName(),']: look at systs['+str(idx)+']'
-#      for ibin in xrange(0,hist.GetNbinsX()+2):
-#          hist.SetBinError(ibin,syst*hist.GetBinContent(ibin))
-#          if verbose:
-#            print '[',hist.GetName(),'] set bin with center',hist.GetBinCenter(ibin),'error to:',syst*hist.GetBinContent(ibin)
-#      bkgUncHisto.Add(hist)
-#  ##histoAll = copy.deepcopy(bkgTotalHist)
-#  #histoAll = thStack.GetStack().Last()
-#  #bkgUncHisto = copy.deepcopy(histoAll)
-#  #for bin in range(0,histoAll.GetNbinsX()):
-#  #    bkgUncHisto.SetBinError(bin+1,self.bkgSyst*histoAll.GetBinContent(bin+1))
-#  bkgUncHisto.SetMarkerStyle(0)
-#  bkgUncHisto.SetLineColor(0)
-#  bkgUncHisto.SetFillColor(kGray+2)
-#  bkgUncHisto.SetLineColor(kGray+2)
-#  bkgUncHisto.SetFillStyle(3001)
-#  bkgUncHisto.SetMarkerSize(0)
-#  bkgUncHisto.Draw("E2same")
-#  if verbose:
-#    for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
-#        print '[',bkgUncHisto.GetName(),'] bin with center',bkgUncHisto.GetBinCenter(ibin),'error is:',bkgUncHisto.GetBinError(ibin)
+if doSystErr:
+    for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
+        bkgUncHisto.SetBinError(ibin,bkgUncHisto.GetBinContent(ibin))
+        bkgUncHisto.SetBinContent(ibin,bkgTotalHist.GetBinContent(ibin))
+        print 'set bkgUncHist bin:',ibin,'to',bkgUncHisto.GetBinContent(ibin),'with error:',bkgUncHisto.GetBinError(ibin)
+        if bkgUncHisto.GetBinContent(ibin) == 0:
+            bkgUncHisto.SetBinContent(ibin,1e-10)
+            bkgUncHisto.SetBinError(ibin,1e-10)
+    bkgUncHisto.SetMarkerStyle(0)
+    bkgUncHisto.SetLineColor(0)
+    bkgUncHisto.SetFillColor(kGray+2)
+    bkgUncHisto.SetLineColor(kGray+2)
+    bkgUncHisto.SetFillStyle(3001)
+    bkgUncHisto.SetMarkerSize(0)
+    bkgUncHisto.SetMinimum(0.1)
+    bkgUncHisto.SetMaximum(stack.GetMaximum())
+    #bkgUncHisto.GetYaxis().SetRangeUser(1e-1,stack.GetMaximum()*1.1)
+    bkgUncHisto.Draw("E2same")
+
+# convert to Poisson error bars
+# check if we need to stop error bars before the end
+if not blind:
+    lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig_hist])
+    #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
+    g = poissonErrGraph(data_hist,lastPopBin)
+    #g.Draw("ZPSAME")
+    g.Draw("ZP0SAME")
+#data_hist.Draw('pesame')
+
+#-- 2nd pad (ratio)
+if doRatio:
+    if blind:
+        print 'ERROR: cannot do data/background ratio when blinded...'
+        exit(-1)
+    h_bkgTot = copy.deepcopy(bkgTotalHist)
+    h_ratio = copy.deepcopy(data_hist)
+    h_nsigma = copy.deepcopy(data_hist)
+    #h_bkgTot1 = TH1F()
+    #h_ratio1 = TH1F()
+    #h_nsigma1 = TH1F()
+    #h_bkgTot1 = h_bkgTot
+    h_bkgTot1 = bkgUncHisto # for ratio, divide using bkgTot with error=sqrt[stat^2+syst^2]
+    #h_ratio1 = h_ratio
+    h_ratio1 = TGraphAsymmErrors()
+    h_nsigma1 = h_nsigma
+    h_ratioSyst = copy.deepcopy(h_ratio)
+
+    pad2.cd()
+    # fPads2.SetLogy()
+    pad2.SetGridy()
+    
+    h_ratio1.Divide(h_ratio,h_bkgTot1,'pois')
+
+    # this part resets bin error/content to -1 if the ratio is zero or negative for some reason so that the point in such a bin isn't drawn
+    #oldRatioHist = copy.deepcopy(h_ratio1)
+    #h_ratio1.Delete()
+    #del h_ratio1
+    ##h_ratio1.Reset()
+    #h_ratio1 = TH1F('ratio','ratio',oldRatioHist.GetNbinsX(),oldRatioHist.GetXaxis().GetXbins().GetArray())
+    #for ibin in range(0,oldRatioHist.GetNbinsX()+1):
+    #    oldBinContent = oldRatioHist.GetBinContent(ibin)
+    #    if oldBinContent > 0:
+    #        #print '1) set bin content for bin:',ibin,'to:',oldBinContent
+    #        h_ratio1.SetBinContent(ibin,oldBinContent)
+    #        h_ratio1.SetBinError(ibin,oldRatioHist.GetBinError(ibin))
+    #    #elif h_bkgTot1.GetBinContent(ibin) > 0:
+    #    #    print '2) set bin content for bin:',ibin,'to:',oldBinContent
+    #    #    h_ratio1.SetBinContent(ibin,oldBinContent)
+    #    #    h_ratio1.SetBinError(ibin,oldRatioHist.GetBinError(ibin))
+    #    else:
+    #        #print '3) set bin content for bin:',ibin,'to -1'
+    #        h_ratio1.SetBinContent(ibin,-1)
+    #        h_ratio1.SetBinError(ibin,-1)
+
+    #h_ratio1.GetXaxis().SetTitle("")
+    #h_ratio1.GetXaxis().SetTitleSize(0.06)
+    #h_ratio1.GetXaxis().SetLabelSize(0.1)
+    #h_ratio1.GetYaxis().SetRangeUser(0.,2)
+    #h_ratio1.GetYaxis().SetTitle("Data/MC")
+    #h_ratio1.GetYaxis().SetLabelSize(0.1)
+    #h_ratio1.GetYaxis().SetTitleSize(0.13)
+    #h_ratio1.GetYaxis().SetTitleOffset(0.3)
+    h_ratio1.GetYaxis().SetTitle( "data / MC" )
+    h_ratio1.GetYaxis().SetTitleFont(42)
+    h_ratio1.GetYaxis().SetLabelFont(42)
+    h_ratio1.GetYaxis().SetLabelOffset(0.007)
+    h_ratio1.GetYaxis().SetLabelSize(0.12)
+    h_ratio1.GetYaxis().SetTitleOffset(0.3)
+    h_ratio1.GetYaxis().SetTitleSize(0.12)
+    h_ratio1.GetYaxis().CenterTitle()
+    h_ratio1.GetYaxis().CenterTitle(1)
+    h_ratio1.GetYaxis().SetNdivisions(405)
+
+    h_ratio1.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
+    h_ratio1.GetXaxis().SetTitleFont(42)
+    h_ratio1.GetXaxis().SetLabelFont(42)
+    h_ratio1.GetXaxis().SetLabelOffset(0.025)
+    h_ratio1.GetXaxis().SetTitleOffset(1.1)
+    h_ratio1.GetXaxis().SetLabelSize(0.15)
+    h_ratio1.GetXaxis().SetTitleSize(0.15)
+    #h_ratio1.GetXaxis().CenterTitle()
+    #h_ratio1.GetXaxis().CenterTitle(1)
+    pad2.SetBottomMargin(0.37)
+
+    h_ratio1.SetMarkerStyle ( 20 )
+    h_ratio1.SetMarkerSize ( 1 )
+    h_ratio1.SetMarkerColor ( 1 )
+    #h_ratio1.SetMarkerColor ( kBlue )
+
+    #h_ratio1.Draw("e0")
+    # used for th1f
+    #h_ratio1.Draw('p')
+    h_ratio1.Draw('z0')
+
+    if doSystErr:
+        h_bkgUnc1 = copy.deepcopy(bkgUncHisto)
+        # set bin error to the relative error on the background
+        for ibin in xrange(0,h_bkgUnc1.GetNbinsX()+2):
+            #print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin)
+            if h_bkgUnc1.GetBinContent(ibin) != 0:
+                print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin),'relative error=',h_bkgUnc1.GetBinError(ibin)/h_bkgUnc1.GetBinContent(ibin)
+                h_bkgUnc1.SetBinError(ibin,h_bkgUnc1.GetBinError(ibin)/h_bkgUnc1.GetBinContent(ibin))
+            h_bkgUnc1.SetBinContent(ibin,1.0)
+        bgRatioErrs = h_bkgUnc1
+
+        bgRatioErrs.SetFillColor(kGray+1)
+        bgRatioErrs.SetLineColor(kGray+1)
+        bgRatioErrs.SetFillStyle(3001)
+        #bgRatioErrs.SetFillStyle(3018)
+        #bgRatioErrs.SetFillStyle(3013)
+        #bgRatioErrs.SetMarkerSize(1.1)
+        bgRatioErrs.SetMarkerSize(0)
+        #bgRatioErrs.SetLineColor(kOrange)
+        #bgRatioErrs.SetLineWidth(3)
+        #bgRatioErrs.Draw('aE2 aE0 same')
+        #bgRatioErrs.SetDrawOption('hist')
+        #bgRatioErrs.Draw('aE2 E0 same')
+        #bgRatioErrs.GetXaxis().SetTitle('')
+        bgRatioErrs.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
+        bgRatioErrs.GetXaxis().SetTitleSize(0.15)
+        bgRatioErrs.GetXaxis().SetLabelSize(0.1)
+        bgRatioErrs.GetXaxis().SetTitleOffset(1.1)
+        bgRatioErrs.GetYaxis().SetTitle("Data/MC")
+        bgRatioErrs.GetYaxis().SetLabelSize(0.1)
+        bgRatioErrs.GetYaxis().SetTitleSize(0.13)
+        bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
+        bgRatioErrs.GetXaxis().SetLabelOffset(0.05)
+        bgRatioErrs.GetYaxis().SetNdivisions(405)
+        bgRatioErrs.SetMarkerStyle ( 1 )
+        bgRatioErrs.Draw('E2')
+        #bgRatioErrs.Draw('3')
+        #h_ratio1.Draw("e0psame")
+        # below is for th1f
+        #h_ratio1.Draw("e0same")
+        h_ratio1.Draw("pz0same")
+        bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
+
+
+    h_ratio1.GetYaxis().SetRangeUser(0.,2)
+
+    #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
+    #lineAtOne.SetLineColor(2)
+    #lineAtOne.Draw()
+    pad1.cd()
 
 
 #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
@@ -326,7 +467,7 @@ l1.SetTextAlign(12)
 l1.SetTextFont(42)
 l1.SetNDC()
 l1.SetTextSize(0.06)
-l1.DrawLatex(0.595,0.965,lumiEnergyString)
+l1.DrawLatex(0.675,0.965,lumiEnergyString)
 
 l2 = r.TLatex()
 l2.SetTextAlign(12)
@@ -341,7 +482,7 @@ l3.SetNDC()
 l3.SetTextSize(0.07)
 if doPrelim:
   l3.DrawLatex(0.30,0.83,"#it{Preliminary}")
-l2.DrawLatex(0.19,0.84,"CMS")
+l2.DrawLatex(0.15,0.84,"CMS")
 r.gPad.Update()
 
 
