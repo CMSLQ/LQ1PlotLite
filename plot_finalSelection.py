@@ -375,6 +375,20 @@ for i_mass, mass in enumerate(masses):
       data_hist.SetMarkerStyle(20)
       data_hist.SetMarkerSize (1.1)
     
+    if var=='Mej_selected_min' or var=='Mej':
+        nDivs = 507
+        xMin = 400
+        xMax = 1980
+    elif var=='ST':
+        nDivs = 507
+        xMin = 1000
+        xMax = 3000
+    else:
+        nDivs = 507
+        xMin = 800
+        xMax = 3000
+
+
     stack = r.THStack ("stack", "stack")
     stack.Add ( qcd_hist   )
     stack.Add ( other_hist )
@@ -382,9 +396,23 @@ for i_mass, mass in enumerate(masses):
     stack.Add ( zjets_hist )
     stack.Draw()
     if doEEJJ:
-      stack.SetMaximum(200000)
+      stack.SetMaximum(500)
+      if mass < 1000 and var=='sT_eejj':
+          stack.SetMaximum(1e5)
+      elif mass < 1000 and var=='Mej_selected_min':
+          stack.SetMaximum(1e4)
+      elif mass > 1000 and var=='Mej_selected_min':
+          stack.SetMaximum(1e3)
     else:
-      stack.SetMaximum(20000000);
+        if var=='Mej' and mass < 1000:
+            stack.SetMaximum(1e3);
+        elif var=='Mej' and mass > 1000:
+            stack.SetMaximum(1e2);
+        elif var=='ST' and mass < 1000:
+            stack.SetMaximum(9e3);
+        elif var=='ST' and mass > 1000:
+            stack.SetMaximum(1e3);
+
     stack.SetMinimum(1e-1)
     bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
 
@@ -400,6 +428,7 @@ for i_mass, mass in enumerate(masses):
     stack.GetYaxis().SetTitleOffset(0.92)
     stack.GetYaxis().SetTitleSize(0.06)
     stack.GetYaxis().CenterTitle(1)
+    stack.GetXaxis().SetNdivisions(nDivs)
     
     if not doRatio:
       stack.GetXaxis().SetTitle( x_labels [i_var] )
@@ -416,6 +445,9 @@ for i_mass, mass in enumerate(masses):
       stack.GetXaxis().SetLabelOffset(0)
       stack.GetXaxis().SetTitleSize(0)
       stack.GetXaxis().SetTitleOffset(0)
+
+    stack.GetXaxis().SetTitle( x_labels [i_var] )
+    stack.GetXaxis().SetRangeUser(xMin,xMax)
 
     ## reduce x-axis labels for Mej plot
     #if 'Mej' in var:
@@ -458,11 +490,10 @@ for i_mass, mass in enumerate(masses):
     #r.SetOwnership(pad1, False)
     pad1.cd()
     stack.Draw('hist')
-    stack.GetYaxis().SetRangeUser(1e-1,stack.GetMaximum()*1.1)
-    stack.GetXaxis().SetTitle( x_labels [i_var] )
     #canvas.SetLogy()
     pad1.SetLogy()
     pad1.Draw()
+    r.gPad.Update()
 
     sig_hist.Draw("HIST SAME")
   
@@ -552,14 +583,6 @@ for i_mass, mass in enumerate(masses):
         #        h_ratio1.SetBinContent(ibin,-1)
         #        h_ratio1.SetBinError(ibin,-1)
 
-        #h_ratio1.GetXaxis().SetTitle("")
-        #h_ratio1.GetXaxis().SetTitleSize(0.06)
-        #h_ratio1.GetXaxis().SetLabelSize(0.1)
-        #h_ratio1.GetYaxis().SetRangeUser(0.,2)
-        #h_ratio1.GetYaxis().SetTitle("Data/MC")
-        #h_ratio1.GetYaxis().SetLabelSize(0.1)
-        #h_ratio1.GetYaxis().SetTitleSize(0.13)
-        #h_ratio1.GetYaxis().SetTitleOffset(0.3)
         h_ratio1.GetYaxis().SetTitle( "data / MC" )
         h_ratio1.GetYaxis().SetTitleFont(42)
         h_ratio1.GetYaxis().SetLabelFont(42)
@@ -577,6 +600,7 @@ for i_mass, mass in enumerate(masses):
         h_ratio1.GetXaxis().SetTitleOffset(1.1)
         h_ratio1.GetXaxis().SetLabelSize(0.15)
         h_ratio1.GetXaxis().SetTitleSize(0.15)
+        h_ratio1.GetXaxis().SetNdivisions(nDivs)
         #h_ratio1.GetXaxis().CenterTitle()
         #h_ratio1.GetXaxis().CenterTitle(1)
         pad2.SetBottomMargin(0.37)
@@ -611,7 +635,8 @@ for i_mass, mass in enumerate(masses):
             for ibin in xrange(0,h_bkgUnc1.GetNbinsX()+2):
                 #print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin)
                 if h_bkgUnc1.GetBinContent(ibin) != 0:
-                    print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin),'relative error=',h_bkgUnc1.GetBinError(ibin)/h_bkgUnc1.GetBinContent(ibin)
+                    if verbose:
+                        print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin),'relative error=',h_bkgUnc1.GetBinError(ibin)/h_bkgUnc1.GetBinContent(ibin)
                     h_bkgUnc1.SetBinError(ibin,h_bkgUnc1.GetBinError(ibin)/h_bkgUnc1.GetBinContent(ibin))
                 h_bkgUnc1.SetBinContent(ibin,1.0)
             bgRatioErrs = h_bkgUnc1
@@ -632,6 +657,7 @@ for i_mass, mass in enumerate(masses):
             bgRatioErrs.GetXaxis().SetTitle( x_labels [i_var] )
             bgRatioErrs.GetXaxis().SetTitleSize(0.15)
             bgRatioErrs.GetXaxis().SetLabelSize(0.1)
+            bgRatioErrs.GetXaxis().SetNdivisions(nDivs)
             bgRatioErrs.GetYaxis().SetTitle("Data/MC")
             bgRatioErrs.GetYaxis().SetLabelSize(0.1)
             bgRatioErrs.GetYaxis().SetTitleSize(0.13)
@@ -644,13 +670,16 @@ for i_mass, mass in enumerate(masses):
             #h_ratio1.Draw("e0same")
             h_ratio1.Draw("pz0same")
             bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
+            bgRatioErrs.GetXaxis().SetRangeUser(xMin,xMax)
 
 
         h_ratio1.GetYaxis().SetRangeUser(0.,2)
+        h_ratio1.GetXaxis().SetRangeUser(xMin,xMax)
 
         #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
         #lineAtOne.SetLineColor(2)
         #lineAtOne.Draw()
+        r.gPad.Update()
         pad1.cd()
     
 
@@ -671,7 +700,7 @@ for i_mass, mass in enumerate(masses):
     leg.AddEntry(other_hist,"Other background","lf")
     leg.AddEntry(qcd_hist  ,"Multijet","lf")
     if doSystErr:
-      leg.AddEntry(bkgUncHisto, 'Uncertainty band','f')
+      leg.AddEntry(bkgUncHisto, 'stat + syst uncertainty','f')
     if doEEJJ:
       beta = 1.0
     else:
@@ -715,14 +744,14 @@ for i_mass, mass in enumerate(masses):
     r.gPad.Update()
 
 
-    #if not r.gROOT.IsBatch():
-    #    ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
-    #    if __name__ == '__main__':
-    #       rep = ''
-    #       while not rep in [ 'c', 'C' ]:
-    #          rep = raw_input( 'enter "c" to continue: ' )
-    #          if 1 < len(rep):
-    #             rep = rep[0]
+    if not r.gROOT.IsBatch():
+        ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
+        if __name__ == '__main__':
+           rep = ''
+           while not rep in [ 'c', 'C' ]:
+              rep = raw_input( 'enter "c" to continue: ' )
+              if 1 < len(rep):
+                 rep = rep[0]
     # FOR TESTING
     #break
 
