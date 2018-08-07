@@ -2,28 +2,78 @@
 
 from plot_common import *
 import tdrstyle
+import math
+from ROOT import kOrange, kGray, kBlue
+
+#FIXME
+def GetBackgroundSyst(allBkg, zjets, ttbar, qcd):
+    # /afs/cern.ch/user/m/mbhat/work/public/Systematics_txtfiles_25_07_2016/pre1_sys.dat
+    #  100*(deltaX/X) [rel. change in %]
+    systDict = {
+      'trig' : 1.16081,
+      'pu' : 0.254125,
+      'ereco' : 8.58642,
+      'ees' : 5.40749,
+      'lumi' : 2.7,
+      'heepid' : 9.08357,
+      'jec' : 2.26787,
+      'jer' : 0.0729784,
+      'pdf' : 4.7,
+    }
+    systDictList = systDict.values()
+    systDictList = [value/100.0 for value in systDictList]
+    preselSyst = 0.0
+    for item in systDictList:
+      preselSyst+=pow(float(item),2)
+    # that is on all background
+    ## mine
+    #'qcdNorm' : 40,
+    qcdTerm = pow(qcd*0.4,2)
+    #'ttbarNorm' : 1,
+    ttbarNormTerm = pow(ttbar*0.01,2)
+    #'zjetsNorm' : 0.75,
+    zjetsNormTerm = pow(zjets*0.0075,2)
+    ##special
+    # 'ttshape' : 7.31,
+    #ttShapeTerm = pow(ttbar*0.0731,2)
+    ttShapeTerm = 0
+    # 'zshape' : 8.28,
+    zShapeTerm = pow(zjets*0.08,2)
+    #
+    preselSyst += qcdTerm+ttbarNormTerm+zjetsNormTerm+ttShapeTerm+zShapeTerm
+    preselSyst = math.sqrt(preselSyst)
+    return preselSyst
+
+
 
 # set batch
 r.gROOT.SetBatch()
 
 
-masses = [ 450, 650 ]
+mass1 = 650
+mass2 = 1200
+
 mass_colors = [ 28, 38 ]
 
 vars     = [ 
     "sT_PAS",
-    "Mej_PAS"
+    "Mej_PAS",
+    "MTenu_PAS"
 ] 
 
 x_labels = [ 
     "S_{T}^{e#nujj} [GeV]",
-    "M_{ej} [GeV]"
+    "M_{ej} [GeV]",
+    "M_{T} [GeV]"
 ]
 
 x_bins = [ 
     [300, 330, 370, 420, 480, 550, 630, 720, 820, 930, 1050, 1180, 1320, 1470, 1630, 1800, 1980, 2170, 2370, 2580, 2800, 3000],
+    [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980],
     [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980]
 ]
+
+lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
 
 r.gROOT.SetStyle('Plain')
 r.gStyle.SetTextFont ( 42 );
@@ -36,25 +86,42 @@ r.gStyle.SetOptStat(0);
 #set the tdr style
 tdrstyle.setTDRStyle()
 
-r.gStyle.SetPadTopMargin(0.1);
-r.gStyle.SetPadBottomMargin(0.16);
+r.gStyle.SetPadTopMargin(0.075);
+r.gStyle.SetPadBottomMargin(0.02);
 r.gStyle.SetPadLeftMargin(0.12);
 r.gStyle.SetPadRightMargin(0.1);
-r.gStyle.SetPadTickX(0)
-r.gStyle.SetPadTickY(0)
+#r.gStyle.SetPadTickX(0)
+#r.gStyle.SetPadTickY(0)
 
-mass1 = 450
-mass2 = 650
+doSystErr = False
+doRatio = True
 
-bkgd_file = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_enujj_MT_plots.root" )
-qcd_file  = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_enujj_MT_QCD_plots.root")
+#FIXME
+if doSystErr:
+  # allbkg, zjets, ttbar, qcd
+  #backgroundSyst = GetBackgroundSyst(4237.1,3176.7,897.13,2.7)
+  backgroundSyst = GetBackgroundSyst(50632.42,42597.24,6262.92,36.85)
+  #print 'BG: 4237.1 +/- '+str(GetBackgroundSyst(4237.1,3176.7,897.13,2.7))
+  #backgroundSyst /= 4237.1
+  backgroundSyst /= 50632.42
+
+#bkgd_file = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_enujj_MT_plots.root" )
+#qcd_file  = r.TFile(os.environ["LQDATA"] + "/LQPlotFiles_fromEdmund/analysisClass_lq_enujj_MT_QCD_plots.root")
+File_preselection     = os.environ["LQDATA"] + "/2016analysis/enujj_psk_oct8_finerBinnedTrigEff_updatedFinalSels/output_cutTable_lq_enujj_MT/analysisClass_lq_enujj_MT_plots.root"
+File_QCD_preselection = os.environ["LQDATA"] + "/2016qcd/enujj_psk_oct8_updatedFinalSels/output_cutTable_lq_enujj_MT_QCD/analysisClass_lq_enujj_QCD_plots.root"
+bkgd_file = r.TFile(File_preselection)
+qcd_file  = r.TFile(File_QCD_preselection)
 
 for i_var, var in enumerate(vars):
 
-    wjets_hist = bkgd_file.Get( "histo1D__WJet_Madgraph__"     + var  )
-    ttbar_hist = bkgd_file.Get( "histo1D__TTbar_Madgraph__"    + var  )
-    other_hist = bkgd_file.Get( "histo1D__OTHERBKG__"          + var  )
-    qcd_hist   = qcd_file .Get( "histo1D__DATA__"              + var  )
+    #wjets_hist = bkgd_file.Get( "histo1D__WJet_Madgraph__"     + var  )
+    #ttbar_hist = bkgd_file.Get( "histo1D__TTbar_Madgraph__"    + var  )
+    #other_hist = bkgd_file.Get( "histo1D__OTHERBKG__"          + var  )
+    #qcd_hist   = qcd_file .Get( "histo1D__DATA__"              + var  )
+    wjets_hist = bkgd_file.Get( "histo1D__WJet_amcatnlo_ptBinned__"     + var  )
+    ttbar_hist = bkgd_file.Get( "histo1D__TTbar_powheg__"    + var  )
+    other_hist = bkgd_file.Get( "histo1D__OTHERBKG_ZJetPt__"          + var  )
+    qcd_hist   = qcd_file .Get( "histo1D__QCDFakes_DATA__"              + var  )
     data_hist  = bkgd_file.Get( "histo1D__DATA__"              + var  )
     sig1_hist  = bkgd_file.Get( "histo1D__LQ_M"+str(mass1)+"__" + var )
     sig2_hist  = bkgd_file.Get( "histo1D__LQ_M"+str(mass2)+"__" + var )
@@ -173,7 +240,7 @@ for i_var, var in enumerate(vars):
     l2.SetTextFont(62)
     l2.SetNDC()
     l2.SetTextSize(0.08)
-    l1.DrawLatex(0.64,0.94,"19.7 fb^{-1} (8 TeV)")
+    l1.DrawLatex(0.64,0.94,"35.9 fb^{-1} (13 TeV)")
     l2.DrawLatex(0.15,0.84,"CMS")
 
     

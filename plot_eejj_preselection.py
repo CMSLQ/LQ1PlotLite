@@ -29,15 +29,16 @@ def GetBackgroundSyst(allBkg, zjets, ttbar, qcd):
     ## mine
     #'qcdNorm' : 40,
     qcdTerm = pow(qcd*0.4,2)
-    #'ttbarNorm' : 20,
-    ttbarNormTerm = pow(ttbar*0.2,2)
-    #'zjetsNorm' : 2.6,
-    zjetsNormTerm = pow(zjets*0.026,2)
+    #'ttbarNorm' : 1,
+    ttbarNormTerm = pow(ttbar*0.01,2)
+    #'zjetsNorm' : 0.75,
+    zjetsNormTerm = pow(zjets*0.0075,2)
     ##special
     # 'ttshape' : 7.31,
-    ttShapeTerm = pow(ttbar*0.0731,2)
+    #ttShapeTerm = pow(ttbar*0.0731,2)
+    ttShapeTerm = 0
     # 'zshape' : 8.28,
-    zShapeTerm = pow(zjets*0.0282,2)
+    zShapeTerm = pow(zjets*0.08,2)
     #
     preselSyst += qcdTerm+ttbarNormTerm+zjetsNormTerm+ttShapeTerm+zShapeTerm
     preselSyst = math.sqrt(preselSyst)
@@ -50,7 +51,7 @@ r.gROOT.SetBatch()
 
 
 mass1 = 650
-mass2 = 950
+mass2 = 1200
 
 mass_colors = [ 28, 38 ]
 
@@ -84,7 +85,7 @@ x_bins = [
     [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980]
 ]
 
-lumiEnergyString = "2.6 fb^{-1} (13 TeV)"
+lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
 
 r.gROOT.SetStyle('Plain')
 r.gStyle.SetTextFont ( 42 )
@@ -113,21 +114,28 @@ doRatio = True
 
 if doSystErr:
   # allbkg, zjets, ttbar, qcd
-  backgroundSyst = GetBackgroundSyst(4237.1,3176.7,897.13,2.7)
+  #backgroundSyst = GetBackgroundSyst(4237.1,3176.7,897.13,2.7)
+  backgroundSyst = GetBackgroundSyst(50632.42,42597.24,6262.92,36.85)
   #print 'BG: 4237.1 +/- '+str(GetBackgroundSyst(4237.1,3176.7,897.13,2.7))
-  backgroundSyst /= 4237.1
+  #backgroundSyst /= 4237.1
+  backgroundSyst /= 50632.42
 
 #bkgd_file = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_2jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root" )
 #qcd_file  = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_2jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_QCD_plots.root")
-bkgd_file = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_zJetsStCorrectionFinalSelections_21jul/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root" )
-qcd_file  = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_updatePlotRanges_29jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_QCD_plots.root")
+#bkgd_file = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_zJetsStCorrectionFinalSelections_21jul/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root" )
+#qcd_file  = r.TFile.Open(os.environ["LQDATA"] + "/RunII/eejj_analysis_ttbarRescaleFinalSels_updatePlotRanges_29jun2016/output_cutTable_lq_eejj/analysisClass_lq_eejj_QCD_plots.root")
+bkgd_file = r.TFile.Open(os.environ["LQDATA"] + '/2016analysis/eejj_psk_oct6_ptEECut_updateFinalSels/output_cutTable_lq_eejj/analysisClass_lq_eejj_plots.root')
+qcd_file = r.TFile.Open(os.environ["LQDATA"] + '/2016qcd/eejj_psk_oct6_ptEECut_actualUpdateFinalSels/output_cutTable_lq_eejj_QCD/analysisClass_lq_eejj_QCD_plots.root')
+ttbar_file = r.TFile.Open(os.environ["LQDATA"] + '/2016ttbar/oct6_emujj_ptEE_updateFinalSels/output_cutTable_lq_ttbar_emujj_correctTrig/analysisClass_lq_ttbarEst_plots.root')
 
 for i_var, var in enumerate(vars):
     print 'examine var:',var
-    zjets_hist = bkgd_file.Get( "histo1D__ZJet_Madgraph_HT__"     + var  )
-    #ttbar_hist = bkgd_file.Get( "histo1D__TTbar_FromData__"    + var  )
-    ttbar_hist = bkgd_file.Get( "histo1D__TTbar_Madgraph__"    + var  )
-    other_hist = bkgd_file.Get( "histo1D__OTHERBKG_MG_HT__"    + var  )
+    #zjets_hist = bkgd_file.Get( "histo1D__ZJet_Madgraph_HT__"     + var  )
+    zjets_hist = bkgd_file.Get( "histo1D__ZJet_amcatnlo_ptBinned__"     + var  )
+    ttbar_hist = ttbar_file.Get( "histo1D__TTBarFromDATA__"    + var  )
+    #ttbar_hist = bkgd_file.Get( "histo1D__TTbar_Madgraph__"    + var  )
+    #other_hist = bkgd_file.Get( "histo1D__OTHERBKG_MG_HT__"    + var  )
+    other_hist = bkgd_file.Get( "histo1D__OTHERBKG_WJetPt__"    + var  )
     qcd_hist   = qcd_file .Get( "histo1D__QCDFakes_DATA__"     + var  )
     data_hist  = bkgd_file.Get( "histo1D__DATA__"              + var  )
     sig1_hist  = bkgd_file.Get( "histo1D__LQ_M"+str(mass1)+"__" + var )
@@ -308,6 +316,31 @@ for i_var, var in enumerate(vars):
 
         h_ratio1.Draw("p")
         h_ratio1.Draw("p")
+        if doSystErr:
+            bgRatioErrs = h_ratio1.Clone()
+            bgRatioErrs.Reset()
+            bgRatioErrs.SetName('bgRatioErrs')
+            for binn in range(0,bgRatioErrs.GetNbinsX()):
+                #bgRatioErrs.SetBinContent(binn, zjets_hist.GetBinContent(binn)+ttbar_hist.GetBinContent(binn)+other_hist.GetBinContent(binn)+qcd_hist.GetBinContent(binn))
+                bgRatioErrs.SetBinContent(binn,1.0)
+            for binn in range(0,bgRatioErrs.GetNbinsX()):
+                bgRatioErrs.SetBinError(binn, bgRatioErrs.GetBinContent(binn)*backgroundSyst)
+            #for binn in range(0,bgRatioErrs.GetNbinsX()):
+            #    print 'bin=',bgRatioErrs.GetBinContent(binn),'+/-',bgRatioErrs.GetBinError(binn)
+            #bgRatioErrs.SetFillColor(kOrange-6)
+            bgRatioErrs.SetFillColor(kGray+2)
+            bgRatioErrs.SetLineColor(kGray+2)
+            bgRatioErrs.SetFillStyle(3001)
+            #bgRatioErrs.SetFillStyle(3018)
+            #bgRatioErrs.SetFillStyle(3013)
+            #bgRatioErrs.SetMarkerSize(1.1)
+            bgRatioErrs.SetMarkerSize(0)
+            #bgRatioErrs.SetLineColor(kOrange)
+            #bgRatioErrs.SetLineWidth(3)
+            #bgRatioErrs.Draw('aE2 aE0 same')
+            #bgRatioErrs.SetDrawOption('hist')
+            #bgRatioErrs.Draw('aE2 E0 same')
+            bgRatioErrs.Draw('E2 same')
 
         #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
         #lineAtOne.SetLineColor(2)
@@ -323,8 +356,8 @@ for i_var, var in enumerate(vars):
             bgErrs.SetBinContent(binn, zjets_hist.GetBinContent(binn)+ttbar_hist.GetBinContent(binn)+other_hist.GetBinContent(binn)+qcd_hist.GetBinContent(binn))
         for binn in range(0,bgErrs.GetNbinsX()):
             bgErrs.SetBinError(binn, bgErrs.GetBinContent(binn)*backgroundSyst)
-        #for binn in range(0,bgErrs.GetNbinsX()):
-        #    print 'bin=',bgErrs.GetBinContent(binn),'+/-',bgErrs.GetBinError(binn)
+        for binn in range(0,bgErrs.GetNbinsX()):
+            print 'bin=',bgErrs.GetBinContent(binn),'+/-',bgErrs.GetBinError(binn)
         #bgErrs.SetFillColor(kOrange-6)
         bgErrs.SetFillColor(kGray+2)
         bgErrs.SetLineColor(kGray+2)
