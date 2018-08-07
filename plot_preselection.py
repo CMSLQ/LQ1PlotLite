@@ -99,7 +99,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ = True
+doEEJJ = False
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -432,9 +432,9 @@ for i_var, var in enumerate(vars):
         pad2.SetGridy()
         #h_ratio1.Divide(h_bkgTot1)
         h_ratio1 = TGraphAsymmErrors()
-        print 'doing h_ratio1.Divide()'
-        print 'Nbins dataCopy=',dataCopy.GetNbinsX()
-        print 'Nbins h_bkgTot1=',h_bkgTot1.GetNbinsX()
+        #print 'doing h_ratio1.Divide()'
+        #print 'Nbins dataCopy=',dataCopy.GetNbinsX()
+        #print 'Nbins h_bkgTot1=',h_bkgTot1.GetNbinsX()
         h_ratio1.Divide(dataCopy,h_bkgTot1,'poiscp')
         #print '2ndlast bin of data plot has:',dataCopy.GetBinContent(dataCopy.GetNbinsX()-1),'entries and error=',dataCopy.GetBinError(dataCopy.GetNbinsX()-1)
         #print 'last bin of data plot has:',dataCopy.GetBinContent(dataCopy.GetNbinsX()),'entries and error=',dataCopy.GetBinError(dataCopy.GetNbinsX())
@@ -502,7 +502,8 @@ for i_var, var in enumerate(vars):
             for ibin in xrange(0,h_bkgUnc1.GetNbinsX()+2):
                 #print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin)
                 if h_bkgUnc1.GetBinContent(ibin) != 0:
-                    print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin),'relative error=',h_bkgUnc1.GetBinError(ibin)/h_bkgUnc1.GetBinContent(ibin)
+                    if verbose:
+                        print '[h_bkgUnc1 with name',h_bkgUnc1.GetName(),'] bin with center',h_bkgUnc1.GetBinCenter(ibin),'bin content is:',h_bkgUnc1.GetBinContent(ibin),'error is:',h_bkgUnc1.GetBinError(ibin),'relative error=',h_bkgUnc1.GetBinError(ibin)/h_bkgUnc1.GetBinContent(ibin)
                     h_bkgUnc1.SetBinError(ibin,h_bkgUnc1.GetBinError(ibin)/h_bkgUnc1.GetBinContent(ibin))
                 h_bkgUnc1.SetBinContent(ibin,1.0)
             bgRatioErrs = h_bkgUnc1
@@ -597,7 +598,7 @@ for i_var, var in enumerate(vars):
     leg.AddEntry(other_hist,"Other background","lf")
     leg.AddEntry(qcd_hist  ,"Multijet","lf")
     if doSystErr:
-      leg.AddEntry(bkgUncHisto, 'Uncertainty band','f')
+      leg.AddEntry(bkgUncHisto, 'stat + syst uncertainty','f')
     if doEEJJ:
       beta = 1.0
     else:
