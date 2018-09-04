@@ -188,7 +188,7 @@ if doEEJJ:
     leg.AddEntry(mej_hist,"M^{min}_{ej}","lp")
     leg.AddEntry(mee_hist,"M_{ee}","lp")
 else:
-    leg.AddEntry(mej_hist,"M^{min}_{ej}","lp")
+    leg.AddEntry(mej_hist,"M_{ej}","lp")
     leg.AddEntry(mee_hist,"M_{T}","lp")
     leg.AddEntry(met_hist,"p^{miss}_{T}","lp")
 leg.Draw()
