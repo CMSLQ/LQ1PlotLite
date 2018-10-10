@@ -63,7 +63,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= False
+doEEJJ= True
 doPrelim = False
 
 if doEEJJ:
@@ -113,7 +113,7 @@ for hist in histList:
     hist.SetLineWidth(2)
 
 st_hist.Draw('lp')
-st_hist.GetYaxis().SetTitle( "Final selection value [GeV]" )
+st_hist.GetYaxis().SetTitle( "Threshold [GeV]" )
 #st_hist.GetYaxis().CenterTitle()
 st_hist.GetYaxis().SetTitleFont(42)
 st_hist.GetYaxis().SetLabelFont(42)
