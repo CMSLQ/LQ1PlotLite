@@ -3,7 +3,7 @@
 from plot_common import *
 import tdrstyle
 import math
-from ROOT import kOrange, kGray, kBlue, TH1F, TGraphAsymmErrors
+from ROOT import kOrange, kGray, kBlue, kRed, kCyan, kGreen, TH1F, TGraphAsymmErrors, Double, TLine
 
 
 ## return lists of masses, vjets, ttbar, qcd, vv, other, data
@@ -106,7 +106,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= True
+doEEJJ= False
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -132,7 +132,7 @@ tdrstyle.setTDRStyle()
 r.gStyle.SetPadTopMargin(0.075);
 r.gStyle.SetPadBottomMargin(0.02)
 r.gStyle.SetPadLeftMargin(0.12)
-r.gStyle.SetPadRightMargin(0.1)
+r.gStyle.SetPadRightMargin(0.03)
 #r.gStyle.SetPadTickX(0)
 #r.gStyle.SetPadTickY(0)
 
@@ -155,12 +155,12 @@ bkgUncHisto = histList[8]
 data_hist = histList[9]
 # combine 'other' bkg components into 'other' hist
 
-setStyle (zjets_hist, 2 , 3004, 1)
+setStyle (zjets_hist, kRed+1 , 3004, 1)
 setStyle (ttbar_hist, 4 , 3005, 1)
 #setStyle (vv_hist   , 4 , 3005, 1)
-setStyle (other_hist, 3 , 3006, 1)
-setStyle (qcd_hist  , 7 , 3013, 1)
-setStyle (sig_hist  , 28,    2, 3)
+setStyle (other_hist, kGreen+1 , 3006, 1)
+setStyle (qcd_hist  , kCyan+1 , 3013, 1)
+setStyle (sig_hist  , 28, 0, 3)
 sig_hist.SetLineStyle(2)
 
 if not blind:
@@ -189,9 +189,9 @@ stack.GetYaxis().CenterTitle()
 stack.GetYaxis().SetTitleFont(42)
 stack.GetYaxis().SetLabelFont(42)
 stack.GetYaxis().SetLabelOffset(0.007)
-stack.GetYaxis().SetLabelSize(0.05)
-stack.GetYaxis().SetTitleOffset(0.92)
-stack.GetYaxis().SetTitleSize(0.06)
+stack.GetYaxis().SetLabelSize(0.06)
+stack.GetYaxis().SetTitleOffset(0.55)
+stack.GetYaxis().SetTitleSize(0.1)
 stack.GetYaxis().CenterTitle(1)
 
 if not doRatio:
@@ -256,7 +256,8 @@ stack.GetYaxis().SetRangeUser(1e-1,stack.GetMaximum()*1.1)
 pad1.SetLogy()
 pad1.Draw()
 
-sig_hist.Draw("HIST SAME")
+#sig_hist.Draw("HIST SAME")
+sig_hist.Draw("SAME")
 
 if doSystErr:
     for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
@@ -283,6 +284,10 @@ if not blind:
     lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig_hist])
     #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
     g = poissonErrGraph(data_hist,lastPopBin)
+    # for constant width plots, no horizontal error bars
+    for iPoint in range(0,g.GetN()):
+      g.SetPointEXlow(iPoint, 0)
+      g.SetPointEXhigh(iPoint, 0)
     #g.Draw("ZPSAME")
     g.Draw("ZP0SAME")
 #data_hist.Draw('pesame')
@@ -307,9 +312,13 @@ if doRatio:
 
     pad2.cd()
     # fPads2.SetLogy()
-    pad2.SetGridy()
+    #pad2.SetGridy()
     
     h_ratio1.Divide(h_ratio,h_bkgTot1,'pois')
+    # for constant width plots, no horizontal error bars
+    for iPoint in range(0,h_ratio1.GetN()):
+      h_ratio1.SetPointEXlow(iPoint, 0)
+      h_ratio1.SetPointEXhigh(iPoint, 0)
 
     # this part resets bin error/content to -1 if the ratio is zero or negative for some reason so that the point in such a bin isn't drawn
     #oldRatioHist = copy.deepcopy(h_ratio1)
@@ -346,7 +355,7 @@ if doRatio:
     h_ratio1.GetYaxis().SetLabelOffset(0.007)
     h_ratio1.GetYaxis().SetLabelSize(0.12)
     h_ratio1.GetYaxis().SetTitleOffset(0.3)
-    h_ratio1.GetYaxis().SetTitleSize(0.12)
+    h_ratio1.GetYaxis().SetTitleSize(0.128)
     h_ratio1.GetYaxis().CenterTitle()
     h_ratio1.GetYaxis().CenterTitle(1)
     h_ratio1.GetYaxis().SetNdivisions(405)
@@ -355,12 +364,12 @@ if doRatio:
     h_ratio1.GetXaxis().SetTitleFont(42)
     h_ratio1.GetXaxis().SetLabelFont(42)
     h_ratio1.GetXaxis().SetLabelOffset(0.025)
-    h_ratio1.GetXaxis().SetTitleOffset(1.1)
+    h_ratio1.GetXaxis().SetTitleOffset(0.8)
     h_ratio1.GetXaxis().SetLabelSize(0.15)
-    h_ratio1.GetXaxis().SetTitleSize(0.15)
+    h_ratio1.GetXaxis().SetTitleSize(0.25)
     #h_ratio1.GetXaxis().CenterTitle()
     #h_ratio1.GetXaxis().CenterTitle(1)
-    pad2.SetBottomMargin(0.37)
+    pad2.SetBottomMargin(0.5)
 
     h_ratio1.SetMarkerStyle ( 20 )
     h_ratio1.SetMarkerSize ( 1 )
@@ -397,14 +406,22 @@ if doRatio:
         #bgRatioErrs.Draw('aE2 E0 same')
         #bgRatioErrs.GetXaxis().SetTitle('')
         bgRatioErrs.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
-        bgRatioErrs.GetXaxis().SetTitleSize(0.15)
-        bgRatioErrs.GetXaxis().SetLabelSize(0.1)
-        bgRatioErrs.GetXaxis().SetTitleOffset(1.1)
-        bgRatioErrs.GetYaxis().SetTitle("Data/MC")
-        bgRatioErrs.GetYaxis().SetLabelSize(0.1)
-        bgRatioErrs.GetYaxis().SetTitleSize(0.13)
+        bgRatioErrs.GetXaxis().SetTitleFont(42)
+        bgRatioErrs.GetXaxis().SetLabelFont(42)
+        bgRatioErrs.GetXaxis().SetLabelOffset(0.04)
+        bgRatioErrs.GetXaxis().SetTitleOffset(0.85)
+        bgRatioErrs.GetXaxis().SetLabelSize(0.15)
+        bgRatioErrs.GetXaxis().SetTitleSize(0.25)
+        #
+        bgRatioErrs.GetYaxis().SetTitle("data / MC")
+        bgRatioErrs.GetYaxis().SetTitleFont(42)
+        bgRatioErrs.GetYaxis().SetLabelFont(42)
+        bgRatioErrs.GetYaxis().SetLabelOffset(0.007)
+        bgRatioErrs.GetYaxis().SetLabelSize(0.12)
         bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
-        bgRatioErrs.GetXaxis().SetLabelOffset(0.05)
+        bgRatioErrs.GetYaxis().SetTitleSize(0.128)
+        bgRatioErrs.GetYaxis().CenterTitle()
+        bgRatioErrs.GetYaxis().CenterTitle(1)
         bgRatioErrs.GetYaxis().SetNdivisions(405)
         bgRatioErrs.SetMarkerStyle ( 1 )
         bgRatioErrs.Draw('E2')
@@ -418,20 +435,19 @@ if doRatio:
 
     h_ratio1.GetYaxis().SetRangeUser(0.,2)
 
-    #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
-    #lineAtOne.SetLineColor(2)
-    #lineAtOne.Draw()
+    lineAtOne = TLine(pad1.GetUxmin(),1,pad1.GetUxmax(),1)
+    lineAtOne.SetLineColor(1)
+    lineAtOne.Draw()
     pad1.cd()
 
 
 #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
 #leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
-leg = r.TLegend(0.56,0.53,0.75,0.88,"","brNDC")
+leg = r.TLegend(0.6,0.4,0.95,0.89,"","brNDC")
 leg.SetTextFont(42)
 leg.SetFillColor(0)
 leg.SetBorderSize(0)
-#leg.SetTextSize(.05)
-leg.SetTextSize(.04)
+leg.SetTextSize(.055)
 if not blind:
   leg.AddEntry(data_hist ,"Data","lpe")
 if doEEJJ:
@@ -442,7 +458,7 @@ leg.AddEntry(ttbar_hist,"t#bar{t}","lf")
 leg.AddEntry(qcd_hist  ,"Multijet","lf")
 leg.AddEntry(other_hist,"Other background","lf")
 if doSystErr:
-  leg.AddEntry(bkgUncHisto, 'stat + syst uncertainty','f')
+  leg.AddEntry(bkgUncHisto, 'Stat+syst uncertainty','f')
 if doEEJJ:
   beta = 1.0
 else:
@@ -467,7 +483,7 @@ l1.SetTextAlign(12)
 l1.SetTextFont(42)
 l1.SetNDC()
 l1.SetTextSize(0.06)
-l1.DrawLatex(0.675,0.965,lumiEnergyString)
+l1.DrawLatex(0.75,0.965,lumiEnergyString)
 
 l2 = r.TLatex()
 l2.SetTextAlign(12)

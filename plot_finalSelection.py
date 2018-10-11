@@ -3,7 +3,7 @@
 from plot_common import *
 import tdrstyle
 import math
-from ROOT import kOrange, kGray, kBlue, TH1F, TGraphAsymmErrors, Double
+from ROOT import kOrange, kGray, kBlue, kRed, kCyan, kGreen, TH1F, TGraphAsymmErrors, Double, TLine
 
 
 # from makeDatacard.py
@@ -310,7 +310,7 @@ tdrstyle.setTDRStyle()
 r.gStyle.SetPadTopMargin(0.075);
 r.gStyle.SetPadBottomMargin(0.02)
 r.gStyle.SetPadLeftMargin(0.12)
-r.gStyle.SetPadRightMargin(0.1)
+r.gStyle.SetPadRightMargin(0.03)
 #r.gStyle.SetPadTickX(0)
 #r.gStyle.SetPadTickY(0)
 
@@ -365,11 +365,12 @@ for i_mass, mass in enumerate(masses):
     #data_hist .Rebin (2)
     #sig_hist .Rebin (2)
   
-    setStyle (zjets_hist, 2 , 3004, 1)
+    setStyle (zjets_hist, kRed+1 , 3004, 1)
     setStyle (ttbar_hist, 4 , 3005, 1)
-    setStyle (other_hist, 3 , 3006, 1)
-    setStyle (qcd_hist  , 7 , 3013, 1)
+    setStyle (other_hist, kGreen+1 , 3006, 1)
+    setStyle (qcd_hist  , kCyan+1 , 3013, 1)
     setStyle (sig_hist  , mass_colors[i_mass],    0, 3)
+    sig_hist.SetLineStyle(2)
     if not blind:
       setStyle (data_hist , 1 ,    0, 1)
       data_hist.SetMarkerStyle(20)
@@ -424,9 +425,9 @@ for i_mass, mass in enumerate(masses):
     stack.GetYaxis().SetTitleFont(42)
     stack.GetYaxis().SetLabelFont(42)
     stack.GetYaxis().SetLabelOffset(0.007)
-    stack.GetYaxis().SetLabelSize(0.05)
-    stack.GetYaxis().SetTitleOffset(0.92)
-    stack.GetYaxis().SetTitleSize(0.06)
+    stack.GetYaxis().SetLabelSize(0.06)
+    stack.GetYaxis().SetTitleOffset(0.55)
+    stack.GetYaxis().SetTitleSize(0.1)
     stack.GetYaxis().CenterTitle(1)
     stack.GetXaxis().SetNdivisions(nDivs)
     
@@ -558,7 +559,7 @@ for i_mass, mass in enumerate(masses):
 
         pad2.cd()
         # fPads2.SetLogy()
-        pad2.SetGridy()
+        #pad2.SetGridy()
         
         h_ratio1.Divide(h_ratio,h_bkgTot1,'pois')
 
@@ -589,7 +590,7 @@ for i_mass, mass in enumerate(masses):
         h_ratio1.GetYaxis().SetLabelOffset(0.007)
         h_ratio1.GetYaxis().SetLabelSize(0.12)
         h_ratio1.GetYaxis().SetTitleOffset(0.3)
-        h_ratio1.GetYaxis().SetTitleSize(0.12)
+        h_ratio1.GetYaxis().SetTitleSize(0.128)
         h_ratio1.GetYaxis().CenterTitle()
         h_ratio1.GetYaxis().CenterTitle(1)
   
@@ -597,13 +598,13 @@ for i_mass, mass in enumerate(masses):
         h_ratio1.GetXaxis().SetTitleFont(42)
         h_ratio1.GetXaxis().SetLabelFont(42)
         h_ratio1.GetXaxis().SetLabelOffset(0.025)
-        h_ratio1.GetXaxis().SetTitleOffset(1.1)
+        h_ratio1.GetXaxis().SetTitleOffset(0.8)
         h_ratio1.GetXaxis().SetLabelSize(0.15)
-        h_ratio1.GetXaxis().SetTitleSize(0.15)
+        h_ratio1.GetXaxis().SetTitleSize(0.25)
         h_ratio1.GetXaxis().SetNdivisions(nDivs)
         #h_ratio1.GetXaxis().CenterTitle()
         #h_ratio1.GetXaxis().CenterTitle(1)
-        pad2.SetBottomMargin(0.37)
+        pad2.SetBottomMargin(0.5)
     
         h_ratio1.SetMarkerStyle ( 20 )
         h_ratio1.SetMarkerSize ( 1 )
@@ -654,15 +655,25 @@ for i_mass, mass in enumerate(masses):
             #bgRatioErrs.SetDrawOption('hist')
             #bgRatioErrs.Draw('aE2 E0 same')
             #bgRatioErrs.GetXaxis().SetTitle('')
-            bgRatioErrs.GetXaxis().SetTitle( x_labels [i_var] )
-            bgRatioErrs.GetXaxis().SetTitleSize(0.15)
-            bgRatioErrs.GetXaxis().SetLabelSize(0.1)
-            bgRatioErrs.GetXaxis().SetNdivisions(nDivs)
-            bgRatioErrs.GetYaxis().SetTitle("Data/MC")
-            bgRatioErrs.GetYaxis().SetLabelSize(0.1)
-            bgRatioErrs.GetYaxis().SetTitleSize(0.13)
-            bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
             bgRatioErrs.SetMarkerStyle ( 1 )
+            bgRatioErrs.GetXaxis().SetTitle( x_labels [i_var] )
+            bgRatioErrs.GetXaxis().SetTitleFont(42)
+            bgRatioErrs.GetXaxis().SetLabelFont(42)
+            bgRatioErrs.GetXaxis().SetNdivisions(nDivs)
+            bgRatioErrs.GetXaxis().SetLabelOffset(0.025)
+            bgRatioErrs.GetXaxis().SetTitleOffset(0.8)
+            bgRatioErrs.GetXaxis().SetLabelSize(0.15)
+            bgRatioErrs.GetXaxis().SetTitleSize(0.25)
+            #
+            bgRatioErrs.GetYaxis().SetTitle("data / MC")
+            bgRatioErrs.GetYaxis().SetTitleFont(42)
+            bgRatioErrs.GetYaxis().SetLabelFont(42)
+            bgRatioErrs.GetYaxis().SetLabelOffset(0.007)
+            bgRatioErrs.GetYaxis().SetLabelSize(0.12)
+            bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
+            bgRatioErrs.GetYaxis().SetTitleSize(0.128)
+            bgRatioErrs.GetYaxis().CenterTitle()
+            bgRatioErrs.GetYaxis().CenterTitle(1)
             bgRatioErrs.Draw('E2')
             #bgRatioErrs.Draw('3')
             #h_ratio1.Draw("e0psame")
@@ -676,20 +687,27 @@ for i_mass, mass in enumerate(masses):
         h_ratio1.GetYaxis().SetRangeUser(0.,2)
         h_ratio1.GetXaxis().SetRangeUser(xMin,xMax)
 
-        #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
-        #lineAtOne.SetLineColor(2)
-        #lineAtOne.Draw()
+        # shameless copy of SetRangeUser code
+        ifirst = h_ratio1.GetXaxis().FindFixBin(xMin);
+        ilast = h_ratio1.GetXaxis().FindFixBin(xMax);
+        if h_ratio1.GetXaxis().GetBinUpEdge(ifirst) <= xMin: ifirst += 1
+        if h_ratio1.GetXaxis().GetBinLowEdge(ilast) >= xMax: ilast -= 1
+        #lineAtOne = TLine(h_ratio1.GetXaxis().GetBinLowEdge(ifirst),1,
+        #        h_ratio1.GetXaxis().GetBinUpEdge(ilast),1)
+        lineAtOne = TLine(pad1.GetUxmin(),1,pad1.GetUxmax(),1)
+        lineAtOne.SetLineColor(1)
+        lineAtOne.Draw()
         r.gPad.Update()
         pad1.cd()
     
 
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
     #leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
-    leg = r.TLegend(0.52,0.53,0.74,0.88,"","brNDC")
+    leg = r.TLegend(0.55,0.53,0.74,0.89,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
-    leg.SetTextSize(.05)
+    leg.SetTextSize(.055)
     if not blind:
       leg.AddEntry(data_hist ,"Data","lpe")
     if doEEJJ:
@@ -700,7 +718,7 @@ for i_mass, mass in enumerate(masses):
     leg.AddEntry(other_hist,"Other background","lf")
     leg.AddEntry(qcd_hist  ,"Multijet","lf")
     if doSystErr:
-      leg.AddEntry(bkgUncHisto, 'stat + syst uncertainty','f')
+      leg.AddEntry(bkgUncHisto, 'Stat+syst uncertainty','f')
     if doEEJJ:
       beta = 1.0
     else:
@@ -725,7 +743,7 @@ for i_mass, mass in enumerate(masses):
     l1.SetTextFont(42)
     l1.SetNDC()
     l1.SetTextSize(0.06)
-    l1.DrawLatex(0.675,0.965,lumiEnergyString)
+    l1.DrawLatex(0.75,0.965,lumiEnergyString)
 
     l2 = r.TLatex()
     l2.SetTextAlign(12)

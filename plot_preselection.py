@@ -3,7 +3,7 @@
 from plot_common import *
 import tdrstyle
 import math
-from ROOT import kOrange, kGray, kBlue, TH1F, TGraphAsymmErrors, Double
+from ROOT import kOrange, kGray, kBlue, kRed, kCyan, kGreen, TH1F, TGraphAsymmErrors, Double, TLine
 
 
 def GetBackgroundSyst(systType, isEEJJ=True):
@@ -99,7 +99,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ = False
+doEEJJ = True
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -110,30 +110,30 @@ mass2 = 1200
 mass_colors = [ 28, 38 ]
 
 varsEEJJ     = [ 
-    "Pt1stEle_PAS",
-    "Pt2ndEle_PAS",
-    "Pt1stJet_PAS",
-    "Pt2ndJet_PAS",
+#    "Pt1stEle_PAS",
+#    "Pt2ndEle_PAS",
+#    "Pt1stJet_PAS",
+#    "Pt2ndJet_PAS",
     "sT_PAS",
     "Mej_selected_min_PAS",
     "Mee_PAS"
 ] 
 
 x_labelsEEJJ = [ 
-    "p_{T} (e_{1}) [GeV]",
-    "p_{T} (e_{2}) [GeV]",
-    "p_{T} (jet_{1}) [GeV]",
-    "p_{T} (jet_{2}) [GeV]",
+#    "p_{T} (e_{1}) [GeV]",
+#    "p_{T} (e_{2}) [GeV]",
+#    "p_{T} (jet_{1}) [GeV]",
+#    "p_{T} (jet_{2}) [GeV]",
     "S_{T} [GeV]",
     "M_{ej}^{min} [GeV]",
     "M_{ee} [GeV]"
 ]
 
 x_binsEEJJ = [ 
-    [i*20 for i in range(0,51)],
-    [i*20 for i in range(0,51)],
-    [i*20 for i in range(0,51)],
-    [i*20 for i in range(0,51)],
+#    [i*20 for i in range(0,51)],
+#    [i*20 for i in range(0,51)],
+#    [i*20 for i in range(0,51)],
+#    [i*20 for i in range(0,51)],
     [300, 330, 370, 420, 480, 550, 630, 720, 820, 930, 1050, 1180, 1320, 1470, 1630, 1800, 1980, 2170, 2370, 2580, 2800, 3000],
     [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980],
     [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980]
@@ -157,7 +157,10 @@ x_binsENUJJ = [
     [300, 330, 370, 420, 480, 550, 630, 720, 820, 930, 1050, 1180, 1320, 1470, 1630, 1800, 1980, 2170, 2370, 2580, 2800, 3000],
     [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980],
     [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980],
-    [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980]
+    #[0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1105, 1215, 1330, 1450, 1575, 1705, 1840, 1980]
+    # 25  30  35  40  45    50   55  60   65   70    75   80   85   90   95   100    105   110   115   120   125   130   135   140
+    [0, 25, 55, 90, 130, 175, 225, 280, 340, 405, 475, 550, 630, 715, 805, 900, 1000, 1100, 1205, 1310, 1430, 1550, 1680, 1820, 1980]
+    # 25  30  35  40  45    50   55  60   65   70    75   80   85   90   95   100   100   105   110   120   120   130   140   160
 ]
 
 systTypesEEJJ  = ['qcd', 'mc', 'ttbarfromdata', 'zjets']
@@ -232,7 +235,7 @@ tdrstyle.setTDRStyle()
 r.gStyle.SetPadTopMargin(0.075);
 r.gStyle.SetPadBottomMargin(0.02)
 r.gStyle.SetPadLeftMargin(0.12)
-r.gStyle.SetPadRightMargin(0.1)
+r.gStyle.SetPadRightMargin(0.03)
 
 
 if doSystErr:
@@ -272,10 +275,10 @@ for i_var, var in enumerate(vars):
     #sig1_hist .Rebin (2)
     #sig2_hist .Rebin (2)
 
-    setStyle (zjets_hist, 2 , 3004, 1)
+    setStyle (zjets_hist, kRed+1 , 3004, 1)
     setStyle (ttbar_hist, 4 , 3005, 1)
-    setStyle (other_hist, 3 , 3006, 1)
-    setStyle (qcd_hist  , 7 , 3013, 1)
+    setStyle (other_hist, kGreen+1 , 3006, 1)
+    setStyle (qcd_hist  , kCyan+1 , 3013, 1)
     setStyle (sig1_hist , 28,    0, 4)
     setStyle (sig2_hist , 38,    0, 4)
     setStyle (data_hist , 1 ,    0, 1)
@@ -304,9 +307,9 @@ for i_var, var in enumerate(vars):
     stack.GetYaxis().SetTitleFont(42)
     stack.GetYaxis().SetLabelFont(42)
     stack.GetYaxis().SetLabelOffset(0.007)
-    stack.GetYaxis().SetLabelSize(0.05)
-    stack.GetYaxis().SetTitleOffset(0.92)
-    stack.GetYaxis().SetTitleSize(0.06)
+    stack.GetYaxis().SetLabelSize(0.06)
+    stack.GetYaxis().SetTitleOffset(0.55)
+    stack.GetYaxis().SetTitleSize(0.1)
     stack.GetYaxis().CenterTitle(1)
     
     if not doRatio:
@@ -429,7 +432,7 @@ for i_var, var in enumerate(vars):
 
         pad2.cd()
         # fPads2.SetLogy()
-        pad2.SetGridy()
+        #pad2.SetGridy()
         #h_ratio1.Divide(h_bkgTot1)
         h_ratio1 = TGraphAsymmErrors()
         #print 'doing h_ratio1.Divide()'
@@ -522,15 +525,6 @@ for i_var, var in enumerate(vars):
             #bgRatioErrs.Draw('aE2 E0 same')
             bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
             bgRatioErrs.SetMarkerStyle ( 1 )
-            bgRatioErrs.GetYaxis().SetTitle( "data / MC" )
-            bgRatioErrs.GetYaxis().SetTitleFont(42)
-            bgRatioErrs.GetYaxis().SetLabelFont(42)
-            bgRatioErrs.GetYaxis().SetLabelOffset(0.007)
-            bgRatioErrs.GetYaxis().SetLabelSize(0.12)
-            bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
-            bgRatioErrs.GetYaxis().SetTitleSize(0.12)
-            bgRatioErrs.GetYaxis().CenterTitle()
-            bgRatioErrs.GetYaxis().CenterTitle(1)
             bgRatioErrs.GetXaxis().SetTitle( x_labels [i_var] )
             bgRatioErrs.GetXaxis().SetTitleFont(42)
             bgRatioErrs.GetXaxis().SetLabelFont(42)
@@ -538,6 +532,16 @@ for i_var, var in enumerate(vars):
             bgRatioErrs.GetXaxis().SetTitleOffset(0.8)
             bgRatioErrs.GetXaxis().SetLabelSize(0.15)
             bgRatioErrs.GetXaxis().SetTitleSize(0.25)
+            #
+            bgRatioErrs.GetYaxis().SetTitle( "data / MC" )
+            bgRatioErrs.GetYaxis().SetTitleFont(42)
+            bgRatioErrs.GetYaxis().SetLabelFont(42)
+            bgRatioErrs.GetYaxis().SetLabelOffset(0.007)
+            bgRatioErrs.GetYaxis().SetLabelSize(0.12)
+            bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
+            bgRatioErrs.GetYaxis().SetTitleSize(0.128)
+            bgRatioErrs.GetYaxis().CenterTitle()
+            bgRatioErrs.GetYaxis().CenterTitle(1)
             bgRatioErrs.Draw('E2')
             #bgRatioErrs.Draw('3')
             #h_ratio1.Draw("e0psame")
@@ -577,18 +581,19 @@ for i_var, var in enumerate(vars):
         #h_ratio2.Draw("samee0")
         #h_ratio2.Draw("ZP0SAME")
 
-        #lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
-        #lineAtOne.SetLineColor(2)
-        #lineAtOne.Draw()
+        lineAtOne = TLine(h_ratio.GetXaxis().GetXmin(),1,h_ratio.GetXaxis().GetXmax(),1)
+        lineAtOne.SetLineColor(1)
+        lineAtOne.Draw()
         pad1.cd()
 
     
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
-    leg = r.TLegend(0.52,0.53,0.76,0.88,"","brNDC")
+    #leg = r.TLegend(0.52,0.53,0.76,0.88,"","brNDC")
+    leg = r.TLegend(0.55,0.52,0.84,0.89,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
-    leg.SetTextSize(.05)
+    leg.SetTextSize(.055)
     leg.AddEntry(data_hist ,"Data","lpe")
     if doEEJJ:
       leg.AddEntry(zjets_hist,"Z/#gamma* + jets","lf")
@@ -598,7 +603,7 @@ for i_var, var in enumerate(vars):
     leg.AddEntry(other_hist,"Other background","lf")
     leg.AddEntry(qcd_hist  ,"Multijet","lf")
     if doSystErr:
-      leg.AddEntry(bkgUncHisto, 'stat + syst uncertainty','f')
+      leg.AddEntry(bkgUncHisto, 'Stat+syst uncertainty','f')
     if doEEJJ:
       beta = 1.0
     else:
@@ -624,7 +629,7 @@ for i_var, var in enumerate(vars):
     l1.SetTextFont(42)
     l1.SetNDC()
     l1.SetTextSize(0.06)
-    l1.DrawLatex(0.675,0.965,lumiEnergyString)
+    l1.DrawLatex(0.75,0.965,lumiEnergyString)
 
     l2 = r.TLatex()
     l2.SetTextAlign(12)
@@ -643,14 +648,14 @@ for i_var, var in enumerate(vars):
     r.gPad.Update()
 
 
-    #if not r.gROOT.IsBatch():
-    #    ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
-    #    if __name__ == '__main__':
-    #       rep = ''
-    #       while not rep in [ 'c', 'C' ]:
-    #          rep = raw_input( 'enter "c" to continue: ' )
-    #          if 1 < len(rep):
-    #             rep = rep[0]
+    if not r.gROOT.IsBatch():
+        ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
+        if __name__ == '__main__':
+           rep = ''
+           while not rep in [ 'c', 'C' ]:
+              rep = raw_input( 'enter "c" to continue: ' )
+              if 1 < len(rep):
+                 rep = rep[0]
     # FOR TESTING
     #break
 
