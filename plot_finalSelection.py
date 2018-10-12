@@ -6,77 +6,6 @@ import math
 from ROOT import kOrange, kGray, kBlue, kRed, kCyan, kGreen, TH1F, TGraphAsymmErrors, Double, TLine
 
 
-# from makeDatacard.py
-#def GetBackgroundSyst(background_name, selectionName):
-#    verbose = False
-#    #if selectionName=='preselection':
-#    #  verbose=True
-#    if verbose:
-#      print 'INFO: GetBackgroundSyst('+background_name+','+selectionName+')'
-#    firstSyst = 0
-#    secondSyst = 0
-#    thirdSyst = 0
-#    if not 'QCD' in background_name and not 'data' in background_name.lower():
-#      for syst in signalSystDict.keys():
-#          if selectionName not in backgroundSystDict[syst][background_name].keys():
-#              if 'LQ' in selectionName:
-#                selectionNameBkgSyst = maxLQselectionBkg
-#              else:
-#                selectionNameBkgSyst = minLQselectionBkg
-#              #print 'selectionName=',selectionName,'not found in',backgroundSystDict[syst][background_name].keys()
-#          else:
-#              selectionNameBkgSyst = selectionName
-#          try:
-#            firstSyst += pow(backgroundSystDict[syst][background_name][selectionNameBkgSyst],2) # deltaX/X
-#            if verbose:
-#              print 'INFO: add',syst,'for',background_name,'at selection',selectionNameBkgSyst,'to firstSyst=',backgroundSystDict[syst][background_name][selectionNameBkgSyst]
-#          except KeyError:
-#              print 'Got a KeyError with: backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']'
-#
-#    if verbose:
-#      print 'INFO: firstSyst=',math.sqrt(firstSyst)
-#
-#    # background-only special systs: "DYShape", "TTShape", "WShape"
-#    specialSysts = ["DYShape"] if doEEJJ else ["WShape","TTShape"]
-#    for syst in specialSysts:
-#        if syst=='DYShape' and not 'DY' in background_name or syst=='TTShape' and not 'TT' in background_name or 'TTBarFromDATA' in background_name or syst=='WShape' and not 'W' in background_name:
-#            continue
-#        if verbose:
-#          print 'INFO: background_name=',background_name
-#          print 'INFO: babackgroundSystDict['+syst+'].keys()=',backgroundSystDict[syst].keys()
-#        if background_name not in backgroundSystDict[syst].keys():
-#          print 'WARNING: could not find',background_name,'in backgroundSystDict['+syst+']=',backgroundSystDict[syst].keys()
-#          continue
-#        if selectionName not in backgroundSystDict[syst][background_name].keys():
-#            selectionNameBkgSyst = maxLQselectionBkg
-#        else:
-#            selectionNameBkgSyst = selectionName
-#        try:
-#          secondSyst = pow(backgroundSystDict[syst][background_name][selectionNameBkgSyst],2)
-#          #print 'backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']=',secondSyst
-#        except KeyError:
-#            print 'ERROR: Got a KeyError with: backgroundSystDict['+syst+']['+background_name+']['+selectionNameBkgSyst+']'
-#
-#    if verbose:
-#      print 'INFO: secondSyst (TT/DYShape)=',math.sqrt(secondSyst)
-#
-#    # XXX WARNING: hardcoded background name (ick); some checking is done at least
-#    if 'TTbar' in background_name:
-#        thirdSyst = pow(ttBarNormDeltaXOverX,2)
-#    elif doEEJJ and 'DY' in background_name:
-#        thirdSyst = pow(zJetNormDeltaXOverX,2)
-#    elif not doEEJJ and 'W' in background_name:
-#        thirdSyst = pow(zJetNormDeltaXOverX,2)
-#    elif 'QCD' in background_name:
-#        thirdSyst = pow(qcdNormDeltaXOverX,2)
-#
-#    if verbose:
-#      print 'INFO: thirdSyst (extra norm uncertainty)=',math.sqrt(thirdSyst)
-#
-#    # now get the total deltaX/X
-#    totalSyst = math.sqrt(firstSyst+secondSyst+thirdSyst)
-#    return totalSyst
-
 def GetBackgroundSyst(background_name, selectionName):
     verbose = True
     #if selectionName=='preselection':
@@ -155,7 +84,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= False
+doEEJJ= True
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -289,9 +218,6 @@ if doSystErr:
   signalSystDict     = FillSystDicts(systematicsNamesSignal,syst_background_names,systematics_filepaths,False)
 
 
-lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
-
-
 print 'Using tables:'
 print '\t Data/MC:',bkgd_file.GetName()
 print '\t QCD(data):',qcd_file.GetName()
@@ -310,9 +236,7 @@ tdrstyle.setTDRStyle()
 r.gStyle.SetPadTopMargin(0.075);
 r.gStyle.SetPadBottomMargin(0.02)
 r.gStyle.SetPadLeftMargin(0.12)
-r.gStyle.SetPadRightMargin(0.03)
-#r.gStyle.SetPadTickX(0)
-#r.gStyle.SetPadTickY(0)
+r.gStyle.SetPadRightMargin(0.04)
 
 
 for i_mass, mass in enumerate(masses):
@@ -364,13 +288,8 @@ for i_mass, mass in enumerate(masses):
     #qcd_hist  .Rebin (2)
     #data_hist .Rebin (2)
     #sig_hist .Rebin (2)
+    setStackHistosStyle([zjets_hist,ttbar_hist,other_hist,qcd_hist,sig_hist,data_hist])
   
-    setStyle (zjets_hist, kRed+1 , 3004, 1)
-    setStyle (ttbar_hist, 4 , 3005, 1)
-    setStyle (other_hist, kGreen+1 , 3006, 1)
-    setStyle (qcd_hist  , kCyan+1 , 3013, 1)
-    setStyle (sig_hist  , mass_colors[i_mass],    0, 3)
-    sig_hist.SetLineStyle(2)
     if not blind:
       setStyle (data_hist , 1 ,    0, 1)
       data_hist.SetMarkerStyle(20)
@@ -397,22 +316,22 @@ for i_mass, mass in enumerate(masses):
     stack.Add ( zjets_hist )
     stack.Draw()
     if doEEJJ:
-      stack.SetMaximum(500)
+      stack.SetMaximum(5e3)
       if mass < 1000 and var=='sT_eejj':
-          stack.SetMaximum(1e5)
+          stack.SetMaximum(5e6)
       elif mass < 1000 and var=='Mej_selected_min':
-          stack.SetMaximum(1e4)
+          stack.SetMaximum(1e5)
       elif mass > 1000 and var=='Mej_selected_min':
-          stack.SetMaximum(1e3)
+          stack.SetMaximum(1e4)
     else:
         if var=='Mej' and mass < 1000:
-            stack.SetMaximum(1e3);
+            stack.SetMaximum(1e4);
         elif var=='Mej' and mass > 1000:
-            stack.SetMaximum(1e2);
-        elif var=='ST' and mass < 1000:
-            stack.SetMaximum(9e3);
-        elif var=='ST' and mass > 1000:
             stack.SetMaximum(1e3);
+        elif var=='ST' and mass < 1000:
+            stack.SetMaximum(1e5);
+        elif var=='ST' and mass > 1000:
+            stack.SetMaximum(1e4);
 
     stack.SetMinimum(1e-1)
     bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
@@ -420,32 +339,12 @@ for i_mass, mass in enumerate(masses):
     stkSystErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
     stkSystStatErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
 
-    stack.GetYaxis().SetTitle( "Events / bin" )
-    stack.GetYaxis().CenterTitle()
-    stack.GetYaxis().SetTitleFont(42)
-    stack.GetYaxis().SetLabelFont(42)
-    stack.GetYaxis().SetLabelOffset(0.007)
-    stack.GetYaxis().SetLabelSize(0.06)
-    stack.GetYaxis().SetTitleOffset(0.55)
-    stack.GetYaxis().SetTitleSize(0.1)
-    stack.GetYaxis().CenterTitle(1)
-    stack.GetXaxis().SetNdivisions(nDivs)
+    setStackYAxisStyle(stack)
     
     if not doRatio:
-      stack.GetXaxis().SetTitle( x_labels [i_var] )
-      stack.GetXaxis().CenterTitle()
-      stack.GetXaxis().SetTitleFont(42)
-      stack.GetXaxis().SetLabelFont(42)
-      stack.GetXaxis().SetLabelOffset(0.007)
-      stack.GetXaxis().SetTitleOffset(0.92)
-      stack.GetXaxis().SetLabelSize(0.05)
-      stack.GetXaxis().SetTitleSize(0.06)
-      stack.GetXaxis().CenterTitle(1)
+        setStackNoRatioXAxisStyle(stack)
     else:
-      stack.GetXaxis().SetLabelSize(0)
-      stack.GetXaxis().SetLabelOffset(0)
-      stack.GetXaxis().SetTitleSize(0)
-      stack.GetXaxis().SetTitleOffset(0)
+        setStackWithRatioXAxisStyle(stack)
 
     stack.GetXaxis().SetTitle( x_labels [i_var] )
     stack.GetXaxis().SetRangeUser(xMin,xMax)
@@ -464,14 +363,6 @@ for i_mass, mass in enumerate(masses):
       save_name = save_name + "_enujj.pdf"
     save_name_png = save_name.replace('.pdf','.png')
   
-    ## WORKS
-    #canvas = r.TCanvas(canv_name,canv_name,800,550)
-    #canvas.cd()
-    #pad1   = r.TPad( pad_name, pad_name , 0.0, 0.0, 1.0, 1.0 )
-    #canvas.SetLogy()
-    #stack.Draw("HIST")
-    ## WORKS
-
     canvas = r.TCanvas(canv_name,canv_name,800,600)
     canvas.cd()
     if not doRatio:
@@ -490,9 +381,9 @@ for i_mass, mass in enumerate(masses):
 
     #r.SetOwnership(pad1, False)
     pad1.cd()
+    pad1.SetLogy()
     stack.Draw('hist')
     #canvas.SetLogy()
-    pad1.SetLogy()
     pad1.Draw()
     r.gPad.Update()
 
@@ -519,12 +410,7 @@ for i_mass, mass in enumerate(masses):
       #bkgUncHisto = copy.deepcopy(histoAll)
       #for bin in range(0,histoAll.GetNbinsX()):
       #    bkgUncHisto.SetBinError(bin+1,self.bkgSyst*histoAll.GetBinContent(bin+1))
-      bkgUncHisto.SetMarkerStyle(0)
-      bkgUncHisto.SetLineColor(0)
-      bkgUncHisto.SetFillColor(kGray+1)
-      bkgUncHisto.SetLineColor(kGray+1)
-      bkgUncHisto.SetFillStyle(3001)
-      bkgUncHisto.SetMarkerSize(0)
+      setBkgUncHistStyle(bkgUncHisto)
       bkgUncHisto.Draw("E2same")
       if verbose:
         for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
@@ -584,32 +470,10 @@ for i_mass, mass in enumerate(masses):
         #        h_ratio1.SetBinContent(ibin,-1)
         #        h_ratio1.SetBinError(ibin,-1)
 
-        h_ratio1.GetYaxis().SetTitle( "data / MC" )
-        h_ratio1.GetYaxis().SetTitleFont(42)
-        h_ratio1.GetYaxis().SetLabelFont(42)
-        h_ratio1.GetYaxis().SetLabelOffset(0.007)
-        h_ratio1.GetYaxis().SetLabelSize(0.12)
-        h_ratio1.GetYaxis().SetTitleOffset(0.3)
-        h_ratio1.GetYaxis().SetTitleSize(0.128)
-        h_ratio1.GetYaxis().CenterTitle()
-        h_ratio1.GetYaxis().CenterTitle(1)
-  
-        h_ratio1.GetXaxis().SetTitle( x_labels [i_var] )
-        h_ratio1.GetXaxis().SetTitleFont(42)
-        h_ratio1.GetXaxis().SetLabelFont(42)
-        h_ratio1.GetXaxis().SetLabelOffset(0.025)
-        h_ratio1.GetXaxis().SetTitleOffset(0.8)
-        h_ratio1.GetXaxis().SetLabelSize(0.15)
-        h_ratio1.GetXaxis().SetTitleSize(0.25)
-        h_ratio1.GetXaxis().SetNdivisions(nDivs)
-        #h_ratio1.GetXaxis().CenterTitle()
-        #h_ratio1.GetXaxis().CenterTitle(1)
+        setRatio1NoBGErrStyle(h_ratio1, x_labels[i_var])
         pad2.SetBottomMargin(0.5)
     
-        h_ratio1.SetMarkerStyle ( 20 )
-        h_ratio1.SetMarkerSize ( 1 )
-        h_ratio1.SetMarkerColor ( 1 )
-        #h_ratio1.SetMarkerColor ( kBlue )
+        setRatio1MarkerStyle(h_ratio1)
   
         #h_ratio1.Draw("e0")
         # used for th1f
@@ -642,38 +506,8 @@ for i_mass, mass in enumerate(masses):
                 h_bkgUnc1.SetBinContent(ibin,1.0)
             bgRatioErrs = h_bkgUnc1
 
-            bgRatioErrs.SetFillColor(kGray+1)
-            bgRatioErrs.SetLineColor(kGray+1)
-            bgRatioErrs.SetFillStyle(3001)
-            #bgRatioErrs.SetFillStyle(3018)
-            #bgRatioErrs.SetFillStyle(3013)
-            #bgRatioErrs.SetMarkerSize(1.1)
-            bgRatioErrs.SetMarkerSize(0)
-            #bgRatioErrs.SetLineColor(kOrange)
-            #bgRatioErrs.SetLineWidth(3)
-            #bgRatioErrs.Draw('aE2 aE0 same')
-            #bgRatioErrs.SetDrawOption('hist')
-            #bgRatioErrs.Draw('aE2 E0 same')
-            #bgRatioErrs.GetXaxis().SetTitle('')
-            bgRatioErrs.SetMarkerStyle ( 1 )
-            bgRatioErrs.GetXaxis().SetTitle( x_labels [i_var] )
-            bgRatioErrs.GetXaxis().SetTitleFont(42)
-            bgRatioErrs.GetXaxis().SetLabelFont(42)
-            bgRatioErrs.GetXaxis().SetNdivisions(nDivs)
-            bgRatioErrs.GetXaxis().SetLabelOffset(0.025)
-            bgRatioErrs.GetXaxis().SetTitleOffset(0.8)
-            bgRatioErrs.GetXaxis().SetLabelSize(0.15)
-            bgRatioErrs.GetXaxis().SetTitleSize(0.25)
-            #
-            bgRatioErrs.GetYaxis().SetTitle("data / MC")
-            bgRatioErrs.GetYaxis().SetTitleFont(42)
-            bgRatioErrs.GetYaxis().SetLabelFont(42)
-            bgRatioErrs.GetYaxis().SetLabelOffset(0.007)
-            bgRatioErrs.GetYaxis().SetLabelSize(0.12)
-            bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
-            bgRatioErrs.GetYaxis().SetTitleSize(0.128)
-            bgRatioErrs.GetYaxis().CenterTitle()
-            bgRatioErrs.GetYaxis().CenterTitle(1)
+            setBGRatioErrStyle(bgRatioErrs, x_labels [i_var])
+             
             bgRatioErrs.Draw('E2')
             #bgRatioErrs.Draw('3')
             #h_ratio1.Draw("e0psame")
@@ -692,18 +526,20 @@ for i_mass, mass in enumerate(masses):
         ilast = h_ratio1.GetXaxis().FindFixBin(xMax);
         if h_ratio1.GetXaxis().GetBinUpEdge(ifirst) <= xMin: ifirst += 1
         if h_ratio1.GetXaxis().GetBinLowEdge(ilast) >= xMax: ilast -= 1
-        #lineAtOne = TLine(h_ratio1.GetXaxis().GetBinLowEdge(ifirst),1,
-        #        h_ratio1.GetXaxis().GetBinUpEdge(ilast),1)
         lineAtOne = TLine(pad1.GetUxmin(),1,pad1.GetUxmax(),1)
         lineAtOne.SetLineColor(1)
         lineAtOne.Draw()
         r.gPad.Update()
         pad1.cd()
     
+    # redraw stack and data on top
+    stack.Draw('histsame')
+    sig_hist.Draw("HIST SAME")
+    g.Draw("ZP0SAME")
 
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
     #leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
-    leg = r.TLegend(0.55,0.53,0.74,0.89,"","brNDC")
+    leg = r.TLegend(0.53,0.45,0.84,0.9,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
@@ -711,12 +547,12 @@ for i_mass, mass in enumerate(masses):
     if not blind:
       leg.AddEntry(data_hist ,"Data","lpe")
     if doEEJJ:
-      leg.AddEntry(zjets_hist,"Z/#gamma* + jets","lf")
+      leg.AddEntry(zjets_hist,"Z/#gamma* + jets","f")
     else:
-      leg.AddEntry(zjets_hist,"W + jets","lf")
-    leg.AddEntry(ttbar_hist,"t#bar{t}","lf")
-    leg.AddEntry(other_hist,"Other background","lf")
-    leg.AddEntry(qcd_hist  ,"Multijet","lf")
+      leg.AddEntry(zjets_hist,"W + jets","f")
+    leg.AddEntry(ttbar_hist,"t#bar{t}","f")
+    leg.AddEntry(other_hist,"Other background","f")
+    leg.AddEntry(qcd_hist  ,"Multijet","f")
     if doSystErr:
       leg.AddEntry(bkgUncHisto, 'Stat+syst uncertainty','f')
     if doEEJJ:
@@ -726,6 +562,8 @@ for i_mass, mass in enumerate(masses):
     leg.AddEntry(sig_hist  ,"LQ, M = "+str(mass)+" GeV, #beta = "+str(beta),"l")
     leg.Draw()
 
+    pad1.RedrawAxis('G')
+    pad1.RedrawAxis()
     canvas.RedrawAxis('G')
     canvas.RedrawAxis()
     canvas.Modified()
@@ -739,26 +577,13 @@ for i_mass, mass in enumerate(masses):
     
     # CMS/lumi/energy
     l1 = r.TLatex()
-    l1.SetTextAlign(12)
-    l1.SetTextFont(42)
-    l1.SetNDC()
-    l1.SetTextSize(0.06)
-    l1.DrawLatex(0.75,0.965,lumiEnergyString)
-
     l2 = r.TLatex()
-    l2.SetTextAlign(12)
-    l2.SetTextFont(62)
-    l2.SetNDC()
-    l2.SetTextSize(0.08)
+    drawLumiEnergyAndCMSStrings(l1,l2)
 
     l3 = r.TLatex()
-    l3.SetTextAlign(12)
-    l3.SetTextFont(42)
-    l3.SetNDC()
-    l3.SetTextSize(0.08)
     if doPrelim:
-      l3.DrawLatex(0.25,0.83,"#it{Preliminary}")
-    l2.DrawLatex(0.15,0.84,"CMS")
+        drawPrelim(l3)
+
     r.gPad.Update()
 
 
