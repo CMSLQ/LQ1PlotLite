@@ -166,14 +166,18 @@ def setStackHistosStyle(plotList):
     setStyle (plotList[1],  4          , 3005, 2)  # ttbar
     setStyle (plotList[2],  r.kGreen+1 , 3006, 2)  # other
     setStyle (plotList[3] , r.kCyan+1  , 3013, 2)  # QCD
-    setStyle (plotList[4] , r.kOrange-6,    0, 4)  # sig1
-    setStyle (plotList[5] , r.kAzure-4 ,    0, 4)  # sig2
-    setStyle (plotList[6] , 1          ,    0, 2)  # data
-    setRatio1MarkerStyle(plotList[6])
-    #plotList[6].SetMarkerStyle(20)                 # data
-    #plotList[6].SetMarkerSize (1.15)                # data
-    plotList[4].SetLineStyle(2)
-    plotList[5].SetLineStyle(2)
+    if len(plotList) == 7:
+        setStyle (plotList[4] , r.kOrange-6,    0, 4)  # sig1
+        setStyle (plotList[5] , r.kAzure-4 ,    0, 4)  # sig2
+        setStyle (plotList[6] , 1          ,    0, 2)  # data
+        setRatio1MarkerStyle(plotList[6])
+        plotList[4].SetLineStyle(2)
+        plotList[5].SetLineStyle(2)
+    elif len(plotList) == 6:
+        setStyle (plotList[4] , r.kAzure-4 ,    0, 4)  # sig
+        setStyle (plotList[5] , 1          ,    0, 2)  # data
+        setRatio1MarkerStyle(plotList[5])
+        plotList[4].SetLineStyle(2)
     
 def setStackYAxisStyle(stack):
     stack.GetYaxis().SetTitle( "Events / bin" )
@@ -259,7 +263,7 @@ def setBGRatioErrStyle(bgRatioErrs,label):
     bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
     bgRatioErrs.GetYaxis().SetNdivisions(502)
 
-def setRatio1NoBGErrStyle(h_ratio1):
+def setRatio1NoBGErrStyle(h_ratio1,label):
     h_ratio1.GetYaxis().SetTitle( "data / MC" )
     h_ratio1.GetYaxis().SetTitleFont(42)
     h_ratio1.GetYaxis().SetLabelFont(42)
@@ -269,7 +273,7 @@ def setRatio1NoBGErrStyle(h_ratio1):
     h_ratio1.GetYaxis().SetTitleSize(0.12)
     h_ratio1.GetYaxis().CenterTitle()
     h_ratio1.GetYaxis().CenterTitle(1)
-    h_ratio1.GetXaxis().SetTitle( x_labels [i_var] )
+    h_ratio1.GetXaxis().SetTitle(label)
     h_ratio1.GetXaxis().SetTitleFont(42)
     h_ratio1.GetXaxis().SetLabelFont(42)
     h_ratio1.GetXaxis().SetLabelOffset(0.025)
