@@ -99,7 +99,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ = True
+doEEJJ = False
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -233,7 +233,7 @@ tdrstyle.setTDRStyle()
 r.gStyle.SetPadTopMargin(0.075);
 r.gStyle.SetPadBottomMargin(0.02)
 r.gStyle.SetPadLeftMargin(0.12)
-r.gStyle.SetPadRightMargin(0.03)
+r.gStyle.SetPadRightMargin(0.04)
 
 
 if doSystErr:
@@ -283,7 +283,7 @@ for i_var, var in enumerate(vars):
     if doEEJJ:
       stack.SetMaximum(1e7)
     else:
-      stack.SetMaximum(20000000);
+      stack.SetMaximum(1e7);
     stack.SetMinimum(1e-1)
     bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
 
@@ -412,7 +412,8 @@ for i_var, var in enumerate(vars):
         #h_ratio1.GetXaxis().SetTitleSize(0.06)
         #h_ratio1.GetXaxis().SetLabelSize(0.1)
         h_ratio1.GetYaxis().SetRangeUser(0.,2)
-        h_ratio1.GetYaxis().SetNdivisions(505)
+        #h_ratio1.GetYaxis().SetNdivisions(505)
+
         #h_ratio1.GetYaxis().SetTitle("Data/MC")
         #h_ratio1.GetYaxis().SetLabelSize(0.1)
         #h_ratio1.GetYaxis().SetTitleSize(0.13)
@@ -421,6 +422,7 @@ for i_var, var in enumerate(vars):
         #h_ratio1.GetXaxis().CenterTitle(1)
         #pad2.SetBottomMargin(0.37)
         pad2.SetBottomMargin(0.5)
+        pad2.SetTopMargin(0.75)
     
         setRatio1MarkerStyle(h_ratio1)
 
@@ -473,7 +475,6 @@ for i_var, var in enumerate(vars):
             # below is for th1f
             #h_ratio1.Draw("e0same")
             h_ratio1.Draw("pz0same")
-            bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
 
             ## need to make hist with "1" in all bins
             #bgRatioErrs = h_ratio1.Clone()
@@ -504,7 +505,7 @@ for i_var, var in enumerate(vars):
     
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
     #leg = r.TLegend(0.52,0.53,0.76,0.88,"","brNDC")
-    leg = r.TLegend(0.55,0.45,0.84,0.9,"","brNDC")
+    leg = r.TLegend(0.53,0.45,0.84,0.9,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
@@ -544,11 +545,6 @@ for i_var, var in enumerate(vars):
     l1 = r.TLatex()
     l2 = r.TLatex()
     drawLumiEnergyAndCMSStrings(l1,l2)
-    #l2.SetTextAlign(12)
-    #l2.SetTextFont(62)
-    #l2.SetNDC()
-    #l2.SetTextSize(0.08)
-    #l2.DrawLatex(0.15,0.84,"CMS")
 
     l3 = r.TLatex()
     if doPrelim:
