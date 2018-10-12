@@ -7,7 +7,7 @@ from ROOT import kOrange, kGray, kBlue, kRed, kCyan, kGreen, TH1F, TGraphAsymmEr
 
 
 def GetBackgroundSyst(background_name, selectionName):
-    verbose = True
+    verbose = False
     #if selectionName=='preselection':
     #  verbose=True
     if verbose:
@@ -290,11 +290,6 @@ for i_mass, mass in enumerate(masses):
     #sig_hist .Rebin (2)
     setStackHistosStyle([zjets_hist,ttbar_hist,other_hist,qcd_hist,sig_hist,data_hist])
   
-    if not blind:
-      setStyle (data_hist , 1 ,    0, 1)
-      data_hist.SetMarkerStyle(20)
-      data_hist.SetMarkerSize (1.1)
-    
     if var=='Mej_selected_min' or var=='Mej':
         nDivs = 507
         xMin = 400
@@ -369,8 +364,8 @@ for i_mass, mass in enumerate(masses):
         pad1  = r.TPad( pad_name+"1", pad_name+"1" , 0.0, 0.0, 1.0, 1.0 )
         pad1.Draw()
     else:
-        pad1 = r.TPad(pad_name+"1", pad_name+"1", 0.00, 0.275, 0.99, 0.99)
-        pad2 = r.TPad(pad_name+"2", pad_name+"2", 0.00, 0.00, 0.99, 0.275)
+        pad1 = r.TPad(pad_name+"1", pad_name+"1", 0.00, 0.3, 0.99, 0.99)
+        pad2 = r.TPad(pad_name+"2", pad_name+"2", 0.00, 0.00, 0.99, 0.3)
         pad1.SetFillColor(0)
         pad1.SetLineColor(0)
         pad2.SetFillColor(0)
@@ -471,7 +466,7 @@ for i_mass, mass in enumerate(masses):
         #        h_ratio1.SetBinError(ibin,-1)
 
         setRatio1NoBGErrStyle(h_ratio1, x_labels[i_var])
-        pad2.SetBottomMargin(0.5)
+        pad2.SetBottomMargin(0.6)
     
         setRatio1MarkerStyle(h_ratio1)
   
@@ -535,15 +530,12 @@ for i_mass, mass in enumerate(masses):
     # redraw stack and data on top
     stack.Draw('histsame')
     sig_hist.Draw("HIST SAME")
-    g.Draw("ZP0SAME")
+    g.Draw("pz0SAME")
 
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
     #leg = r.TLegend(0.43,0.58,0.67,0.89,"","brNDC")
-    leg = r.TLegend(0.53,0.45,0.84,0.9,"","brNDC")
-    leg.SetTextFont(42)
-    leg.SetFillColor(0)
-    leg.SetBorderSize(0)
-    leg.SetTextSize(.055)
+    leg = r.TLegend(0.49,0.45,0.75,0.88,"","brNDC")
+    setLegendStyle(leg)
     if not blind:
       leg.AddEntry(data_hist ,"Data","lpe")
     if doEEJJ:
