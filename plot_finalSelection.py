@@ -84,7 +84,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= True
+doEEJJ= False
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -235,7 +235,7 @@ tdrstyle.setTDRStyle()
 
 r.gStyle.SetPadTopMargin(0.075);
 r.gStyle.SetPadBottomMargin(0.02)
-r.gStyle.SetPadLeftMargin(0.12)
+r.gStyle.SetPadLeftMargin(0.14)
 r.gStyle.SetPadRightMargin(0.04)
 
 
