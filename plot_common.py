@@ -162,3 +162,106 @@ def ZeroNegativeBins(plotList):
                 hist.SetBinContent(binn,0)
 
 
+def setStackHistosStyle(plotList):
+    setStyle (plotList[0],  r.kRed+1   , 3004, 1)  # Z/W
+    setStyle (plotList[1],  4          , 3005, 1)  # ttbar
+    setStyle (plotList[2],  r.kGreen+1 , 3006, 1)  # other
+    setStyle (plotList[3] , r.kCyan+1  , 3013, 1)  # QCD
+    setStyle (plotList[4] , 28         ,    0, 4)  # sig1
+    setStyle (plotList[5] , 38         ,    0, 4)  # sig2
+    setStyle (plotList[6] , 1          ,    0, 1)  # data
+    plotList[6].SetMarkerStyle(20)                 # data
+    plotList[6].SetMarkerSize (1.1)                # data
+    
+
+def setStackYAxisStyle(stack):
+    stack.GetYaxis().SetTitle( "Events / bin" )
+    stack.GetYaxis().CenterTitle()
+    stack.GetYaxis().SetTitleFont(42)
+    stack.GetYaxis().SetLabelFont(42)
+    stack.GetYaxis().SetLabelOffset(0.007)
+    stack.GetYaxis().SetLabelSize(0.06)
+    stack.GetYaxis().SetTitleOffset(0.55)
+    stack.GetYaxis().SetTitleSize(0.1)
+    stack.GetYaxis().CenterTitle(1)
+
+def setStackNoRatioXAxisStyle(stack):
+    stack.GetXaxis().SetTitle( x_labels [i_var] )
+    stack.GetXaxis().CenterTitle()
+    stack.GetXaxis().SetTitleFont(42)
+    stack.GetXaxis().SetLabelFont(42)
+    stack.GetXaxis().SetLabelOffset(0.007)
+    stack.GetXaxis().SetTitleOffset(0.92)
+    stack.GetXaxis().SetLabelSize(0.05)
+    stack.GetXaxis().SetTitleSize(0.06)
+    stack.GetXaxis().CenterTitle(1)
+
+def setStackWithRatioXAxisStyle(stack):
+    stack.GetXaxis().SetLabelSize(0)
+    stack.GetXaxis().SetLabelOffset(0)
+    stack.GetXaxis().SetTitleSize(0)
+    stack.GetXaxis().SetTitleOffset(0)
+
+def setBkgUncHistStyle(bkgUncHisto):
+    bkgUncHisto.SetMarkerStyle(0)
+    bkgUncHisto.SetLineColor(0)
+    bkgUncHisto.SetFillColor(r.kGray+1)
+    bkgUncHisto.SetLineColor(r.kGray+1)
+    bkgUncHisto.SetFillStyle(3001)
+    bkgUncHisto.SetMarkerSize(0)
+
+def setRatio1MarkerStyle(h_ratio1):
+    h_ratio1.SetMarkerStyle ( 20 )
+    h_ratio1.SetMarkerSize ( 1 )
+
+def setBGRatioErrStyle(bgRatioErrs,label):
+    bgRatioErrs.SetFillColor(r.kGray+1)
+    bgRatioErrs.SetLineColor(r.kGray+1)
+    bgRatioErrs.SetFillStyle(3001)
+    #bgRatioErrs.SetFillStyle(3018)
+    #bgRatioErrs.SetFillStyle(3013)
+    #bgRatioErrs.SetMarkerSize(1.1)
+    bgRatioErrs.SetMarkerSize(0)
+    #bgRatioErrs.SetLineColor(kOrange)
+    #bgRatioErrs.SetLineWidth(3)
+    #bgRatioErrs.Draw('aE2 aE0 same')
+    #bgRatioErrs.SetDrawOption('hist')
+    #bgRatioErrs.Draw('aE2 E0 same')
+    bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
+    bgRatioErrs.SetMarkerStyle ( 1 )
+    bgRatioErrs.GetXaxis().SetTitle( label )
+    bgRatioErrs.GetXaxis().SetTitleFont(42)
+    bgRatioErrs.GetXaxis().SetLabelFont(42)
+    bgRatioErrs.GetXaxis().SetLabelOffset(0.025)
+    bgRatioErrs.GetXaxis().SetTitleOffset(0.8)
+    bgRatioErrs.GetXaxis().SetLabelSize(0.15)
+    bgRatioErrs.GetXaxis().SetTitleSize(0.25)
+    #
+    bgRatioErrs.GetYaxis().SetTitle( "data / MC" )
+    bgRatioErrs.GetYaxis().SetTitleFont(42)
+    bgRatioErrs.GetYaxis().SetLabelFont(42)
+    bgRatioErrs.GetYaxis().SetLabelOffset(0.007)
+    bgRatioErrs.GetYaxis().SetLabelSize(0.12)
+    bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
+    bgRatioErrs.GetYaxis().SetTitleSize(0.128)
+    bgRatioErrs.GetYaxis().CenterTitle()
+    bgRatioErrs.GetYaxis().CenterTitle(1)
+
+def setRatio1NoBGErrStyle(h_ratio1):
+    h_ratio1.GetYaxis().SetTitle( "data / MC" )
+    h_ratio1.GetYaxis().SetTitleFont(42)
+    h_ratio1.GetYaxis().SetLabelFont(42)
+    h_ratio1.GetYaxis().SetLabelOffset(0.007)
+    h_ratio1.GetYaxis().SetLabelSize(0.12)
+    h_ratio1.GetYaxis().SetTitleOffset(0.3)
+    h_ratio1.GetYaxis().SetTitleSize(0.12)
+    h_ratio1.GetYaxis().CenterTitle()
+    h_ratio1.GetYaxis().CenterTitle(1)
+    h_ratio1.GetXaxis().SetTitle( x_labels [i_var] )
+    h_ratio1.GetXaxis().SetTitleFont(42)
+    h_ratio1.GetXaxis().SetLabelFont(42)
+    h_ratio1.GetXaxis().SetLabelOffset(0.025)
+    h_ratio1.GetXaxis().SetTitleOffset(1.1)
+    h_ratio1.GetXaxis().SetLabelSize(0.15)
+    h_ratio1.GetXaxis().SetTitleSize(0.15)
+

@@ -274,18 +274,8 @@ for i_var, var in enumerate(vars):
     #data_hist .Rebin (2)
     #sig1_hist .Rebin (2)
     #sig2_hist .Rebin (2)
+    setStackHistosStyle([zjets_hist,ttbar_hist,other_hist,qcd_hist,sig1_hist,sig2_hist,data_hist])
 
-    setStyle (zjets_hist, kRed+1 , 3004, 1)
-    setStyle (ttbar_hist, 4 , 3005, 1)
-    setStyle (other_hist, kGreen+1 , 3006, 1)
-    setStyle (qcd_hist  , kCyan+1 , 3013, 1)
-    setStyle (sig1_hist , 28,    0, 4)
-    setStyle (sig2_hist , 38,    0, 4)
-    setStyle (data_hist , 1 ,    0, 1)
-    
-    data_hist.SetMarkerStyle(20)
-    data_hist.SetMarkerSize (1.1)
-    
     stack = r.THStack ("stack", "stack")
     stack.Add ( qcd_hist   )
     stack.Add ( other_hist )
@@ -302,31 +292,12 @@ for i_var, var in enumerate(vars):
     stkSystErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
     stkSystStatErrHistos = [ copy.deepcopy(h) for h in [qcd_hist,other_hist,ttbar_hist,zjets_hist] ]
 
-    stack.GetYaxis().SetTitle( "Events / bin" )
-    stack.GetYaxis().CenterTitle()
-    stack.GetYaxis().SetTitleFont(42)
-    stack.GetYaxis().SetLabelFont(42)
-    stack.GetYaxis().SetLabelOffset(0.007)
-    stack.GetYaxis().SetLabelSize(0.06)
-    stack.GetYaxis().SetTitleOffset(0.55)
-    stack.GetYaxis().SetTitleSize(0.1)
-    stack.GetYaxis().CenterTitle(1)
+    setStackYAxisStyle(stack)
     
     if not doRatio:
-      stack.GetXaxis().SetTitle( x_labels [i_var] )
-      stack.GetXaxis().CenterTitle()
-      stack.GetXaxis().SetTitleFont(42)
-      stack.GetXaxis().SetLabelFont(42)
-      stack.GetXaxis().SetLabelOffset(0.007)
-      stack.GetXaxis().SetTitleOffset(0.92)
-      stack.GetXaxis().SetLabelSize(0.05)
-      stack.GetXaxis().SetTitleSize(0.06)
-      stack.GetXaxis().CenterTitle(1)
+        setStackNoRatioXAxisStyle(stack)
     else:
-      stack.GetXaxis().SetLabelSize(0)
-      stack.GetXaxis().SetLabelOffset(0)
-      stack.GetXaxis().SetTitleSize(0)
-      stack.GetXaxis().SetTitleOffset(0)
+        setStackWithRatioXAxisStyle(stack)
 
     ## reduce x-axis labels for Mej plot
     #if 'Mej' in var:
@@ -343,14 +314,6 @@ for i_var, var in enumerate(vars):
       save_name = save_name + "_enujj.pdf"
 
     save_namePNG = save_name.replace('.pdf','.png')
-
-    ## WORKS
-    #canvas = r.TCanvas(canv_name,canv_name,800,550)
-    #canvas.cd()
-    #pad1   = r.TPad( pad_name, pad_name , 0.0, 0.0, 1.0, 1.0 )
-    #canvas.SetLogy()
-    #stack.Draw("HIST")
-    ## WORKS
 
     canvas = r.TCanvas(canv_name,canv_name,800,600)
     canvas.cd()
@@ -394,12 +357,7 @@ for i_var, var in enumerate(vars):
       #bkgUncHisto = copy.deepcopy(histoAll)
       #for bin in range(0,histoAll.GetNbinsX()):
       #    bkgUncHisto.SetBinError(bin+1,self.bkgSyst*histoAll.GetBinContent(bin+1))
-      bkgUncHisto.SetMarkerStyle(0)
-      bkgUncHisto.SetLineColor(0)
-      bkgUncHisto.SetFillColor(kGray+1)
-      bkgUncHisto.SetLineColor(kGray+1)
-      bkgUncHisto.SetFillStyle(3001)
-      bkgUncHisto.SetMarkerSize(0)
+      setBkgUncHistStyle(bkgUncHisto)
       bkgUncHisto.Draw("E2same")
       #for ibin in xrange(0,bkgUncHisto.GetNbinsX()+2):
       #    print '[',bkgUncHisto.GetName(),'] bin',ibin,'error is:',bkgUncHisto.GetBinError(ibin)
@@ -466,9 +424,7 @@ for i_var, var in enumerate(vars):
         #pad2.SetBottomMargin(0.37)
         pad2.SetBottomMargin(0.5)
     
-        h_ratio1.SetMarkerStyle ( 20 )
-        h_ratio1.SetMarkerSize ( 1 )
-        #h_ratio1.SetMarkerColor ( kBlue )
+        setRatio1MarkerStyle(h_ratio1)
 
         # make bins with zero data have no marker ("empty" them)
         #h_ratio2 = copy.deepcopy(h_ratio1)
@@ -511,37 +467,8 @@ for i_var, var in enumerate(vars):
                 h_bkgUnc1.SetBinContent(ibin,1.0)
             bgRatioErrs = h_bkgUnc1
 
-            bgRatioErrs.SetFillColor(kGray+1)
-            bgRatioErrs.SetLineColor(kGray+1)
-            bgRatioErrs.SetFillStyle(3001)
-            #bgRatioErrs.SetFillStyle(3018)
-            #bgRatioErrs.SetFillStyle(3013)
-            #bgRatioErrs.SetMarkerSize(1.1)
-            bgRatioErrs.SetMarkerSize(0)
-            #bgRatioErrs.SetLineColor(kOrange)
-            #bgRatioErrs.SetLineWidth(3)
-            #bgRatioErrs.Draw('aE2 aE0 same')
-            #bgRatioErrs.SetDrawOption('hist')
-            #bgRatioErrs.Draw('aE2 E0 same')
-            bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
-            bgRatioErrs.SetMarkerStyle ( 1 )
-            bgRatioErrs.GetXaxis().SetTitle( x_labels [i_var] )
-            bgRatioErrs.GetXaxis().SetTitleFont(42)
-            bgRatioErrs.GetXaxis().SetLabelFont(42)
-            bgRatioErrs.GetXaxis().SetLabelOffset(0.025)
-            bgRatioErrs.GetXaxis().SetTitleOffset(0.8)
-            bgRatioErrs.GetXaxis().SetLabelSize(0.15)
-            bgRatioErrs.GetXaxis().SetTitleSize(0.25)
-            #
-            bgRatioErrs.GetYaxis().SetTitle( "data / MC" )
-            bgRatioErrs.GetYaxis().SetTitleFont(42)
-            bgRatioErrs.GetYaxis().SetLabelFont(42)
-            bgRatioErrs.GetYaxis().SetLabelOffset(0.007)
-            bgRatioErrs.GetYaxis().SetLabelSize(0.12)
-            bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
-            bgRatioErrs.GetYaxis().SetTitleSize(0.128)
-            bgRatioErrs.GetYaxis().CenterTitle()
-            bgRatioErrs.GetYaxis().CenterTitle(1)
+            setBGRatioErrStyle(bgRatioErrs, x_labels [i_var])
+
             bgRatioErrs.Draw('E2')
             #bgRatioErrs.Draw('3')
             #h_ratio1.Draw("e0psame")
@@ -560,22 +487,7 @@ for i_var, var in enumerate(vars):
             #bgRatioErrsGraph.Draw('E2 same')
             h_ratio1.Draw("zp0same")
         else:
-            h_ratio1.GetYaxis().SetTitle( "data / MC" )
-            h_ratio1.GetYaxis().SetTitleFont(42)
-            h_ratio1.GetYaxis().SetLabelFont(42)
-            h_ratio1.GetYaxis().SetLabelOffset(0.007)
-            h_ratio1.GetYaxis().SetLabelSize(0.12)
-            h_ratio1.GetYaxis().SetTitleOffset(0.3)
-            h_ratio1.GetYaxis().SetTitleSize(0.12)
-            h_ratio1.GetYaxis().CenterTitle()
-            h_ratio1.GetYaxis().CenterTitle(1)
-            h_ratio1.GetXaxis().SetTitle( x_labels [i_var] )
-            h_ratio1.GetXaxis().SetTitleFont(42)
-            h_ratio1.GetXaxis().SetLabelFont(42)
-            h_ratio1.GetXaxis().SetLabelOffset(0.025)
-            h_ratio1.GetXaxis().SetTitleOffset(1.1)
-            h_ratio1.GetXaxis().SetLabelSize(0.15)
-            h_ratio1.GetXaxis().SetTitleSize(0.15)
+            setRatio1NoBGErrStyle(h_ratio1)
             h_ratio1.Draw("zp0a")
         #h_ratio1.Draw("esame")
         #h_ratio2.Draw("samee0")
