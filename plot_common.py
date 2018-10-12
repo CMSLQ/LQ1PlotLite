@@ -182,8 +182,8 @@ def setStackYAxisStyle(stack):
     stack.GetYaxis().SetTitleFont(42)
     stack.GetYaxis().SetLabelFont(42)
     stack.GetYaxis().SetLabelOffset(0.007)
-    stack.GetYaxis().SetLabelSize(0.07)
-    stack.GetYaxis().SetTitleOffset(0.62)
+    stack.GetYaxis().SetLabelSize(0.08)
+    stack.GetYaxis().SetTitleOffset(0.65)
     stack.GetYaxis().SetTitleSize(0.1)
     stack.GetYaxis().CenterTitle(1)
 
