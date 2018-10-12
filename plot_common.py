@@ -166,7 +166,7 @@ def setStackHistosStyle(plotList):
     setStyle (plotList[1],  4          , 3005, 2)  # ttbar
     setStyle (plotList[2],  r.kGreen+1 , 3006, 2)  # other
     setStyle (plotList[3] , r.kCyan+1  , 3013, 2)  # QCD
-    setStyle (plotList[4] , r.kOrange-5,    0, 4)  # sig1
+    setStyle (plotList[4] , r.kOrange-6,    0, 4)  # sig1
     setStyle (plotList[5] , r.kAzure-4 ,    0, 4)  # sig2
     setStyle (plotList[6] , 1          ,    0, 2)  # data
     setRatio1MarkerStyle(plotList[6])
@@ -181,8 +181,8 @@ def setStackYAxisStyle(stack):
     stack.GetYaxis().SetTitleFont(42)
     stack.GetYaxis().SetLabelFont(42)
     stack.GetYaxis().SetLabelOffset(0.007)
-    stack.GetYaxis().SetLabelSize(0.06)
-    stack.GetYaxis().SetTitleOffset(0.55)
+    stack.GetYaxis().SetLabelSize(0.07)
+    stack.GetYaxis().SetTitleOffset(0.62)
     stack.GetYaxis().SetTitleSize(0.1)
     stack.GetYaxis().CenterTitle(1)
 
@@ -221,6 +221,7 @@ def setUncertaintyStyle(hist):
 def setRatio1MarkerStyle(h_ratio1):
     h_ratio1.SetMarkerStyle ( 20 )
     h_ratio1.SetMarkerSize ( 1.175 )
+    h_ratio1.SetLineWidth ( 2 )
 
 def setBGRatioErrStyle(bgRatioErrs,label):
     #bgRatioErrs.SetFillColor(r.kGray+1)
@@ -242,19 +243,21 @@ def setBGRatioErrStyle(bgRatioErrs,label):
     bgRatioErrs.GetXaxis().SetTitleFont(42)
     bgRatioErrs.GetXaxis().SetLabelFont(42)
     bgRatioErrs.GetXaxis().SetLabelOffset(0.025)
-    bgRatioErrs.GetXaxis().SetTitleOffset(0.8)
-    bgRatioErrs.GetXaxis().SetLabelSize(0.15)
+    bgRatioErrs.GetXaxis().SetTitleOffset(0.9)
+    bgRatioErrs.GetXaxis().SetLabelSize(0.18)
     bgRatioErrs.GetXaxis().SetTitleSize(0.25)
     #
     bgRatioErrs.GetYaxis().SetTitle( "data / MC" )
     bgRatioErrs.GetYaxis().SetTitleFont(42)
     bgRatioErrs.GetYaxis().SetLabelFont(42)
-    bgRatioErrs.GetYaxis().SetLabelOffset(0.007)
-    bgRatioErrs.GetYaxis().SetLabelSize(0.12)
+    bgRatioErrs.GetYaxis().SetLabelOffset(0.01)
+    bgRatioErrs.GetYaxis().SetLabelSize(0.175)
     bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
-    bgRatioErrs.GetYaxis().SetTitleSize(0.128)
-    bgRatioErrs.GetYaxis().CenterTitle()
-    bgRatioErrs.GetYaxis().CenterTitle(1)
+    bgRatioErrs.GetYaxis().SetTitleSize(0.175)
+    #bgRatioErrs.GetYaxis().CenterTitle()
+    #bgRatioErrs.GetYaxis().CenterTitle(1)
+    bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
+    bgRatioErrs.GetYaxis().SetNdivisions(502)
 
 def setRatio1NoBGErrStyle(h_ratio1):
     h_ratio1.GetYaxis().SetTitle( "data / MC" )
@@ -280,7 +283,7 @@ def drawLumiEnergyAndCMSStrings(l1,l2):
     l1.SetTextFont(42)
     l1.SetNDC()
     l1.SetTextSize(0.06)
-    l1.DrawLatex(0.745,0.965,lumiEnergyString)
+    l1.DrawLatex(0.735,0.965,lumiEnergyString)
     #
     l2.SetTextAlign(12)
     l2.SetTextFont(62)
