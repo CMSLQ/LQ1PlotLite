@@ -221,8 +221,6 @@ else:
   qcd_dat_file  = open(qcdFilePath+'analysisClass_lq_enujj_QCD_tables.dat')
 
 
-lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
-
 r.gROOT.SetStyle('Plain')
 r.gStyle.SetTextFont ( 42 )
 r.gStyle.SetTitleFont ( 42, "XYZ" )
@@ -283,7 +281,7 @@ for i_var, var in enumerate(vars):
     stack.Add ( zjets_hist )
     stack.Draw()
     if doEEJJ:
-      stack.SetMaximum(200000)
+      stack.SetMaximum(1e7)
     else:
       stack.SetMaximum(20000000);
     stack.SetMinimum(1e-1)
@@ -498,22 +496,27 @@ for i_var, var in enumerate(vars):
         lineAtOne.Draw()
         pad1.cd()
 
+    # redraw stack and data on top
+    stack.Draw('histsame')
+    sig1_hist.Draw("HIST SAME")
+    sig2_hist.Draw("HIST SAME")
+    g.Draw("ZP0SAME")
     
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
     #leg = r.TLegend(0.52,0.53,0.76,0.88,"","brNDC")
-    leg = r.TLegend(0.55,0.52,0.84,0.89,"","brNDC")
+    leg = r.TLegend(0.55,0.45,0.84,0.9,"","brNDC")
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     leg.SetTextSize(.055)
     leg.AddEntry(data_hist ,"Data","lpe")
     if doEEJJ:
-      leg.AddEntry(zjets_hist,"Z/#gamma* + jets","lf")
+      leg.AddEntry(zjets_hist,"Z/#gamma* + jets","f")
     else:
-      leg.AddEntry(zjets_hist,"W + jets","lf")
-    leg.AddEntry(ttbar_hist,"t#bar{t}","lf")
-    leg.AddEntry(other_hist,"Other background","lf")
-    leg.AddEntry(qcd_hist  ,"Multijet","lf")
+      leg.AddEntry(zjets_hist,"W + jets","f")
+    leg.AddEntry(ttbar_hist,"t#bar{t}","f")
+    leg.AddEntry(other_hist,"Other background","f")
+    leg.AddEntry(qcd_hist  ,"Multijet","f")
     if doSystErr:
       leg.AddEntry(bkgUncHisto, 'Stat+syst uncertainty','f')
     if doEEJJ:
@@ -524,6 +527,8 @@ for i_var, var in enumerate(vars):
     leg.AddEntry(sig2_hist  ,"LQ, M = "+str(mass2)+" GeV, #beta = "+str(beta),"l")
     leg.Draw()
 
+    pad1.RedrawAxis('G')
+    pad1.RedrawAxis()
     canvas.RedrawAxis('G')
     canvas.RedrawAxis()
     canvas.Modified()
@@ -537,26 +542,18 @@ for i_var, var in enumerate(vars):
     
     # CMS/lumi/energy
     l1 = r.TLatex()
-    l1.SetTextAlign(12)
-    l1.SetTextFont(42)
-    l1.SetNDC()
-    l1.SetTextSize(0.06)
-    l1.DrawLatex(0.75,0.965,lumiEnergyString)
-
     l2 = r.TLatex()
-    l2.SetTextAlign(12)
-    l2.SetTextFont(62)
-    l2.SetNDC()
-    l2.SetTextSize(0.08)
+    drawLumiEnergyAndCMSStrings(l1,l2)
+    #l2.SetTextAlign(12)
+    #l2.SetTextFont(62)
+    #l2.SetNDC()
+    #l2.SetTextSize(0.08)
+    #l2.DrawLatex(0.15,0.84,"CMS")
 
     l3 = r.TLatex()
-    l3.SetTextAlign(12)
-    l3.SetTextFont(42)
-    l3.SetNDC()
-    l3.SetTextSize(0.08)
     if doPrelim:
-      l3.DrawLatex(0.25,0.83,"#it{Preliminary}")
-    l2.DrawLatex(0.15,0.84,"CMS")
+        drawPrelim(l3)
+
     r.gPad.Update()
 
 
