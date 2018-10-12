@@ -119,13 +119,6 @@ def getLastPopulatedBin(histList,threshold=1e-2):
         return bin
     
 
-def setStyle ( plot, color, style, width ) :
-    plot.SetLineColor( color ) 
-    plot.SetFillColor( color ) 
-    plot.SetFillStyle( style ) 
-    plot.SetLineWidth( width )
-    return
-
 
 def rebin ( plot, bins, addOverflow=True ) :
     n_bins    = len ( bins ) - 1
@@ -162,18 +155,26 @@ def ZeroNegativeBins(plotList):
                 hist.SetBinContent(binn,0)
 
 
-def setStackHistosStyle(plotList):
-    setStyle (plotList[0],  r.kRed+1   , 3004, 1)  # Z/W
-    setStyle (plotList[1],  4          , 3005, 1)  # ttbar
-    setStyle (plotList[2],  r.kGreen+1 , 3006, 1)  # other
-    setStyle (plotList[3] , r.kCyan+1  , 3013, 1)  # QCD
-    setStyle (plotList[4] , 28         ,    0, 4)  # sig1
-    setStyle (plotList[5] , 38         ,    0, 4)  # sig2
-    setStyle (plotList[6] , 1          ,    0, 1)  # data
-    plotList[6].SetMarkerStyle(20)                 # data
-    plotList[6].SetMarkerSize (1.1)                # data
-    
+def setStyle ( plot, color, style, width ) :
+    plot.SetLineColor( color ) 
+    plot.SetFillColor( color ) 
+    plot.SetFillStyle( style ) 
+    plot.SetLineWidth( width )
 
+def setStackHistosStyle(plotList):
+    setStyle (plotList[0],  r.kRed+1   , 3004, 2)  # Z/W
+    setStyle (plotList[1],  4          , 3005, 2)  # ttbar
+    setStyle (plotList[2],  r.kGreen+1 , 3006, 2)  # other
+    setStyle (plotList[3] , r.kCyan+1  , 3013, 2)  # QCD
+    setStyle (plotList[4] , r.kOrange-5,    0, 4)  # sig1
+    setStyle (plotList[5] , r.kAzure-4 ,    0, 4)  # sig2
+    setStyle (plotList[6] , 1          ,    0, 2)  # data
+    setRatio1MarkerStyle(plotList[6])
+    #plotList[6].SetMarkerStyle(20)                 # data
+    #plotList[6].SetMarkerSize (1.15)                # data
+    plotList[4].SetLineStyle(2)
+    plotList[5].SetLineStyle(2)
+    
 def setStackYAxisStyle(stack):
     stack.GetYaxis().SetTitle( "Events / bin" )
     stack.GetYaxis().CenterTitle()
@@ -205,23 +206,31 @@ def setStackWithRatioXAxisStyle(stack):
 def setBkgUncHistStyle(bkgUncHisto):
     bkgUncHisto.SetMarkerStyle(0)
     bkgUncHisto.SetLineColor(0)
-    bkgUncHisto.SetFillColor(r.kGray+1)
-    bkgUncHisto.SetLineColor(r.kGray+1)
-    bkgUncHisto.SetFillStyle(3001)
-    bkgUncHisto.SetMarkerSize(0)
+    #bkgUncHisto.SetFillColor(r.kGray+1)
+    #bkgUncHisto.SetLineColor(r.kGray+1)
+    #bkgUncHisto.SetFillStyle(3003)
+    setUncertaintyStyle(bkgUncHisto)
+    #bkgUncHisto.SetMarkerSize(0)
+
+def setUncertaintyStyle(hist):
+    hist.SetFillColor(r.kGray+2)
+    hist.SetLineColor(r.kGray+2)
+    hist.SetFillStyle(3001)
+    hist.SetMarkerSize(0)
 
 def setRatio1MarkerStyle(h_ratio1):
     h_ratio1.SetMarkerStyle ( 20 )
-    h_ratio1.SetMarkerSize ( 1 )
+    h_ratio1.SetMarkerSize ( 1.175 )
 
 def setBGRatioErrStyle(bgRatioErrs,label):
-    bgRatioErrs.SetFillColor(r.kGray+1)
-    bgRatioErrs.SetLineColor(r.kGray+1)
-    bgRatioErrs.SetFillStyle(3001)
+    #bgRatioErrs.SetFillColor(r.kGray+1)
+    #bgRatioErrs.SetLineColor(r.kGray+1)
+    #bgRatioErrs.SetFillStyle(3003)
+    #bgRatioErrs.SetMarkerSize(0)
+    setUncertaintyStyle(bgRatioErrs)
     #bgRatioErrs.SetFillStyle(3018)
     #bgRatioErrs.SetFillStyle(3013)
     #bgRatioErrs.SetMarkerSize(1.1)
-    bgRatioErrs.SetMarkerSize(0)
     #bgRatioErrs.SetLineColor(kOrange)
     #bgRatioErrs.SetLineWidth(3)
     #bgRatioErrs.Draw('aE2 aE0 same')
@@ -265,3 +274,23 @@ def setRatio1NoBGErrStyle(h_ratio1):
     h_ratio1.GetXaxis().SetLabelSize(0.15)
     h_ratio1.GetXaxis().SetTitleSize(0.15)
 
+def drawLumiEnergyAndCMSStrings(l1,l2):
+    lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
+    l1.SetTextAlign(12)
+    l1.SetTextFont(42)
+    l1.SetNDC()
+    l1.SetTextSize(0.06)
+    l1.DrawLatex(0.745,0.965,lumiEnergyString)
+    #
+    l2.SetTextAlign(12)
+    l2.SetTextFont(62)
+    l2.SetNDC()
+    l2.SetTextSize(0.08)
+    l2.DrawLatex(0.15,0.84,"CMS")
+
+def drawPrelim(l3):
+    l3.SetTextAlign(12)
+    l3.SetTextFont(42)
+    l3.SetNDC()
+    l3.SetTextSize(0.08)
+    l3.DrawLatex(0.25,0.83,"#it{Preliminary}")
