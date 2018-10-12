@@ -68,10 +68,7 @@ def GetErrorsGraph(histList,backgroundSyst):
     #for binn in range(0,bgErrs.GetNbinsX()):
     #    print 'bin=',bgErrs.GetBinContent(binn),'+/-',bgErrs.GetBinError(binn)
     # set style
-    bgErrs.SetFillColor(r.kGray+2)
-    bgErrs.SetLineColor(r.kGray+2)
-    bgErrs.SetFillStyle(3001)
-    bgErrs.SetMarkerSize(0)
+    setUncertaintyStyle(bgErrs)
     return bgErrs
 
 def poissonErrGraph(hist,lastPopBin=9999):
@@ -210,15 +207,11 @@ def setStackWithRatioXAxisStyle(stack):
 def setBkgUncHistStyle(bkgUncHisto):
     bkgUncHisto.SetMarkerStyle(0)
     bkgUncHisto.SetLineColor(0)
-    #bkgUncHisto.SetFillColor(r.kGray+1)
-    #bkgUncHisto.SetLineColor(r.kGray+1)
-    #bkgUncHisto.SetFillStyle(3003)
     setUncertaintyStyle(bkgUncHisto)
-    #bkgUncHisto.SetMarkerSize(0)
 
 def setUncertaintyStyle(hist):
-    hist.SetFillColor(r.kGray+2)
-    hist.SetLineColor(r.kGray+2)
+    hist.SetFillColor(r.kGray+1)
+    hist.SetLineColor(r.kGray+1)
     hist.SetFillStyle(3001)
     hist.SetMarkerSize(0)
 
@@ -228,19 +221,7 @@ def setRatio1MarkerStyle(h_ratio1):
     h_ratio1.SetLineWidth ( 2 )
 
 def setBGRatioErrStyle(bgRatioErrs,label):
-    #bgRatioErrs.SetFillColor(r.kGray+1)
-    #bgRatioErrs.SetLineColor(r.kGray+1)
-    #bgRatioErrs.SetFillStyle(3003)
-    #bgRatioErrs.SetMarkerSize(0)
     setUncertaintyStyle(bgRatioErrs)
-    #bgRatioErrs.SetFillStyle(3018)
-    #bgRatioErrs.SetFillStyle(3013)
-    #bgRatioErrs.SetMarkerSize(1.1)
-    #bgRatioErrs.SetLineColor(kOrange)
-    #bgRatioErrs.SetLineWidth(3)
-    #bgRatioErrs.Draw('aE2 aE0 same')
-    #bgRatioErrs.SetDrawOption('hist')
-    #bgRatioErrs.Draw('aE2 E0 same')
     bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
     bgRatioErrs.SetMarkerStyle ( 1 )
     bgRatioErrs.GetXaxis().SetTitle( label )
@@ -281,6 +262,12 @@ def setRatio1NoBGErrStyle(h_ratio1,label):
     h_ratio1.GetXaxis().SetLabelSize(0.15)
     h_ratio1.GetXaxis().SetTitleSize(0.15)
 
+def setLegendStyle(leg):
+    leg.SetTextFont(42)
+    leg.SetFillColor(0)
+    leg.SetBorderSize(0)
+    leg.SetTextSize(.065)
+
 def drawLumiEnergyAndCMSStrings(l1,l2):
     lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
     l1.SetTextAlign(12)
@@ -293,7 +280,7 @@ def drawLumiEnergyAndCMSStrings(l1,l2):
     l2.SetTextFont(62)
     l2.SetNDC()
     l2.SetTextSize(0.08)
-    l2.DrawLatex(0.15,0.84,"CMS")
+    l2.DrawLatex(0.16,0.84,"CMS")
 
 def drawPrelim(l3):
     l3.SetTextAlign(12)
@@ -301,3 +288,4 @@ def drawPrelim(l3):
     l3.SetNDC()
     l3.SetTextSize(0.08)
     l3.DrawLatex(0.25,0.83,"#it{Preliminary}")
+
