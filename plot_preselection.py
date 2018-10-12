@@ -99,7 +99,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ = False
+doEEJJ = True
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -280,10 +280,9 @@ for i_var, var in enumerate(vars):
     stack.Add ( ttbar_hist )
     stack.Add ( zjets_hist )
     stack.Draw()
-    if doEEJJ:
-      stack.SetMaximum(1e7)
-    else:
-      stack.SetMaximum(1e7);
+    stack.SetMaximum(5e7)
+    if var=="MET_PAS":
+        stack.SetMaximum(5e6)
     stack.SetMinimum(1e-1)
     bkgTotalHist = stack.GetStack().Last() # sum of all TH1 in stack
 
@@ -320,8 +319,8 @@ for i_var, var in enumerate(vars):
         pad1  = r.TPad( pad_name+"1", pad_name+"1" , 0.0, 0.0, 1.0, 1.0 )
         pad1.Draw()
     else:
-        pad1 = r.TPad(pad_name+"1", pad_name+"1", 0.00, 0.275, 0.99, 0.99)
-        pad2 = r.TPad(pad_name+"2", pad_name+"2", 0.00, 0.00, 0.99, 0.275)
+        pad1 = r.TPad(pad_name+"1", pad_name+"1", 0.00, 0.3, 0.99, 0.99)
+        pad2 = r.TPad(pad_name+"2", pad_name+"2", 0.00, 0.00, 0.99, 0.3)
         pad1.SetFillColor(0)
         pad1.SetLineColor(0)
         pad2.SetFillColor(0)
@@ -421,7 +420,7 @@ for i_var, var in enumerate(vars):
         #h_ratio1.GetXaxis().CenterTitle()
         #h_ratio1.GetXaxis().CenterTitle(1)
         #pad2.SetBottomMargin(0.37)
-        pad2.SetBottomMargin(0.5)
+        pad2.SetBottomMargin(0.6)
         pad2.SetTopMargin(0.75)
     
         setRatio1MarkerStyle(h_ratio1)
@@ -505,11 +504,8 @@ for i_var, var in enumerate(vars):
     
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
     #leg = r.TLegend(0.52,0.53,0.76,0.88,"","brNDC")
-    leg = r.TLegend(0.53,0.45,0.84,0.9,"","brNDC")
-    leg.SetTextFont(42)
-    leg.SetFillColor(0)
-    leg.SetBorderSize(0)
-    leg.SetTextSize(.055)
+    leg = r.TLegend(0.49,0.45,0.75,0.88,"","brNDC")
+    setLegendStyle(leg)
     leg.AddEntry(data_hist ,"Data","lpe")
     if doEEJJ:
       leg.AddEntry(zjets_hist,"Z/#gamma* + jets","f")
