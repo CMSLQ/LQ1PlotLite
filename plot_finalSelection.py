@@ -84,7 +84,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= False
+doEEJJ= True
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -101,8 +101,8 @@ varsEEJJ     = [
 ] 
 
 x_labelsEEJJ = [ 
-    "S_{T} [GeV]",
-    "M_{ej}^{min} [GeV]",
+    "#it{S}_{T} [GeV]",
+    "#it{M}_{ej}^{min} [GeV]",
     #"M_{eejj} [GeV]"
 ]
 
@@ -118,8 +118,8 @@ varsENUJJ     = [
 ] 
 
 x_labelsENUJJ = [ 
-    "S_{T} [GeV]",
-    "M_{ej} [GeV]",
+    "#it{S}_{T} [GeV]",
+    "#it{M}_{ej} [GeV]",
 ]
 
 x_binsENUJJ = [ 
@@ -546,7 +546,7 @@ for i_mass, mass in enumerate(masses):
     leg.AddEntry(other_hist,"Other background","f")
     leg.AddEntry(qcd_hist  ,"Multijet","f")
     if doSystErr:
-      leg.AddEntry(bkgUncHisto, 'Stat+syst uncertainty','f')
+      leg.AddEntry(bkgUncHisto, 'Stat#oplussyst uncertainty','f')
     if doEEJJ:
       beta = 1.0
     else:

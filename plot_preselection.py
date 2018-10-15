@@ -99,7 +99,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ = True
+doEEJJ = False
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -124,9 +124,9 @@ x_labelsEEJJ = [
 #    "p_{T} (e_{2}) [GeV]",
 #    "p_{T} (jet_{1}) [GeV]",
 #    "p_{T} (jet_{2}) [GeV]",
-    "S_{T} [GeV]",
-    "M_{ej}^{min} [GeV]",
-    "M_{ee} [GeV]"
+    "#it{S}_{T} [GeV]",
+    "#it{M}_{ej}^{min} [GeV]",
+    "#it{M}_{ee} [GeV]"
 ]
 
 x_binsEEJJ = [ 
@@ -147,9 +147,9 @@ varsENUJJ     = [
 ] 
 
 x_labelsENUJJ = [ 
-    "S_{T} [GeV]",
-    "M_{ej} [GeV]",
-    "M_{T} [GeV]",
+    "#it{S}_{T} [GeV]",
+    "#it{M}_{ej} [GeV]",
+    "#it{M}_{T} [GeV]",
     "#it{p}_{T}^{miss} [GeV]"
 ]
 
@@ -515,7 +515,7 @@ for i_var, var in enumerate(vars):
     leg.AddEntry(other_hist,"Other background","f")
     leg.AddEntry(qcd_hist  ,"Multijet","f")
     if doSystErr:
-      leg.AddEntry(bkgUncHisto, 'Stat+syst uncertainty','f')
+      leg.AddEntry(bkgUncHisto, 'Stat#oplussyst uncertainty','f')
     if doEEJJ:
       beta = 1.0
     else:

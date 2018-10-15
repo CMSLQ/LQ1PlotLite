@@ -106,7 +106,7 @@ r.gROOT.SetBatch()
 # Configurables
 ####################################################################################################
 #FIXME commandline the eejj/enujj switching
-doEEJJ= True
+doEEJJ= False
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -301,7 +301,7 @@ if doRatio:
     #        h_ratio1.SetBinContent(ibin,-1)
     #        h_ratio1.SetBinError(ibin,-1)
 
-    setRatio1NoBGErrStyle(h_ratio1, 'M_{LQ} [GeV]')
+    setRatio1NoBGErrStyle(h_ratio1, '#it{M}_{LQ} [GeV]')
     pad2.SetBottomMargin(0.6)
     
     setRatio1MarkerStyle(h_ratio1)
@@ -322,7 +322,7 @@ if doRatio:
             h_bkgUnc1.SetBinContent(ibin,1.0)
         bgRatioErrs = h_bkgUnc1
 
-        setBGRatioErrStyle(bgRatioErrs, 'M_{LQ} [GeV]')
+        setBGRatioErrStyle(bgRatioErrs, '#it{M}_{LQ} [GeV]')
         bgRatioErrs.GetXaxis().SetLabelOffset(0.07)
         bgRatioErrs.GetXaxis().SetTitleOffset(1.1)
 
@@ -358,7 +358,7 @@ leg.AddEntry(ttbar_hist,"t#bar{t}","f")
 leg.AddEntry(qcd_hist  ,"Multijet","f")
 leg.AddEntry(other_hist,"Other background","f")
 if doSystErr:
-  leg.AddEntry(bkgUncHisto, 'Stat+syst uncertainty','f')
+  leg.AddEntry(bkgUncHisto, 'Stat#oplussyst uncertainty','f')
 if doEEJJ:
   beta = 1.0
 else:
