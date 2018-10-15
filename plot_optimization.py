@@ -84,9 +84,9 @@ r.gStyle.SetOptStat(0)
 tdrstyle.setTDRStyle()
 
 r.gStyle.SetPadTopMargin(0.075);
-r.gStyle.SetPadBottomMargin(0.15)
-r.gStyle.SetPadLeftMargin(0.15)
-r.gStyle.SetPadRightMargin(0.1)
+r.gStyle.SetPadBottomMargin(0.17)
+r.gStyle.SetPadLeftMargin(0.165)
+r.gStyle.SetPadRightMargin(0.03)
 #r.gStyle.SetPadTickX(0)
 #r.gStyle.SetPadTickY(0)
 
@@ -119,18 +119,18 @@ st_hist.GetYaxis().SetTitleFont(42)
 st_hist.GetYaxis().SetLabelFont(42)
 st_hist.GetYaxis().SetLabelOffset(0.007)
 st_hist.GetYaxis().SetLabelSize(0.05)
-st_hist.GetYaxis().SetTitleOffset(1.1)
-st_hist.GetYaxis().SetTitleSize(0.06)
+st_hist.GetYaxis().SetTitleOffset(1.0)
+st_hist.GetYaxis().SetTitleSize(0.08)
 #st_hist.GetYaxis().CenterTitle(1)
 #
 st_hist.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
 #st_hist.GetXaxis().CenterTitle()
 st_hist.GetXaxis().SetTitleFont(42)
 st_hist.GetXaxis().SetLabelFont(42)
-st_hist.GetXaxis().SetLabelOffset(0.02)
-st_hist.GetXaxis().SetTitleOffset(1.1)
+st_hist.GetXaxis().SetLabelOffset(0.019)
+st_hist.GetXaxis().SetTitleOffset(0.92)
 st_hist.GetXaxis().SetLabelSize(0.05)
-st_hist.GetXaxis().SetTitleSize(0.06)
+st_hist.GetXaxis().SetTitleSize(0.08)
 #st_hist.GetXaxis().CenterTitle(1)
 
 mej_hist.Draw('samelp')
@@ -156,7 +156,11 @@ pad1.Draw()
 #r.SetOwnership(pad1, False)
 pad1.cd()
 st_hist.Draw('lp')
-st_hist.GetYaxis().SetRangeUser(0,st_hist.GetMaximum()*1.3)
+if doEEJJ:
+    st_hist.GetYaxis().SetRangeUser(0,2000)
+else:
+    st_hist.GetYaxis().SetRangeUser(0,2500)
+#st_hist.GetXaxis().SetNdivisions(505)
 st_hist.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
 pad1.Draw()
 
@@ -167,9 +171,10 @@ if not doEEJJ:
     met_hist.Draw('samelp')
 
 if doEEJJ:
-    leg = r.TLegend(0.1867,0.5,0.4,0.78,"","brNDC")
+    #leg = r.TLegend(0.1867,0.5,0.4,0.78,"","brNDC")
+    leg = r.TLegend(0.1992,0.54,0.4136,0.8206,"","brNDC")
 else:
-    leg = r.TLegend(0.175,0.47,0.38,0.8,"","brNDC")
+    leg = r.TLegend(0.1992,0.4843,0.3997,0.8136,"","brNDC")
 leg.SetTextFont(42)
 leg.SetFillColor(0)
 leg.SetFillStyle(0)
@@ -210,7 +215,7 @@ l1.SetTextAlign(12)
 l1.SetTextFont(42)
 l1.SetNDC()
 l1.SetTextSize(0.06)
-l1.DrawLatex(0.595,0.965,lumiEnergyString)
+l1.DrawLatex(0.664,0.965,lumiEnergyString)
 
 l2 = r.TLatex()
 l2.SetTextAlign(12)
@@ -225,7 +230,7 @@ l3.SetNDC()
 l3.SetTextSize(0.07)
 if doPrelim:
   l3.DrawLatex(0.30,0.83,"#it{Preliminary}")
-l2.DrawLatex(0.19,0.84,"CMS")
+l2.DrawLatex(0.2018,0.8589,"CMS")
 r.gPad.Update()
 
 
@@ -236,14 +241,14 @@ r.gPad.Update()
 #l4.SetTextSize(0.05)
 #l4.DrawLatex(0.19,0.77,"eejj")
 
-if not r.gROOT.IsBatch():
-    ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
-    if __name__ == '__main__':
-       rep = ''
-       while not rep in [ 'c', 'C' ]:
-          rep = raw_input( 'enter "c" to continue: ' )
-          if 1 < len(rep):
-             rep = rep[0]
+#if not r.gROOT.IsBatch():
+#    ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
+#    if __name__ == '__main__':
+#       rep = ''
+#       while not rep in [ 'c', 'C' ]:
+#          rep = raw_input( 'enter "c" to continue: ' )
+#          if 1 < len(rep):
+#             rep = rep[0]
 ## FOR TESTING
 ##break
 
