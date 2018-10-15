@@ -258,24 +258,22 @@ effAccHist.SetMarkerColor(kBlue)
 
 effAccHist.Draw('ap')
 effAccHist.GetYaxis().SetTitle( "Acceptance #times efficiency" )
-#effAccHist.GetYaxis().CenterTitle()
 effAccHist.GetYaxis().SetTitleFont(42)
 effAccHist.GetYaxis().SetLabelFont(42)
 effAccHist.GetYaxis().SetLabelOffset(0.007)
-effAccHist.GetYaxis().SetLabelSize(0.04)
-effAccHist.GetYaxis().SetTitleOffset(1.1)
-effAccHist.GetYaxis().SetTitleSize(0.06)
-#effAccHist.GetYaxis().CenterTitle(1)
+effAccHist.GetYaxis().SetLabelSize(0.06)
+effAccHist.GetYaxis().SetTitleOffset(1.)
+effAccHist.GetYaxis().SetTitleSize(0.07)
+effAccHist.GetYaxis().CenterTitle(1)
 #
-effAccHist.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
-#effAccHist.GetXaxis().CenterTitle()
+effAccHist.GetXaxis().SetTitle( '#it{M}_{LQ} [GeV]' )
 effAccHist.GetXaxis().SetTitleFont(42)
 effAccHist.GetXaxis().SetLabelFont(42)
 effAccHist.GetXaxis().SetLabelOffset(0.01)
-effAccHist.GetXaxis().SetTitleOffset(1.1)
-effAccHist.GetXaxis().SetLabelSize(0.04)
-effAccHist.GetXaxis().SetTitleSize(0.06)
-#effAccHist.GetXaxis().CenterTitle(1)
+effAccHist.GetXaxis().SetTitleOffset(1.)
+effAccHist.GetXaxis().SetLabelSize(0.06)
+effAccHist.GetXaxis().SetTitleSize(0.07)
+effAccHist.GetXaxis().SetNdivisions(505)
 
 
 canv_name = "effAcc_LQ" + "" + "_canv"
@@ -298,7 +296,6 @@ pad1.cd()
 effAccHist.Draw('ap')
 effAccHist.GetYaxis().SetRangeUser(0,max(ratio)*1.3)
 effAccHist.GetXaxis().SetRangeUser(min(masses)-50,max(masses)+50)
-effAccHist.GetXaxis().SetTitle( 'M_{LQ} [GeV]' )
 pad1.Draw()
 
 
@@ -371,14 +368,15 @@ if doEEJJ:
 else:
   l4.DrawLatex(0.19,0.77,"e#nujj")
 
-if not r.gROOT.IsBatch():
-    ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
-    if __name__ == '__main__':
-       rep = ''
-       while not rep in [ 'c', 'C' ]:
-          rep = raw_input( 'enter "c" to continue: ' )
-          if 1 < len(rep):
-             rep = rep[0]
+canvas.Draw()
+#if not r.gROOT.IsBatch():
+#    ## wait for input to keep the GUI (which lives on a ROOT event dispatcher) alive
+#    if __name__ == '__main__':
+#       rep = ''
+#       while not rep in [ 'c', 'C' ]:
+#          rep = raw_input( 'enter "c" to continue: ' )
+#          if 1 < len(rep):
+#             rep = rep[0]
 ## FOR TESTING
 ##break
 
