@@ -268,7 +268,7 @@ def setLegendStyle(leg):
     leg.SetBorderSize(0)
     leg.SetTextSize(.065)
 
-def drawLumiEnergyAndCMSStrings(l1,l2):
+def drawLumiEnergyAndCMSStrings(l1,l2,drawCMS=True):
     lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
     l1.SetTextAlign(12)
     l1.SetTextFont(42)
@@ -280,6 +280,8 @@ def drawLumiEnergyAndCMSStrings(l1,l2):
     l2.SetTextFont(62)
     l2.SetNDC()
     l2.SetTextSize(0.08)
+    if not drawCMS:
+        return
     l2.DrawLatex(0.16,0.84,"CMS")
 
 def drawPrelim(l3):
