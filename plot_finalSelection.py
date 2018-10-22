@@ -4,6 +4,7 @@ from plot_common import *
 import tdrstyle
 import math
 from ROOT import kOrange, kGray, kBlue, kRed, kCyan, kGreen, TH1F, TGraphAsymmErrors, Double, TLine
+from optparse import OptionParser
 
 
 def GetBackgroundSyst(background_name, selectionName):
@@ -75,20 +76,76 @@ def GetBackgroundSyst(background_name, selectionName):
     return totalSyst
 
 
-
-
-# set batch
-r.gROOT.SetBatch()
-
 ####################################################################################################
 # Configurables
 ####################################################################################################
-#FIXME commandline the eejj/enujj switching
+##---Option Parser
+#usage = "usage: %prog [options] \nExample: \n./plot_preselection.py --eejj=True --prelim=True --systErr=True --ratio=True --batch=False"
+#
+#parser = OptionParser(usage=usage)
+#
+#parser.add_option("-e", "--eejj", dest="doEEJJ",
+#                  help="do EEJJ channel plots",
+#                  metavar="EEJJ",default='True')
+#
+#parser.add_option("-p", "--prelim", dest="doPrelim",
+#                  help="do prelim style plots",
+#                  metavar="PRELIMI",default='False')
+#
+#parser.add_option("-s", "--systErr", dest="doSystErr",
+#                  help="add syst. err. to plots",
+#                  metavar="SYSTERR",default='True')
+#
+#parser.add_option("-r", "--ratio", dest="doRatio",
+#                  help="add data/bkg. ratio to plots",
+#                  metavar="RATIO",default='True')
+#
+#parser.add_option("-b", "--batch", dest="doBatch",
+#                  help="use ROOT batch mode",
+#                  metavar="BATCH",default='True')
+#
+#parser.add_option("-d", "--data", dest="showData",
+#                  help="show data",
+#                  metavar="SHOWDATA",default='True')
+#
+#(options, args) = parser.parse_args()
+#doEEJJ = StrToBool(options.doEEJJ)
+#doPrelim = StrToBool(options.doPrelim)
+#doSystErr = StrToBool(options.doSystErr)
+#doRatio = StrToBool(options.doRatio)
+#doBatch = StrToBool(options.doBatch)
+#blind = not StrToBool(options.showData)
+#FIXME: using the optionparser causes a segfault, at least in the cmssw environment
 doEEJJ= True
 doPrelim = False
 doSystErr = True
 doRatio = True
 blind = False
+doBatch = True
+
+print 'Doing:',
+if doEEJJ:
+    print 'EEJJ',
+else:
+    print 'ENuJJ',
+if doPrelim:
+    print 'prelim.',
+if not doSystErr:
+    print 'without syst. err.',
+if not doRatio:
+    print 'without data/bkg ratio',
+if blind:
+    print 'blinding'
+if doBatch:
+    print '\nUsing ROOT batch mode',
+else:
+    print '\nNot using ROOT batch mode'
+print
+
+# set batch
+if doBatch:
+    r.gROOT.SetBatch()
+
 
 masses = [ 650, 1200 ]
 
@@ -466,7 +523,8 @@ for i_mass, mass in enumerate(masses):
         #        h_ratio1.SetBinError(ibin,-1)
 
         setRatio1NoBGErrStyle(h_ratio1, x_labels[i_var])
-        pad2.SetBottomMargin(0.6)
+        pad2.SetBottomMargin(0.55)
+        pad2.SetTopMargin(0.075)
     
         setRatio1MarkerStyle(h_ratio1)
   
@@ -526,6 +584,7 @@ for i_mass, mass in enumerate(masses):
         lineAtOne.Draw()
         r.gPad.Update()
         pad1.cd()
+        pad1.SetBottomMargin(0.05)
     
     # redraw stack and data on top
     stack.Draw('histsame')

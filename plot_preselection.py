@@ -4,6 +4,7 @@ from plot_common import *
 import tdrstyle
 import math
 from ROOT import kOrange, kGray, kBlue, kRed, kCyan, kGreen, TH1F, TGraphAsymmErrors, Double, TLine
+from optparse import OptionParser
 
 
 def GetBackgroundSyst(systType, isEEJJ=True):
@@ -92,17 +93,62 @@ def GetBackgroundSyst(systType, isEEJJ=True):
       print 'final background systematic for systType=',systType,'(relative):',preselSyst
     return preselSyst
 
-# set batch
-r.gROOT.SetBatch()
 
 ####################################################################################################
 # Configurables
 ####################################################################################################
-#FIXME commandline the eejj/enujj switching
-doEEJJ = False
-doPrelim = False
-doSystErr = True
-doRatio = True
+#---Option Parser
+usage = "usage: %prog [options] \nExample: \n./plot_preselection.py --eejj=True --prelim=True --systErr=True --ratio=True --batch=False"
+
+parser = OptionParser(usage=usage)
+
+parser.add_option("-e", "--eejj", dest="doEEJJ",
+                  help="do EEJJ channel plots",
+                  metavar="EEJJ",default='True')
+
+parser.add_option("-p", "--prelim", dest="doPrelim",
+                  help="do prelim style plots",
+                  metavar="PRELIMI",default='False')
+
+parser.add_option("-s", "--systErr", dest="doSystErr",
+                  help="add syst. err. to plots",
+                  metavar="SYSTERR",default='True')
+
+parser.add_option("-r", "--ratio", dest="doRatio",
+                  help="add data/bkg. ratio to plots",
+                  metavar="RATIO",default='True')
+
+parser.add_option("-b", "--batch", dest="doBatch",
+                  help="use ROOT batch mode",
+                  metavar="BATCH",default='True')
+
+(options, args) = parser.parse_args()
+doEEJJ = StrToBool(options.doEEJJ)
+doPrelim = StrToBool(options.doPrelim)
+doSystErr = StrToBool(options.doSystErr)
+doRatio = StrToBool(options.doRatio)
+doBatch = StrToBool(options.doBatch)
+
+print 'Doing:',
+if doEEJJ:
+    print 'EEJJ',
+else:
+    print 'ENuJJ',
+if doPrelim:
+    print 'prelim.',
+if not doSystErr:
+    print 'without syst. err.',
+if not doRatio:
+    print 'without data/bkg ratio',
+if doBatch:
+    print '\nUsing ROOT batch mode',
+else:
+    print '\nNot using ROOT batch mode'
+print
+
+# set batch
+if doBatch:
+    r.gROOT.SetBatch()
 
 mass1 = 650
 mass2 = 1200
@@ -299,7 +345,7 @@ for i_var, var in enumerate(vars):
     ## reduce x-axis labels for Mej plot
     #if 'Mej' in var:
     #  stack.GetXaxis().SetNdivisions(507)
-    stack.GetXaxis().SetNdivisions(515)
+    #stack.GetXaxis().SetNdivisions(515)
     
     canv_name = var + "_canv"
     pad_name  = var + "_pad"
@@ -420,8 +466,8 @@ for i_var, var in enumerate(vars):
         #h_ratio1.GetXaxis().CenterTitle()
         #h_ratio1.GetXaxis().CenterTitle(1)
         #pad2.SetBottomMargin(0.37)
-        pad2.SetBottomMargin(0.6)
-        pad2.SetTopMargin(0.75)
+        pad2.SetBottomMargin(0.55)
+        pad2.SetTopMargin(0.075)
     
         setRatio1MarkerStyle(h_ratio1)
 
@@ -495,6 +541,7 @@ for i_var, var in enumerate(vars):
         lineAtOne.SetLineColor(1)
         lineAtOne.Draw()
         pad1.cd()
+        pad1.SetBottomMargin(0.05)
 
     # redraw stack and data on top
     stack.Draw('histsame')
@@ -504,7 +551,7 @@ for i_var, var in enumerate(vars):
     
     #leg = r.TLegend(0.43,0.53,0.89,0.89,"","brNDC") #used for all lq2 data plots
     #leg = r.TLegend(0.52,0.53,0.76,0.88,"","brNDC")
-    leg = r.TLegend(0.49,0.45,0.75,0.88,"","brNDC")
+    leg = r.TLegend(0.52,0.45,0.75,0.9,"","brNDC")
     setLegendStyle(leg)
     leg.AddEntry(data_hist ,"Data","lpe")
     if doEEJJ:

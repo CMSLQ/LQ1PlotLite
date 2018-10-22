@@ -203,8 +203,8 @@ if not doRatio:
     pad1  = r.TPad( pad_name+"1", pad_name+"1" , 0.0, 0.0, 1.0, 1.0 )
     pad1.Draw()
 else:
-    pad1 = r.TPad(pad_name+"1", pad_name+"1", 0.00, 0.275, 0.99, 0.99)
-    pad2 = r.TPad(pad_name+"2", pad_name+"2", 0.00, 0.00, 0.99, 0.275)
+    pad1 = r.TPad(pad_name+"1", pad_name+"1", 0.00, 0.3, 0.99, 0.99)
+    pad2 = r.TPad(pad_name+"2", pad_name+"2", 0.00, 0.00, 0.99, 0.3)
     pad1.SetFillColor(0)
     pad1.SetLineColor(0)
     pad2.SetFillColor(0)
@@ -303,6 +303,7 @@ if doRatio:
 
     setRatio1NoBGErrStyle(h_ratio1, '#it{M}_{LQ} [GeV]')
     pad2.SetBottomMargin(0.6)
+    pad2.SetTopMargin(0.075)
     
     setRatio1MarkerStyle(h_ratio1)
 
@@ -323,8 +324,8 @@ if doRatio:
         bgRatioErrs = h_bkgUnc1
 
         setBGRatioErrStyle(bgRatioErrs, '#it{M}_{LQ} [GeV]')
-        bgRatioErrs.GetXaxis().SetLabelOffset(0.07)
-        bgRatioErrs.GetXaxis().SetTitleOffset(1.1)
+        #bgRatioErrs.GetXaxis().SetLabelOffset(0.07)
+        #bgRatioErrs.GetXaxis().SetTitleOffset(1.1)
 
         bgRatioErrs.Draw('E2')
         h_ratio1.Draw("pz0same")
@@ -337,6 +338,7 @@ if doRatio:
     lineAtOne.SetLineColor(1)
     lineAtOne.Draw()
     pad1.cd()
+    pad1.SetBottomMargin(0.05)
 
 
 # redraw stack and data on top

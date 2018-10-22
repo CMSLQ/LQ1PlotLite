@@ -5,6 +5,9 @@ import ROOT as r
 from numpy import array
 
 
+def StrToBool(v):
+    return v.lower() in ("yes", "true", "t", "1")
+
 # from makeDatacard.py
 def GetSystDictFromFile(filename,syst_background_names):
     # go custom text parsing :`(
@@ -197,12 +200,14 @@ def setStackNoRatioXAxisStyle(stack):
     stack.GetXaxis().SetLabelSize(0.05)
     stack.GetXaxis().SetTitleSize(0.06)
     stack.GetXaxis().CenterTitle(1)
+    stack.GetXaxis().SetNdivisions(507)
 
 def setStackWithRatioXAxisStyle(stack):
     stack.GetXaxis().SetLabelSize(0)
     stack.GetXaxis().SetLabelOffset(0)
     stack.GetXaxis().SetTitleSize(0)
     stack.GetXaxis().SetTitleOffset(0)
+    stack.GetXaxis().SetNdivisions(507)
 
 def setBkgUncHistStyle(bkgUncHisto):
     bkgUncHisto.SetMarkerStyle(0)
@@ -231,21 +236,24 @@ def setBGRatioErrStyle(bgRatioErrs,label):
     bgRatioErrs.GetXaxis().SetTitleOffset(0.9)
     bgRatioErrs.GetXaxis().SetLabelSize(0.18)
     bgRatioErrs.GetXaxis().SetTitleSize(0.25)
+    bgRatioErrs.GetXaxis().SetNdivisions(507)
     #
-    bgRatioErrs.GetYaxis().SetTitle( "data / MC" )
+    bgRatioErrs.GetYaxis().SetTitle( "data / bkg." )
     bgRatioErrs.GetYaxis().SetTitleFont(42)
     bgRatioErrs.GetYaxis().SetLabelFont(42)
     bgRatioErrs.GetYaxis().SetLabelOffset(0.01)
-    bgRatioErrs.GetYaxis().SetLabelSize(0.175)
-    bgRatioErrs.GetYaxis().SetTitleOffset(0.3)
-    bgRatioErrs.GetYaxis().SetTitleSize(0.175)
+    bgRatioErrs.GetYaxis().SetLabelSize(0.17)
+    #bgRatioErrs.GetYaxis().SetTitleOffset(0.2)
+    #bgRatioErrs.GetYaxis().SetTitleSize(0.175)
+    bgRatioErrs.GetYaxis().SetTitleOffset(0.4)
+    bgRatioErrs.GetYaxis().SetTitleSize(0.16)
     #bgRatioErrs.GetYaxis().CenterTitle()
     #bgRatioErrs.GetYaxis().CenterTitle(1)
     bgRatioErrs.GetYaxis().SetRangeUser(0.,2)
     bgRatioErrs.GetYaxis().SetNdivisions(502)
 
 def setRatio1NoBGErrStyle(h_ratio1,label):
-    h_ratio1.GetYaxis().SetTitle( "data / MC" )
+    h_ratio1.GetYaxis().SetTitle( "data / bkg." )
     h_ratio1.GetYaxis().SetTitleFont(42)
     h_ratio1.GetYaxis().SetLabelFont(42)
     h_ratio1.GetYaxis().SetLabelOffset(0.007)
@@ -266,7 +274,7 @@ def setLegendStyle(leg):
     leg.SetTextFont(42)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
-    leg.SetTextSize(.065)
+    leg.SetTextSize(.0625)
 
 def drawLumiEnergyAndCMSStrings(l1,l2,drawCMS=True):
     lumiEnergyString = "35.9 fb^{-1} (13 TeV)"
@@ -274,7 +282,7 @@ def drawLumiEnergyAndCMSStrings(l1,l2,drawCMS=True):
     l1.SetTextFont(42)
     l1.SetNDC()
     l1.SetTextSize(0.06)
-    l1.DrawLatex(0.735,0.965,lumiEnergyString)
+    l1.DrawLatex(0.7375,0.965,lumiEnergyString)
     #
     l2.SetTextAlign(12)
     l2.SetTextFont(62)
@@ -282,7 +290,7 @@ def drawLumiEnergyAndCMSStrings(l1,l2,drawCMS=True):
     l2.SetTextSize(0.08)
     if not drawCMS:
         return
-    l2.DrawLatex(0.16,0.84,"CMS")
+    l2.DrawLatex(0.175,0.84,"CMS")
 
 def drawPrelim(l3):
     l3.SetTextAlign(12)
