@@ -266,7 +266,7 @@ effAccHist.GetYaxis().SetTitleOffset(1.)
 effAccHist.GetYaxis().SetTitleSize(0.07)
 effAccHist.GetYaxis().CenterTitle(1)
 #
-effAccHist.GetXaxis().SetTitle( '#it{M}_{LQ} [GeV]' )
+effAccHist.GetXaxis().SetTitle( '#it{m}_{LQ} [GeV]' )
 effAccHist.GetXaxis().SetTitleFont(42)
 effAccHist.GetXaxis().SetLabelFont(42)
 effAccHist.GetXaxis().SetLabelOffset(0.01)

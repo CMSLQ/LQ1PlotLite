@@ -171,8 +171,8 @@ x_labelsEEJJ = [
 #    "p_{T} (jet_{1}) [GeV]",
 #    "p_{T} (jet_{2}) [GeV]",
     "#it{S}_{T} [GeV]",
-    "#it{M}_{ej}^{min} [GeV]",
-    "#it{M}_{ee} [GeV]"
+    "#it{m}_{ej}^{min} [GeV]",
+    "#it{m}_{ee} [GeV]"
 ]
 
 x_binsEEJJ = [ 
@@ -194,8 +194,8 @@ varsENUJJ     = [
 
 x_labelsENUJJ = [ 
     "#it{S}_{T} [GeV]",
-    "#it{M}_{ej} [GeV]",
-    "#it{M}_{T} [GeV]",
+    "#it{m}_{ej} [GeV]",
+    "#it{m}_{T} [GeV]",
     "#it{p}_{T}^{miss} [GeV]"
 ]
 
@@ -567,8 +567,8 @@ for i_var, var in enumerate(vars):
       beta = 1.0
     else:
       beta = 0.5
-    leg.AddEntry(sig1_hist  ,"LQ, M = "+str(mass1)+" GeV, #beta = "+str(beta),"l")
-    leg.AddEntry(sig2_hist  ,"LQ, M = "+str(mass2)+" GeV, #beta = "+str(beta),"l")
+    leg.AddEntry(sig1_hist  ,"#it{m}_{LQ} = "+str(mass1)+" GeV, #beta = "+str(beta),"l")
+    leg.AddEntry(sig2_hist  ,"#it{m}_{LQ} = "+str(mass2)+" GeV, #beta = "+str(beta),"l")
     leg.Draw()
 
     pad1.RedrawAxis('G')

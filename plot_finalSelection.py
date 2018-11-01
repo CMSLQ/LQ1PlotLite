@@ -116,7 +116,7 @@ def GetBackgroundSyst(background_name, selectionName):
 #doBatch = StrToBool(options.doBatch)
 #blind = not StrToBool(options.showData)
 #FIXME: using the optionparser causes a segfault, at least in the cmssw environment
-doEEJJ= True
+doEEJJ= False
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -159,7 +159,7 @@ varsEEJJ     = [
 
 x_labelsEEJJ = [ 
     "#it{S}_{T} [GeV]",
-    "#it{M}_{ej}^{min} [GeV]",
+    "#it{m}_{ej}^{min} [GeV]",
     #"M_{eejj} [GeV]"
 ]
 
@@ -176,7 +176,7 @@ varsENUJJ     = [
 
 x_labelsENUJJ = [ 
     "#it{S}_{T} [GeV]",
-    "#it{M}_{ej} [GeV]",
+    "#it{m}_{ej} [GeV]",
 ]
 
 x_binsENUJJ = [ 
@@ -374,14 +374,14 @@ for i_mass, mass in enumerate(masses):
       elif mass < 1000 and var=='Mej_selected_min':
           stack.SetMaximum(1e5)
       elif mass > 1000 and var=='Mej_selected_min':
-          stack.SetMaximum(1e4)
+          stack.SetMaximum(1e5)
     else:
         if var=='Mej' and mass < 1000:
             stack.SetMaximum(1e4);
         elif var=='Mej' and mass > 1000:
-            stack.SetMaximum(1e3);
+            stack.SetMaximum(1e4);
         elif var=='ST' and mass < 1000:
-            stack.SetMaximum(1e5);
+            stack.SetMaximum(1e6);
         elif var=='ST' and mass > 1000:
             stack.SetMaximum(1e4);
 
@@ -610,7 +610,7 @@ for i_mass, mass in enumerate(masses):
       beta = 1.0
     else:
       beta = 0.5
-    leg.AddEntry(sig_hist  ,"LQ, M = "+str(mass)+" GeV, #beta = "+str(beta),"l")
+    leg.AddEntry(sig_hist  ,"#it{m}_{LQ} = "+str(mass)+" GeV, #beta = "+str(beta),"l")
     leg.Draw()
 
     pad1.RedrawAxis('G')

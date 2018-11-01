@@ -123,7 +123,7 @@ st_hist.GetYaxis().SetTitleOffset(1.1)
 st_hist.GetYaxis().SetTitleSize(0.07)
 #st_hist.GetYaxis().CenterTitle(1)
 #
-st_hist.GetXaxis().SetTitle( '#it{M}_{LQ} [GeV]' )
+st_hist.GetXaxis().SetTitle( '#it{m}_{LQ} [GeV]' )
 #st_hist.GetXaxis().CenterTitle()
 st_hist.GetXaxis().SetTitleFont(42)
 st_hist.GetXaxis().SetLabelFont(42)
@@ -161,7 +161,7 @@ if doEEJJ:
 else:
     st_hist.GetYaxis().SetRangeUser(0,2500)
 #st_hist.GetXaxis().SetNdivisions(505)
-st_hist.GetXaxis().SetTitle( '#it{M}_{LQ} [GeV]' )
+st_hist.GetXaxis().SetTitle( '#it{m}_{LQ} [GeV]' )
 pad1.Draw()
 
 
@@ -190,11 +190,11 @@ header.SetTextFont(42)
 header.SetTextSize(0.06)
 leg.AddEntry(st_hist,"#it{S}_{T}","lp")
 if doEEJJ:
-    leg.AddEntry(mej_hist,"#it{M}^{min}_{ej}","lp")
-    leg.AddEntry(mee_hist,"#it{M}_{ee}","lp")
+    leg.AddEntry(mej_hist,"#it{m}^{min}_{ej}","lp")
+    leg.AddEntry(mee_hist,"#it{m}_{ee}","lp")
 else:
-    leg.AddEntry(mej_hist,"#it{M}_{ej}","lp")
-    leg.AddEntry(mee_hist,"#it{M}_{T}","lp")
+    leg.AddEntry(mej_hist,"#it{m}_{ej}","lp")
+    leg.AddEntry(mee_hist,"#it{m}_{T}","lp")
     leg.AddEntry(met_hist,"#it{p}^{miss}_{T}","lp")
 leg.Draw()
 

@@ -301,7 +301,7 @@ if doRatio:
     #        h_ratio1.SetBinContent(ibin,-1)
     #        h_ratio1.SetBinError(ibin,-1)
 
-    setRatio1NoBGErrStyle(h_ratio1, '#it{M}_{LQ} [GeV]')
+    setRatio1NoBGErrStyle(h_ratio1, '#it{m}_{LQ} [GeV]')
     pad2.SetBottomMargin(0.6)
     pad2.SetTopMargin(0.075)
     
@@ -323,7 +323,7 @@ if doRatio:
             h_bkgUnc1.SetBinContent(ibin,1.0)
         bgRatioErrs = h_bkgUnc1
 
-        setBGRatioErrStyle(bgRatioErrs, '#it{M}_{LQ} [GeV]')
+        setBGRatioErrStyle(bgRatioErrs, '#it{m}_{LQ} [GeV]')
         #bgRatioErrs.GetXaxis().SetLabelOffset(0.07)
         #bgRatioErrs.GetXaxis().SetTitleOffset(1.1)
 
