@@ -243,7 +243,7 @@ if doSystErr:
 if not blind:
     lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig_hist])
     #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
-    g = poissonErrGraph(data_hist,lastPopBin)
+    g = poissonErrGraph(data_hist,stack,lastPopBin)
     # for constant width plots, no horizontal error bars
     for iPoint in range(0,g.GetN()):
       g.SetPointEXlow(iPoint, 0)

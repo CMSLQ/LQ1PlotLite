@@ -409,7 +409,7 @@ for i_var, var in enumerate(vars):
     # check if we need to stop error bars before the end
     lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig1_hist,sig2_hist])
     #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
-    g = poissonErrGraph(data_hist,lastPopBin)
+    g = poissonErrGraph(data_hist,stack,lastPopBin)
     #g.Draw("ZPSAME")
     g.Draw("ZP0SAME")
 

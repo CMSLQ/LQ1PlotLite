@@ -74,7 +74,9 @@ def GetErrorsGraph(histList,backgroundSyst):
     setUncertaintyStyle(bgErrs)
     return bgErrs
 
-def poissonErrGraph(hist,lastPopBin=9999):
+def poissonErrGraph(hist,stack,lastPopBin=9999):
+    verbose = True
+    totBkgHist = stack.GetStack().Last()
     lastPopBinCenter = 9999
     if lastPopBin < 9999:
       lastPopBinCenter = hist.GetBinCenter(lastPopBin)
@@ -86,26 +88,30 @@ def poissonErrGraph(hist,lastPopBin=9999):
     i=0
     while i < g.GetN() and g.GetX()[i] <= lastPopBinCenter:
       N = g.GetY()[i]
-      #print 'poissonErrGraph(): consider data point x=',g.GetX()[i],'y=',N
+      if verbose:
+          print 'poissonErrGraph(): consider data point x=',g.GetX()[i],'y=',N
       #for n in range(0,g.GetN()):
       #  print g.GetY()[n],
       #print
       # turn off error bars for empty bins at beginning of dist
-      if N > 0:
+      if N > 0 or totBkgHist.GetBinContent(totBkgHist.FindBin(g.GetX()[i])) > 0:
         seenNonzeroPoint = True
       if not seenNonzeroPoint:
-        #print 'removePoint(',i,') / ',g.GetN()
+        if verbose:
+          print 'saw zero point; removePoint(',i,') / ',g.GetN(),' and continue'
         g.RemovePoint(i)
         i=0
         continue
       L = 0 if N==0 else (r.Math.gamma_quantile(alpha/2,N,1.))
       U = r.Math.gamma_quantile_c(alpha/2,N+1,1)
       if N==0:
-        #print 'set this point to 1e-10'
+        if verbose:
+          print 'set this point to 1e-10'
         g.SetPoint(i,g.GetX()[i],1e-10)
       g.SetPointEYlow(i, N-L)
       g.SetPointEYhigh(i, U-N)
-      #print 'point is',g.GetY()[i],'-',g.GetEYlow()[i],'+',g.GetEYhigh()[i]
+      if verbose:
+        print 'current point is',g.GetY()[i],'-',g.GetEYlow()[i],'+',g.GetEYhigh()[i]
       i+=1
     return g
 

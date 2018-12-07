@@ -116,7 +116,7 @@ def GetBackgroundSyst(background_name, selectionName):
 #doBatch = StrToBool(options.doBatch)
 #blind = not StrToBool(options.showData)
 #FIXME: using the optionparser causes a segfault, at least in the cmssw environment
-doEEJJ= False
+doEEJJ= True
 doPrelim = False
 doSystErr = True
 doRatio = True
@@ -473,7 +473,7 @@ for i_mass, mass in enumerate(masses):
     if not blind:
       lastPopBin = getLastPopulatedBin([zjets_hist,ttbar_hist,other_hist,qcd_hist,data_hist,sig_hist])
       #print 'last pop bin center = ', data_hist.GetBinCenter(lastPopBin)
-      g = poissonErrGraph(data_hist,lastPopBin)
+      g = poissonErrGraph(data_hist,stack,lastPopBin)
       #g.Draw("ZPSAME")
       g.Draw("ZP0SAME")
 
